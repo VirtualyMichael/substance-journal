@@ -477,6 +477,18 @@ class ToleranceTests(unittest.TestCase):
         level = current_tolerance_level(ingestions, self.substances_by_key, "psychedelics", at + timedelta(minutes=1))
         self.assertAlmostEqual(level, 2.0, places=2)
 
+    def test_series_always_has_a_point_exactly_at_end(self) -> None:
+        # Regression test: the fixed-step loop generally doesn't land exactly on
+        # `end` (e.g. 6-hour steps from `start` fall short of "now" by up to 6
+        # hours), so the graph's Now marker - which only draws when now falls
+        # within [min_time, max_time] of the plotted points - was silently never
+        # shown on the Tolerance Trend graph.
+        from substance_journal.core.tolerance import tolerance_series
+
+        end = datetime(2026, 7, 27, 13, 47, 23)  # deliberately not aligned to a 6h step
+        series = tolerance_series([], self.substances_by_key, "psychedelics", end, days_back=30, points_per_day=4)
+        self.assertEqual(series[-1].at, end)
+
 
 class AlcoholImportTests(unittest.TestCase):
     def setUp(self) -> None:

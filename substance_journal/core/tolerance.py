@@ -74,4 +74,10 @@ def tolerance_series(
     while t <= end:
         points.append(TolerancePoint(at=t, value=current_tolerance_level(ingestions, substances_by_key, track_key, t)))
         t += step
+    # The fixed step above won't generally land exactly on `end` (e.g. every 6
+    # hours from `start` may fall short of "now" by up to 6 hours) - always add an
+    # exact point at `end` so a graph ending "now" actually has a point there for
+    # the Now marker to align with, instead of silently not drawing it.
+    if not points or points[-1].at < end:
+        points.append(TolerancePoint(at=end, value=current_tolerance_level(ingestions, substances_by_key, track_key, end)))
     return points

@@ -54,6 +54,15 @@ class MainWindow(QMainWindow):
         self.refresh_all()
         QTimer.singleShot(150, self._maybe_prompt_alcohol_import)
 
+        self.now_timer = QTimer(self)
+        self.now_timer.setInterval(60_000)
+        self.now_timer.timeout.connect(self.refresh_time_sensitive_views)
+        self.now_timer.start()
+
+    def refresh_time_sensitive_views(self) -> None:
+        self.refresh_selected_session()
+        self.refresh_tolerance_graph()
+
     def closeEvent(self, event) -> None:  # noqa: N802 - Qt API naming
         settings = QSettings()
         settings.setValue("layout/geometry", self.saveGeometry())
