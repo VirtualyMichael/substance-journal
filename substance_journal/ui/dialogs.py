@@ -113,8 +113,9 @@ class SubstanceIngestionDialog(QDialog):
         self.amount.setSingleStep(1.0)
 
         self.cannabis_calculator = CannabisFlowerCalculator()
-        self.cannabis_calculator.dose_mg_changed.connect(self._on_cannabis_dose_changed)
+        self.cannabis_calculator.amount_changed.connect(self._on_cannabis_amount_changed)
         self.cannabis_calculator.setVisible(False)
+        self._cannabis_amount: tuple[float, str] | None = None
 
         self.occurred_at = QDateTimeEdit()
         self.occurred_at.setCalendarPopup(True)
@@ -129,12 +130,14 @@ class SubstanceIngestionDialog(QDialog):
         self.notes = QPlainTextEdit("")
         self.notes.setMaximumHeight(90)
 
+        self._amount_label = QLabel("Amount")
+
         form = QFormLayout()
         form.addRow("Substance", self.substance_combo)
         form.addRow("Route", self.roa_combo)
         form.addRow("", self.dose_hint)
         form.addRow("", self.duration_hint)
-        form.addRow("Amount", self.amount)
+        form.addRow(self._amount_label, self.amount)
         form.addRow(self.cannabis_calculator)
         form.addRow("Time", self.occurred_at)
         form.addRow("Consumer", self.consumer)
@@ -186,9 +189,8 @@ class SubstanceIngestionDialog(QDialog):
         roa = self._current_roa()
         return self._current_substance().key == "cannabis" and roa is not None and roa.route == "smoked"
 
-    def _on_cannabis_dose_changed(self, mg: float) -> None:
-        if self._is_cannabis_smoked():
-            self.amount.setValue(mg)
+    def _on_cannabis_amount_changed(self, amount: float, unit: str) -> None:
+        self._cannabis_amount = (amount, unit)
 
     def _on_roa_changed(self) -> None:
         roa = self._current_roa()
@@ -197,6 +199,8 @@ class SubstanceIngestionDialog(QDialog):
             self.duration_hint.setText("")
             self.amount.setSuffix("")
             self.cannabis_calculator.setVisible(False)
+            self._amount_label.setVisible(True)
+            self.amount.setVisible(True)
             return
         self.amount.setSuffix(f" {roa.unit}")
         self.dose_hint.setText(
@@ -206,18 +210,24 @@ class SubstanceIngestionDialog(QDialog):
 
         is_cannabis_smoked = self._is_cannabis_smoked()
         self.cannabis_calculator.setVisible(is_cannabis_smoked)
+        self._amount_label.setVisible(not is_cannabis_smoked)
+        self.amount.setVisible(not is_cannabis_smoked)
         if is_cannabis_smoked:
-            self.amount.setValue(self.cannabis_calculator.current_dose_mg())
+            self._cannabis_amount = self.cannabis_calculator.current_amount()
         elif roa.dose_common and roa.dose_common.min is not None:
             self.amount.setValue(roa.dose_common.min)
 
     def result_values(self) -> dict:
         roa = self._current_roa()
+        if self._is_cannabis_smoked() and self._cannabis_amount is not None:
+            amount, unit = self._cannabis_amount
+        else:
+            amount, unit = self.amount.value(), (roa.unit if roa else "")
         return {
             "substance_key": self._current_substance().key,
             "roa_id": roa.id if roa else None,
-            "amount": self.amount.value(),
-            "unit": roa.unit if roa else "",
+            "amount": amount,
+            "unit": unit,
             "occurred_at": self.occurred_at.dateTime().toPython(),
             "consumer": self.consumer.currentText().strip() or "Me",
             "notes": self.notes.toPlainText().strip(),

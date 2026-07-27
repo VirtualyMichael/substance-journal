@@ -65,6 +65,7 @@ class TimelineGraph(QWidget):
         total_seconds = max((max_time - min_time).total_seconds(), 1.0)
 
         if max(point[1] for point in self.points) <= 0:
+            self._draw_now_marker(painter, graph, min_time, max_time, total_seconds)
             painter.setPen(QColor("#7f858f"))
             painter.drawText(graph, Qt.AlignCenter, self.empty_message)
             return
@@ -94,6 +95,8 @@ class TimelineGraph(QWidget):
             x = graph.left() + graph.width() * x_ratio
             painter.drawLine(int(x), graph.top(), int(x), graph.bottom())
             painter.drawEllipse(QPointF(x, graph.bottom()), 4, 4)
+
+        self._draw_now_marker(painter, graph, min_time, max_time, total_seconds)
 
         if self.hover_pos and self.points:
             x = self.hover_pos.x()
@@ -136,6 +139,19 @@ class TimelineGraph(QWidget):
         painter.drawText(bottom, Qt.AlignLeft, min_time.strftime("%b %d"))
         painter.drawText(bottom, Qt.AlignRight, max_time.strftime("%b %d"))
         painter.drawText(graph.adjusted(0, -22, 0, -graph.height()), Qt.AlignRight, f"Peak {max_value:.1f}")
+
+    def _draw_now_marker(self, painter, graph, min_time, max_time, total_seconds) -> None:
+        now = datetime.now()
+        if now < min_time or now > max_time:
+            return
+        x_ratio = (now - min_time).total_seconds() / total_seconds
+        x = graph.left() + graph.width() * x_ratio
+        painter.setPen(QPen(QColor("#66d9ff"), 2, Qt.SolidLine, Qt.RoundCap))
+        painter.drawLine(int(x), graph.top(), int(x), graph.bottom())
+        label_rect = graph.adjusted(0, -24, 0, -graph.height() + 2)
+        painter.setFont(QFont("Segoe UI", 8, QFont.Weight.DemiBold))
+        painter.setPen(QColor("#66d9ff"))
+        painter.drawText(label_rect.adjusted(int(x - graph.left()) - 24, 0, 0, 0), Qt.AlignLeft, "Now")
 
     def _map_point(self, timestamp, value, min_time, total_seconds, max_value, graph) -> QPointF:
         x_ratio = (timestamp - min_time).total_seconds() / total_seconds
