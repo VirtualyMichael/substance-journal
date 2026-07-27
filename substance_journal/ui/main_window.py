@@ -191,12 +191,20 @@ class MainWindow(QMainWindow):
         effect_timeline_dock = self._make_dock("Effect Timeline", self.effect_graph, "dock_effect_timeline")
         tolerance_dock = self._make_dock("Tolerance Trend", tolerance_content, "dock_tolerance")
 
+        # Default layout: Ingestions on the left, Effect Timeline large and prominent
+        # on the right (the two panels worth seeing at a glance), with Subjective
+        # Effects and Tolerance Trend tabbed together below the timeline as
+        # secondary/reference detail - still one click away, not competing for
+        # space with the two most-used panels.
         self.addDockWidget(Qt.RightDockWidgetArea, ingestions_dock)
-        self.splitDockWidget(ingestions_dock, effects_dock, Qt.Horizontal)
-        self.splitDockWidget(ingestions_dock, effect_timeline_dock, Qt.Vertical)
+        self.splitDockWidget(ingestions_dock, effect_timeline_dock, Qt.Horizontal)
         self.splitDockWidget(effect_timeline_dock, tolerance_dock, Qt.Vertical)
+        self.tabifyDockWidget(tolerance_dock, effects_dock)
+        effects_dock.raise_()
 
         self._default_docks = [ingestions_dock, effects_dock, effect_timeline_dock, tolerance_dock]
+        self.resizeDocks([ingestions_dock, effect_timeline_dock], [380, 900], Qt.Horizontal)
+        self.resizeDocks([effect_timeline_dock, tolerance_dock], [520, 260], Qt.Vertical)
         self._default_dock_state = self.saveState()
 
     def reset_layout(self) -> None:
