@@ -2,9 +2,12 @@ from __future__ import annotations
 
 from datetime import datetime
 
+from pathlib import Path
+
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
     QComboBox,
+    QFileDialog,
     QFrame,
     QGridLayout,
     QHBoxLayout,
@@ -18,6 +21,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+from substance_journal.core.alcohol_import import import_alcohol_tracker_export
 from substance_journal.core.database import Store
 from substance_journal.core.interactions import check_new_ingestion
 from substance_journal.core.models import EffectLog, Ingestion, SubjectiveEffect, SubstancePreset
@@ -88,10 +92,13 @@ class MainWindow(QMainWindow):
         self.end_session_button = end_session_button
         delete_button = QPushButton("Delete Ingestion")
         delete_button.clicked.connect(self.delete_selected_ingestion)
+        import_button = QPushButton("Import Alcohol Tracker Data")
+        import_button.clicked.connect(self.import_alcohol_data)
 
         top_row = QHBoxLayout()
         top_row.addLayout(text_layout)
         top_row.addStretch(1)
+        top_row.addWidget(import_button)
         top_row.addWidget(delete_button)
         top_row.addWidget(end_session_button)
         top_row.addWidget(log_effect_button)
@@ -504,6 +511,25 @@ class MainWindow(QMainWindow):
         )
         self.refresh_selected_session()
         self.refresh_recent_effects_row()
+
+    def import_alcohol_data(self) -> None:
+        path, _ = QFileDialog.getOpenFileName(
+            self, "Import Alcohol Tracker Data", "", "JSON Files (*.json)"
+        )
+        if not path:
+            return
+        try:
+            result = import_alcohol_tracker_export(self.store, Path(path))
+        except Exception as e:
+            QMessageBox.critical(self, "Import Failed", f"Could not import: {e}")
+            return
+        QMessageBox.information(
+            self,
+            "Import Complete",
+            f"Imported {result.imported} ingestion(s) across {result.sessions_created} session(s).\n"
+            f"Skipped {result.skipped_duplicates} already-imported duplicate(s).",
+        )
+        self.refresh_all()
 
     def end_selected_session(self) -> None:
         if self.selected_session_id is None:

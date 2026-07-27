@@ -1,3 +1,4 @@
+import json
 import os
 import tempfile
 import unittest
@@ -331,6 +332,94 @@ class ToleranceTests(unittest.TestCase):
         ]
         level = current_tolerance_level(ingestions, self.substances_by_key, "psychedelics", at + timedelta(minutes=1))
         self.assertAlmostEqual(level, 2.0, places=2)
+
+
+class AlcoholImportTests(unittest.TestCase):
+    def setUp(self) -> None:
+        from substance_journal.core.database import Store
+
+        db_path = Path(tempfile.gettempdir()) / f"substance_journal_test_import_{os.getpid()}_{id(self)}.db"
+        if db_path.exists():
+            db_path.unlink()
+        self.db_path = db_path
+        self.store = Store(db_path)
+
+        self.export_path = Path(tempfile.gettempdir()) / f"alcohol_tracker_export_{os.getpid()}_{id(self)}.json"
+        export_rows = [
+            {
+                "occurred_at": "2026-06-01T20:00:00",
+                "amount": 1.0,
+                "unit": "shots",
+                "abv_percent": 40.0,
+                "label": "Shot - 40%",
+                "notes": "",
+                "duration_minutes": 0,
+                "consumer": "Me",
+            },
+            {
+                "occurred_at": "2026-06-01T22:00:00",
+                "amount": 12.0,
+                "unit": "fl_oz",
+                "abv_percent": 5.0,
+                "label": "Beer - 12 oz 5%",
+                "notes": "with dinner",
+                "duration_minutes": 0,
+                "consumer": "Me",
+            },
+            {
+                "occurred_at": "2026-06-03T19:00:00",
+                "amount": 5.0,
+                "unit": "fl_oz",
+                "abv_percent": 12.0,
+                "label": "Wine - 5 oz 12%",
+                "notes": "",
+                "duration_minutes": 0,
+                "consumer": "Alex",
+            },
+        ]
+        with open(self.export_path, "w", encoding="utf-8") as f:
+            json.dump(export_rows, f)
+
+    def tearDown(self) -> None:
+        if self.db_path.exists():
+            self.db_path.unlink()
+        if self.export_path.exists():
+            self.export_path.unlink()
+
+    def test_import_creates_one_session_per_consumer_per_day(self) -> None:
+        from substance_journal.core.alcohol_import import import_alcohol_tracker_export
+
+        result = import_alcohol_tracker_export(self.store, self.export_path)
+        self.assertEqual(result.imported, 3)
+        self.assertEqual(result.sessions_created, 2)  # Me/June 1 and Alex/June 3
+        self.assertEqual(result.skipped_duplicates, 0)
+
+        me_sessions = self.store.list_sessions("Me")
+        self.assertEqual(len(me_sessions), 1)
+        ingestions = self.store.list_ingestions_for_session(me_sessions[0].id)
+        self.assertEqual(len(ingestions), 2)
+        self.assertTrue(all(i.substance_key == "alcohol" for i in ingestions))
+        self.assertEqual(me_sessions[0].ended_at.isoformat(), "2026-06-01T22:00:00")
+
+    def test_import_computes_pure_alcohol_grams_matching_alcohol_tracker_formula(self) -> None:
+        from substance_journal.core.alcohol_import import import_alcohol_tracker_export
+
+        import_alcohol_tracker_export(self.store, self.export_path)
+        me_sessions = self.store.list_sessions("Me")
+        ingestions = self.store.list_ingestions_for_session(me_sessions[0].id)
+        shot = next(i for i in ingestions if "Shot" in i.notes)
+        # 1 shot = 1.5 fl oz * 40% ABV * 23.36 g/fl oz pure alcohol
+        expected_grams = round(1.5 * 0.40 * 23.36, 2)
+        self.assertAlmostEqual(shot.amount, expected_grams, places=2)
+        self.assertEqual(shot.unit, "g")
+
+    def test_reimport_skips_duplicates(self) -> None:
+        from substance_journal.core.alcohol_import import import_alcohol_tracker_export
+
+        import_alcohol_tracker_export(self.store, self.export_path)
+        second_result = import_alcohol_tracker_export(self.store, self.export_path)
+        self.assertEqual(second_result.imported, 0)
+        self.assertEqual(second_result.skipped_duplicates, 3)
 
 
 if __name__ == "__main__":
