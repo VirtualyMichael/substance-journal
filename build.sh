@@ -34,6 +34,9 @@ echo "Checking Python syntax..."
     substance_journal/__main__.py \
     substance_journal/app.py \
     substance_journal/core/paths.py \
+    substance_journal/core/models.py \
+    substance_journal/core/reference_data.py \
+    substance_journal/core/database.py \
     substance_journal/ui/theme.py \
     substance_journal/ui/main_window.py \
     tests/test_core.py
