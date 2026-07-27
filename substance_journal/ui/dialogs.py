@@ -1,9 +1,8 @@
 from __future__ import annotations
 
-from collections.abc import Callable
 from datetime import datetime
 
-from PySide6.QtCore import QDateTime
+from PySide6.QtCore import QDateTime, Qt
 from PySide6.QtWidgets import (
     QComboBox,
     QDateTimeEdit,
@@ -11,16 +10,19 @@ from PySide6.QtWidgets import (
     QDialogButtonBox,
     QDoubleSpinBox,
     QFormLayout,
-    QInputDialog,
+    QHBoxLayout,
     QLabel,
     QLineEdit,
+    QListWidget,
+    QListWidgetItem,
     QMessageBox,
     QPlainTextEdit,
+    QPushButton,
     QVBoxLayout,
 )
 
 from substance_journal.core.database import Store
-from substance_journal.core.models import RouteOfAdministration, Substance
+from substance_journal.core.models import EffectLog, RouteOfAdministration, SubjectiveEffect, Substance
 
 
 def _format_dose(unit: str, threshold: float | None, light, common, strong, heavy: float | None) -> str:
@@ -287,3 +289,114 @@ class SubstancePresetDialog(QDialog):
             "roa_id": roa.id if roa else None,
             "amount": self.amount.value(),
         }
+
+
+class EffectPickerDialog(QDialog):
+    """Browse/search the Subjective Effect Index and tag effects against a session
+    as they happen. Stays open after each tag so multiple effects can be logged in
+    quick succession without reopening the dialog - matches PsychonautWiki Journal's
+    in-the-moment tagging flow."""
+
+    def __init__(self, parent, store: Store, session_id: int) -> None:
+        super().__init__(parent)
+        self.setWindowTitle("Log Subjective Effect")
+        self.setMinimumSize(560, 620)
+        self.store = store
+        self.session_id = session_id
+        self.effects: list[SubjectiveEffect] = store.list_effects()
+        self.logged_count = 0
+
+        self.search = QLineEdit("")
+        self.search.setPlaceholderText("Search effects...")
+        self.search.textChanged.connect(self._refresh_list)
+
+        self.category_combo = QComboBox()
+        self.category_combo.addItem("All categories", None)
+        for category in sorted({e.category for e in self.effects}):
+            self.category_combo.addItem(category, category)
+        self.category_combo.currentIndexChanged.connect(self._refresh_list)
+
+        self.intensity_combo = QComboBox()
+        self.intensity_combo.addItem("No intensity", None)
+        self.intensity_combo.addItem("Light", "light")
+        self.intensity_combo.addItem("Common", "common")
+        self.intensity_combo.addItem("Strong", "strong")
+
+        filter_row = QHBoxLayout()
+        filter_row.addWidget(self.search, 1)
+        filter_row.addWidget(self.category_combo)
+
+        self.effect_list = QListWidget()
+        self.effect_list.itemDoubleClicked.connect(self._log_selected)
+
+        self.description_label = QLabel("")
+        self.description_label.setObjectName("Muted")
+        self.description_label.setWordWrap(True)
+        self.effect_list.currentItemChanged.connect(self._on_selection_changed)
+
+        self.status_label = QLabel("")
+        self.status_label.setObjectName("Muted")
+
+        log_button = QPushButton("Log This Effect")
+        log_button.setObjectName("PrimaryButton")
+        log_button.clicked.connect(self._log_selected)
+        done_button = QPushButton("Done")
+        done_button.clicked.connect(self.accept)
+
+        action_row = QHBoxLayout()
+        action_row.addWidget(self.intensity_combo)
+        action_row.addStretch(1)
+        action_row.addWidget(log_button)
+        action_row.addWidget(done_button)
+
+        layout = QVBoxLayout(self)
+        layout.addLayout(filter_row)
+        layout.addWidget(self.effect_list, 1)
+        layout.addWidget(self.description_label)
+        layout.addWidget(self.status_label)
+        layout.addLayout(action_row)
+
+        self._refresh_list()
+
+    def _refresh_list(self) -> None:
+        query = self.search.text().strip().lower()
+        category = self.category_combo.currentData()
+        self.effect_list.clear()
+        for effect in self.effects:
+            if category and effect.category != category:
+                continue
+            if query and query not in effect.name.lower():
+                continue
+            label = effect.name
+            if effect.subcategory:
+                label += f"  ({effect.subcategory})"
+            item = QListWidgetItem(label)
+            item.setData(Qt.UserRole, effect.id)
+            self.effect_list.addItem(item)
+
+    def _selected_effect(self) -> SubjectiveEffect | None:
+        item = self.effect_list.currentItem()
+        if item is None:
+            return None
+        effect_id = item.data(Qt.UserRole)
+        return next((e for e in self.effects if e.id == effect_id), None)
+
+    def _on_selection_changed(self) -> None:
+        effect = self._selected_effect()
+        self.description_label.setText(effect.description or "" if effect else "")
+
+    def _log_selected(self) -> None:
+        effect = self._selected_effect()
+        if effect is None:
+            return
+        self.store.add_effect_log(
+            EffectLog(
+                id=None,
+                session_id=self.session_id,
+                effect_id=effect.id,
+                occurred_at=datetime.now(),
+                intensity=self.intensity_combo.currentData(),
+            )
+        )
+        self.logged_count += 1
+        self.status_label.setText(f"Logged “{effect.name}” at {datetime.now().strftime('%I:%M %p').lstrip('0')}")

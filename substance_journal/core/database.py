@@ -314,6 +314,33 @@ class Store:
             for row in rows
         ]
 
+    def recent_effects(self, limit: int = 8) -> list[SubjectiveEffect]:
+        with closing(self._connect()) as connection:
+            rows = connection.execute(
+                """
+                SELECT se.* FROM subjective_effects se
+                JOIN (
+                    SELECT effect_id, MAX(occurred_at) AS last_used
+                    FROM effect_logs
+                    GROUP BY effect_id
+                ) recent ON recent.effect_id = se.id
+                ORDER BY recent.last_used DESC
+                LIMIT ?
+                """,
+                (limit,),
+            ).fetchall()
+        return [
+            SubjectiveEffect(
+                id=row["id"],
+                name=row["name"],
+                category=row["category"],
+                subcategory=row["subcategory"],
+                description=row["description"],
+                wiki_url=row["wiki_url"],
+            )
+            for row in rows
+        ]
+
     def lookup_interaction(self, substance_a: str, substance_b: str) -> Interaction | None:
         pair = tuple(sorted((substance_a, substance_b)))
         with closing(self._connect()) as connection:

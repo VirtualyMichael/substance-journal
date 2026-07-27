@@ -22,9 +22,9 @@ from PySide6.QtWidgets import (
 
 from substance_journal.core.database import Store
 from substance_journal.core.interactions import check_new_ingestion
-from substance_journal.core.models import Ingestion, SubstancePreset
+from substance_journal.core.models import EffectLog, Ingestion, SubjectiveEffect, SubstancePreset
 from substance_journal.core.paths import default_db_path
-from substance_journal.ui.dialogs import SubstanceIngestionDialog, SubstancePresetDialog
+from substance_journal.ui.dialogs import EffectPickerDialog, SubstanceIngestionDialog, SubstancePresetDialog
 
 
 class MainWindow(QMainWindow):
@@ -56,6 +56,7 @@ class MainWindow(QMainWindow):
         self.session_summary.setObjectName("Muted")
         self.sessions_list = QListWidget()
         self.ingestion_list = QListWidget()
+        self.effect_log_list = QListWidget()
 
         layout.addWidget(self._build_header(), 0, 0, 1, 2)
         layout.addWidget(self._build_sidebar(), 1, 0)
@@ -79,6 +80,9 @@ class MainWindow(QMainWindow):
         add_button = QPushButton("+ Ingestion")
         add_button.setObjectName("PrimaryButton")
         add_button.clicked.connect(self.add_ingestion)
+        log_effect_button = QPushButton("Log Effect")
+        log_effect_button.clicked.connect(self.log_effect)
+        self.log_effect_button = log_effect_button
         end_session_button = QPushButton("End Session")
         end_session_button.clicked.connect(self.end_selected_session)
         self.end_session_button = end_session_button
@@ -90,14 +94,20 @@ class MainWindow(QMainWindow):
         top_row.addStretch(1)
         top_row.addWidget(delete_button)
         top_row.addWidget(end_session_button)
+        top_row.addWidget(log_effect_button)
         top_row.addWidget(add_button)
 
         self.quick_add_row = QWidget()
         self.quick_add_layout = QHBoxLayout(self.quick_add_row)
         self.quick_add_layout.setContentsMargins(0, 8, 0, 0)
 
+        self.recent_effects_row = QWidget()
+        self.recent_effects_layout = QHBoxLayout(self.recent_effects_row)
+        self.recent_effects_layout.setContentsMargins(0, 4, 0, 0)
+
         layout.addLayout(top_row)
         layout.addWidget(self.quick_add_row)
+        layout.addWidget(self.recent_effects_row)
         return frame
 
     def _build_sidebar(self) -> QFrame:
@@ -133,7 +143,23 @@ class MainWindow(QMainWindow):
         layout.setSpacing(10)
         layout.addWidget(self.session_title)
         layout.addWidget(self.session_summary)
-        layout.addWidget(self.ingestion_list, 1)
+
+        lists_row = QHBoxLayout()
+        ingestions_column = QVBoxLayout()
+        ingestions_label = QLabel("Ingestions")
+        ingestions_label.setObjectName("SectionTitle")
+        ingestions_column.addWidget(ingestions_label)
+        ingestions_column.addWidget(self.ingestion_list, 1)
+
+        effects_column = QVBoxLayout()
+        effects_label = QLabel("Subjective Effects")
+        effects_label.setObjectName("SectionTitle")
+        effects_column.addWidget(effects_label)
+        effects_column.addWidget(self.effect_log_list, 1)
+
+        lists_row.addLayout(ingestions_column, 1)
+        lists_row.addLayout(effects_column, 1)
+        layout.addLayout(lists_row, 1)
         return frame
 
     # ---- refresh ----
@@ -141,6 +167,7 @@ class MainWindow(QMainWindow):
     def refresh_all(self) -> None:
         self._refresh_consumer_filter()
         self.refresh_quick_add_row()
+        self.refresh_recent_effects_row()
         self.refresh_sessions()
 
     def _refresh_consumer_filter(self) -> None:
@@ -198,11 +225,13 @@ class MainWindow(QMainWindow):
 
     def refresh_selected_session(self) -> None:
         self.ingestion_list.clear()
+        self.effect_log_list.clear()
         session = self.store.get_session(self.selected_session_id) if self.selected_session_id else None
         if session is None:
             self.session_title.setText("No session selected")
             self.session_summary.setText("Log an ingestion to start a new session.")
             self.end_session_button.setEnabled(False)
+            self.log_effect_button.setEnabled(False)
             return
 
         substances_by_key = {s.key: s for s in self.store.list_substances()}
@@ -218,12 +247,25 @@ class MainWindow(QMainWindow):
             item.setData(Qt.UserRole, ingestion.id)
             self.ingestion_list.addItem(item)
 
+        effects_by_id = {e.id: e for e in self.store.list_effects()}
+        effect_logs = self.store.list_effect_logs_for_session(session.id)
+        for effect_log in effect_logs:
+            effect = effects_by_id.get(effect_log.effect_id)
+            name = effect.name if effect else "Unknown effect"
+            intensity = f" ({effect_log.intensity})" if effect_log.intensity else ""
+            item = QListWidgetItem(
+                f"{effect_log.occurred_at.strftime('%I:%M %p').lstrip('0')}  |  {name}{intensity}"
+            )
+            item.setData(Qt.UserRole, effect_log.id)
+            self.effect_log_list.addItem(item)
+
         status = "open" if session.ended_at is None else "closed"
         self.session_title.setText(
             f"{session.consumer}'s session — {session.started_at.strftime('%a %d %b %Y, %I:%M %p').replace(' 0', ' ')} ({status})"
         )
-        self.session_summary.setText(f"{len(ingestions)} ingestion(s) logged.")
+        self.session_summary.setText(f"{len(ingestions)} ingestion(s), {len(effect_logs)} effect(s) logged.")
         self.end_session_button.setEnabled(session.ended_at is None)
+        self.log_effect_button.setEnabled(True)
 
     def refresh_quick_add_row(self) -> None:
         while self.quick_add_layout.count():
@@ -263,6 +305,27 @@ class MainWindow(QMainWindow):
         self.quick_add_layout.addWidget(new_preset_button)
 
         self.quick_add_layout.addStretch(1)
+
+    def refresh_recent_effects_row(self) -> None:
+        while self.recent_effects_layout.count():
+            item = self.recent_effects_layout.takeAt(0)
+            widget = item.widget()
+            if widget is not None:
+                widget.deleteLater()
+
+        recent = self.store.recent_effects(limit=8)
+        self.recent_effects_row.setVisible(bool(recent))
+        if not recent:
+            return
+
+        label = QLabel("Recent effects:")
+        label.setObjectName("Muted")
+        self.recent_effects_layout.addWidget(label)
+        for effect in recent:
+            btn = QPushButton(effect.name)
+            btn.clicked.connect(lambda checked, e=effect: self.quick_log_effect(e))
+            self.recent_effects_layout.addWidget(btn)
+        self.recent_effects_layout.addStretch(1)
 
     # ---- session attach helper ----
 
@@ -378,6 +441,26 @@ class MainWindow(QMainWindow):
             )
         )
         self.refresh_quick_add_row()
+
+    def log_effect(self) -> None:
+        if self.selected_session_id is None:
+            QMessageBox.information(self, "No session selected", "Log an ingestion or select a session first.")
+            return
+        dialog = EffectPickerDialog(self, self.store, self.selected_session_id)
+        dialog.exec()
+        if dialog.logged_count:
+            self.refresh_selected_session()
+            self.refresh_recent_effects_row()
+
+    def quick_log_effect(self, effect: SubjectiveEffect) -> None:
+        if self.selected_session_id is None:
+            QMessageBox.information(self, "No session selected", "Log an ingestion or select a session first.")
+            return
+        self.store.add_effect_log(
+            EffectLog(id=None, session_id=self.selected_session_id, effect_id=effect.id, occurred_at=datetime.now())
+        )
+        self.refresh_selected_session()
+        self.refresh_recent_effects_row()
 
     def end_selected_session(self) -> None:
         if self.selected_session_id is None:
