@@ -52,7 +52,7 @@ if [ "$SKIP_TESTS" -eq 0 ]; then
 fi
 
 echo "Building windowed executable..."
-"$VENV_PYINSTALLER" --noconfirm --windowed --name SubstanceJournal --paths . substance_journal/__main__.py
+"$VENV_PYINSTALLER" --noconfirm --windowed --name SubstanceJournal --paths . --add-data "data:data" substance_journal/__main__.py
 
 if [ ! -f "$EXE_PATH" ]; then
     echo "Build finished but executable was not found at $EXE_PATH" >&2

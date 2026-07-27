@@ -46,7 +46,7 @@ if (-not $SkipTests) {
 }
 
 Write-Host "Building windowed executable..."
-& $VenvPyInstaller --noconfirm --windowed --name SubstanceJournal --paths . substance_journal\__main__.py
+& $VenvPyInstaller --noconfirm --windowed --name SubstanceJournal --paths . --add-data "data;data" substance_journal\__main__.py
 
 if (-not (Test-Path $ExePath)) {
     throw "Build finished but executable was not found at $ExePath"

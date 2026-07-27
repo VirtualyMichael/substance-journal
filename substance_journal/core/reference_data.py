@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import sys
 from functools import lru_cache
 from pathlib import Path
 
@@ -8,7 +9,17 @@ from pathlib import Path
 # databases (not just refreshed values) - see database.py's seed-once check.
 DATA_VERSION = 1
 
-_DATA_DIR = Path(__file__).resolve().parent.parent.parent / "data"
+
+def _data_dir() -> Path:
+    # PyInstaller extracts --add-data files under sys._MEIPASS at runtime (both
+    # onefile and onedir builds); fall back to the source tree layout in dev mode.
+    bundle_root = getattr(sys, "_MEIPASS", None)
+    if bundle_root:
+        return Path(bundle_root) / "data"
+    return Path(__file__).resolve().parent.parent.parent / "data"
+
+
+_DATA_DIR = _data_dir()
 
 
 def _load_json(name: str) -> list[dict]:
