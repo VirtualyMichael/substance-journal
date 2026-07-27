@@ -107,8 +107,16 @@ def session_effect_series(
         return []
 
     start = min(c.occurred_at for c in curves)
-    end = max(c.offset_end for c in curves)
-    end = max(end, datetime.now())
+    natural_end = max(c.offset_end for c in curves)
+    now = datetime.now()
+    # Extend the range a little past the curve's natural end so the "Now" marker
+    # is visible while a session is still winding down - but never stretch the
+    # timeline out to "today" for an old/historical session, which would squash
+    # the actual curve into an invisible sliver at the left edge.
+    if start <= now <= natural_end + timedelta(hours=6):
+        end = max(natural_end, now)
+    else:
+        end = natural_end
 
     step = timedelta(hours=1 / points_per_hour)
     points = []

@@ -333,6 +333,28 @@ class EffectCurveTests(unittest.TestCase):
         common_time = next(t for t in combined_at if t in lsd_at and lsd_at[t] > 0.5)
         self.assertGreaterEqual(combined_at[common_time], lsd_at[common_time])
 
+    def test_old_historical_session_is_not_stretched_out_to_today(self) -> None:
+        # Regression test: the timeline used to always extend its end to
+        # datetime.now(), which for an old/closed session (e.g. imported history)
+        # stretched the x-axis out to today and squashed the actual curve into an
+        # invisible sliver at the left edge.
+        from substance_journal.core.effect_curve import session_effect_series
+        from substance_journal.core.models import Ingestion
+
+        alcohol = self.substances_by_key["alcohol"]
+        roa = alcohol.roas[0]
+        old_time = datetime(2026, 1, 1, 20, 0, 0)
+        ingestions = [
+            Ingestion(
+                id=None, session_id=1, substance_key="alcohol", roa_id=roa.id,
+                amount=roa.dose_common.min, unit=roa.unit, occurred_at=old_time, consumer="Me",
+            )
+        ]
+        series = session_effect_series(ingestions, self.substances_by_key)
+        span_hours = (series[-1][0] - series[0][0]).total_seconds() / 3600
+        self.assertLess(span_hours, 24)
+        self.assertGreater(max(v for _, v in series), 0.5)
+
 
 class ToleranceTests(unittest.TestCase):
     def setUp(self) -> None:
