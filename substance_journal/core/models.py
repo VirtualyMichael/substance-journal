@@ -19,7 +19,7 @@ class DurationPhase:
 
 @dataclass(frozen=True)
 class RouteOfAdministration:
-    id: int | None
+    id: str  # stable "substance_key:route" key, e.g. "alcohol:oral"
     substance_key: str
     route: str
     unit: str
@@ -60,7 +60,7 @@ class Interaction:
 
 @dataclass(frozen=True)
 class SubjectiveEffect:
-    id: int | None
+    id: str | None  # stable key = effect name (guaranteed unique in the SEI)
     name: str
     category: str
     subcategory: str | None
@@ -82,7 +82,7 @@ class Ingestion:
     id: int | None
     session_id: int
     substance_key: str
-    roa_id: int
+    roa_id: str
     amount: float
     unit: str
     occurred_at: datetime
@@ -94,7 +94,7 @@ class Ingestion:
 class EffectLog:
     id: int | None
     session_id: int
-    effect_id: int
+    effect_id: str
     occurred_at: datetime
     intensity: str | None = None  # light, common, strong
     notes: str = ""
@@ -104,6 +104,6 @@ class EffectLog:
 class SubstancePreset:
     id: int | None
     substance_key: str
-    roa_id: int
+    roa_id: str
     name: str
     amount: float

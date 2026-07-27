@@ -35,44 +35,12 @@ CREATE TABLE IF NOT EXISTS substances (
     addiction_potential TEXT
 );
 
-CREATE TABLE IF NOT EXISTS routes_of_administration (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    substance_key TEXT NOT NULL,
-    route TEXT NOT NULL,
-    unit TEXT NOT NULL,
-    dose_threshold REAL,
-    dose_light_min REAL,
-    dose_light_max REAL,
-    dose_common_min REAL,
-    dose_common_max REAL,
-    dose_strong_min REAL,
-    dose_strong_max REAL,
-    dose_heavy REAL
-);
-
-CREATE TABLE IF NOT EXISTS duration_phases (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    roa_id INTEGER NOT NULL,
-    phase TEXT NOT NULL,
-    min_minutes REAL,
-    max_minutes REAL
-);
-
 CREATE TABLE IF NOT EXISTS interactions (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     substance_a TEXT NOT NULL,
     substance_b TEXT NOT NULL,
     risk_level TEXT NOT NULL,
     note TEXT
-);
-
-CREATE TABLE IF NOT EXISTS subjective_effects (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
-    category TEXT NOT NULL,
-    subcategory TEXT,
-    description TEXT,
-    wiki_url TEXT
 );
 
 CREATE TABLE IF NOT EXISTS sessions (
@@ -87,7 +55,7 @@ CREATE TABLE IF NOT EXISTS ingestions (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     session_id INTEGER NOT NULL,
     substance_key TEXT NOT NULL,
-    roa_id INTEGER NOT NULL,
+    roa_id TEXT NOT NULL,
     amount REAL NOT NULL,
     unit TEXT NOT NULL,
     occurred_at TEXT NOT NULL,
@@ -102,7 +70,7 @@ CREATE INDEX IF NOT EXISTS idx_ingestions_session ON ingestions(session_id);
 CREATE TABLE IF NOT EXISTS effect_logs (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     session_id INTEGER NOT NULL,
-    effect_id INTEGER NOT NULL,
+    effect_id TEXT NOT NULL,
     occurred_at TEXT NOT NULL,
     intensity TEXT,
     notes TEXT NOT NULL DEFAULT ''
@@ -113,9 +81,53 @@ CREATE INDEX IF NOT EXISTS idx_effect_logs_session ON effect_logs(session_id);
 CREATE TABLE IF NOT EXISTS substance_presets (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     substance_key TEXT NOT NULL,
-    roa_id INTEGER NOT NULL,
+    roa_id TEXT NOT NULL,
     name TEXT NOT NULL,
     amount REAL NOT NULL
+);
+"""
+
+# routes_of_administration, duration_phases, and subjective_effects are fully
+# wiped and reseeded from bundled data/*.json on every startup (see
+# _reseed_reference_data) - they have no reason to persist row identity across
+# restarts. They are dropped and recreated unconditionally on every init (see
+# _init_schema) rather than defined with CREATE TABLE IF NOT EXISTS, both because
+# that keeps their schema always in sync with this code and, critically, because
+# databases created before this fix had them keyed by AUTOINCREMENT id - an id
+# that got silently reassigned every single relaunch, orphaning any roa_id/
+# effect_id stored elsewhere (ingestions, substance_presets, effect_logs) as soon
+# as the app restarted. Stable natural keys (substance_key:route, effect name)
+# fix that permanently.
+EPHEMERAL_REFERENCE_SCHEMA = """
+CREATE TABLE routes_of_administration (
+    key TEXT PRIMARY KEY,
+    substance_key TEXT NOT NULL,
+    route TEXT NOT NULL,
+    unit TEXT NOT NULL,
+    dose_threshold REAL,
+    dose_light_min REAL,
+    dose_light_max REAL,
+    dose_common_min REAL,
+    dose_common_max REAL,
+    dose_strong_min REAL,
+    dose_strong_max REAL,
+    dose_heavy REAL
+);
+
+CREATE TABLE duration_phases (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    roa_key TEXT NOT NULL,
+    phase TEXT NOT NULL,
+    min_minutes REAL,
+    max_minutes REAL
+);
+
+CREATE TABLE subjective_effects (
+    name TEXT PRIMARY KEY,
+    category TEXT NOT NULL,
+    subcategory TEXT,
+    description TEXT,
+    wiki_url TEXT
 );
 """
 
@@ -135,6 +147,9 @@ class Store:
         self.db_path = db_path
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
         self._init_schema()
+        with closing(self._connect()) as connection:
+            self._migrate_legacy_roa_keys(connection)
+            connection.commit()
         self._reseed_reference_data()
 
     def _connect(self) -> sqlite3.Connection:
@@ -146,7 +161,45 @@ class Store:
     def _init_schema(self) -> None:
         with closing(self._connect()) as connection:
             connection.executescript(SCHEMA)
+            connection.executescript("DROP TABLE IF EXISTS duration_phases; DROP TABLE IF EXISTS routes_of_administration; DROP TABLE IF EXISTS subjective_effects;")
+            connection.executescript(EPHEMERAL_REFERENCE_SCHEMA)
             connection.commit()
+
+    def _migrate_legacy_roa_keys(self, connection: sqlite3.Connection) -> None:
+        """One-time, idempotent best-effort recovery for ingestions/substance_presets
+        written before routes_of_administration had stable keys, when roa_id held an
+        AUTOINCREMENT integer that was silently reassigned on every app restart.
+        There is no way to recover exactly which route those old integers meant (that
+        mapping was already lost across past restarts), so this remaps by matching
+        the substance's route by unit where possible (ingestions store their own
+        unit), falling back to the substance's first route otherwise - lossless for
+        every substance that only has one route, which covers this app's real data
+        almost entirely."""
+        substances_by_key = {s["key"]: s for s in reference_data.load_substances()}
+
+        def best_roa_key(substance_key: str, unit: str | None) -> str | None:
+            substance = substances_by_key.get(substance_key)
+            if not substance or not substance["roas"]:
+                return None
+            if unit:
+                for roa in substance["roas"]:
+                    if roa["unit"] == unit:
+                        return f"{substance_key}:{roa['route']}"
+            return f"{substance_key}:{substance['roas'][0]['route']}"
+
+        for row in connection.execute("SELECT id, substance_key, roa_id, unit FROM ingestions").fetchall():
+            if isinstance(row["roa_id"], str):
+                continue
+            new_key = best_roa_key(row["substance_key"], row["unit"])
+            if new_key:
+                connection.execute("UPDATE ingestions SET roa_id = ? WHERE id = ?", (new_key, row["id"]))
+
+        for row in connection.execute("SELECT id, substance_key, roa_id FROM substance_presets").fetchall():
+            if isinstance(row["roa_id"], str):
+                continue
+            new_key = best_roa_key(row["substance_key"], None)
+            if new_key:
+                connection.execute("UPDATE substance_presets SET roa_id = ? WHERE id = ?", (new_key, row["id"]))
 
     # ---- reference data (reseeded from bundled JSON on every startup) ----
 
@@ -156,11 +209,8 @@ class Store:
         interactions = reference_data.load_interactions()
 
         with closing(self._connect()) as connection:
-            connection.execute("DELETE FROM duration_phases")
-            connection.execute("DELETE FROM routes_of_administration")
             connection.execute("DELETE FROM substances")
             connection.execute("DELETE FROM interactions")
-            connection.execute("DELETE FROM subjective_effects")
 
             for substance in substances:
                 connection.execute(
@@ -188,15 +238,17 @@ class Store:
                     light = roa["dose_light"] or {}
                     common = roa["dose_common"] or {}
                     strong = roa["dose_strong"] or {}
-                    cursor = connection.execute(
+                    roa_key = f"{substance['key']}:{roa['route']}"
+                    connection.execute(
                         """
                         INSERT INTO routes_of_administration (
-                            substance_key, route, unit, dose_threshold,
+                            key, substance_key, route, unit, dose_threshold,
                             dose_light_min, dose_light_max, dose_common_min, dose_common_max,
                             dose_strong_min, dose_strong_max, dose_heavy
-                        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                         """,
                         (
+                            roa_key,
                             substance["key"],
                             roa["route"],
                             roa["unit"],
@@ -210,14 +262,13 @@ class Store:
                             roa["dose_heavy"],
                         ),
                     )
-                    roa_id = cursor.lastrowid
                     for phase in ("onset", "comeup", "peak", "offset", "total", "afterglow"):
                         lo, hi = _range_minutes((roa["duration"] or {}).get(phase))
                         if lo is None and hi is None:
                             continue
                         connection.execute(
-                            "INSERT INTO duration_phases (roa_id, phase, min_minutes, max_minutes) VALUES (?, ?, ?, ?)",
-                            (roa_id, phase, lo, hi),
+                            "INSERT INTO duration_phases (roa_key, phase, min_minutes, max_minutes) VALUES (?, ?, ?, ?)",
+                            (roa_key, phase, lo, hi),
                         )
 
             for interaction in interactions:
@@ -246,7 +297,7 @@ class Store:
 
     def _row_to_roa(self, connection: sqlite3.Connection, row: sqlite3.Row) -> RouteOfAdministration:
         phase_rows = connection.execute(
-            "SELECT phase, min_minutes, max_minutes FROM duration_phases WHERE roa_id = ?", (row["id"],)
+            "SELECT phase, min_minutes, max_minutes FROM duration_phases WHERE roa_key = ?", (row["key"],)
         ).fetchall()
         durations = tuple(
             DurationPhase(phase=p["phase"], min_minutes=p["min_minutes"], max_minutes=p["max_minutes"])
@@ -259,7 +310,7 @@ class Store:
             return DoseRange(min=row[min_key], max=row[max_key])
 
         return RouteOfAdministration(
-            id=row["id"],
+            id=row["key"],
             substance_key=row["substance_key"],
             route=row["route"],
             unit=row["unit"],
@@ -307,7 +358,7 @@ class Store:
             rows = connection.execute("SELECT * FROM subjective_effects ORDER BY category, name").fetchall()
         return [
             SubjectiveEffect(
-                id=row["id"],
+                id=row["name"],
                 name=row["name"],
                 category=row["category"],
                 subcategory=row["subcategory"],
@@ -326,7 +377,7 @@ class Store:
                     SELECT effect_id, MAX(occurred_at) AS last_used
                     FROM effect_logs
                     GROUP BY effect_id
-                ) recent ON recent.effect_id = se.id
+                ) recent ON recent.effect_id = se.name
                 ORDER BY recent.last_used DESC
                 LIMIT ?
                 """,
@@ -334,7 +385,7 @@ class Store:
             ).fetchall()
         return [
             SubjectiveEffect(
-                id=row["id"],
+                id=row["name"],
                 name=row["name"],
                 category=row["category"],
                 subcategory=row["subcategory"],

@@ -117,6 +117,47 @@ class StoreTests(unittest.TestCase):
         effects = self.store.list_effects()
         self.assertLess(len(effects), 500)
 
+    def test_roa_keys_and_effect_ids_survive_reseeding_across_restarts(self) -> None:
+        # Regression test: routes_of_administration and subjective_effects used to
+        # be keyed by AUTOINCREMENT id and were fully wiped/reseeded on every
+        # startup, so an ingestion's stored roa_id (or an effect_log's effect_id)
+        # silently pointed at nothing (or the wrong thing) after any restart. Stable
+        # natural keys ("substance_key:route", effect name) must survive any number
+        # of reseeds.
+        from substance_journal.core.database import Store
+        from substance_journal.core.models import EffectLog, Ingestion
+
+        lsd = self.store.get_substance("lsd")
+        roa = lsd.roas[0]
+        session_id = self.store.start_session("Me", datetime(2026, 7, 27, 20, 0, 0))
+        self.store.add_ingestion(
+            Ingestion(
+                id=None, session_id=session_id, substance_key="lsd", roa_id=roa.id,
+                amount=100.0, unit=roa.unit, occurred_at=datetime(2026, 7, 27, 20, 5, 0), consumer="Me",
+            )
+        )
+        color_enhancement = next(e for e in self.store.list_effects() if e.name == "Color enhancement")
+        self.store.add_effect_log(
+            EffectLog(id=None, session_id=session_id, effect_id=color_enhancement.id, occurred_at=datetime(2026, 7, 27, 21, 0, 0))
+        )
+
+        # simulate several app restarts (each one wipes and reseeds reference data)
+        for _ in range(3):
+            Store(self.db_path)
+
+        reopened = Store(self.db_path)
+        ingestions = reopened.list_ingestions_for_session(session_id)
+        self.assertEqual(len(ingestions), 1)
+        lsd_after = reopened.get_substance("lsd")
+        matching_roa = next((r for r in lsd_after.roas if r.id == ingestions[0].roa_id), None)
+        self.assertIsNotNone(matching_roa, "ingestion's roa_id no longer matches any current route after restart")
+
+        effect_logs = reopened.list_effect_logs_for_session(session_id)
+        self.assertEqual(len(effect_logs), 1)
+        effects_by_id = {e.id: e for e in reopened.list_effects()}
+        self.assertIn(effect_logs[0].effect_id, effects_by_id, "effect_log's effect_id no longer matches any current effect after restart")
+        self.assertEqual(effects_by_id[effect_logs[0].effect_id].name, "Color enhancement")
+
     def test_session_lifecycle(self) -> None:
         self.assertIsNone(self.store.get_open_session("Me"))
 
