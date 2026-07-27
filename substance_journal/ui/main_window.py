@@ -23,6 +23,7 @@ from PySide6.QtWidgets import (
 
 from substance_journal.core.alcohol_import import default_alcohol_tracker_db_path, import_alcohol_tracker_data
 from substance_journal.core.database import Store
+from substance_journal.core.effect_curve import session_effect_series
 from substance_journal.core.interactions import check_new_ingestion
 from substance_journal.core.models import EffectLog, Ingestion, SubjectiveEffect, SubstancePreset
 from substance_journal.core.paths import default_db_path
@@ -169,6 +170,14 @@ class MainWindow(QMainWindow):
         lists_row.addLayout(effects_column, 1)
         layout.addLayout(lists_row, 1)
 
+        effect_timeline_label = QLabel("Effect Timeline")
+        effect_timeline_label.setObjectName("SectionTitle")
+        layout.addWidget(effect_timeline_label)
+        self.effect_graph = TimelineGraph(
+            "Effect Timeline", "Estimated combined intensity across this session's ingestions."
+        )
+        layout.addWidget(self.effect_graph)
+
         tolerance_header = QHBoxLayout()
         tolerance_label = QLabel("Tolerance")
         tolerance_label.setObjectName("SectionTitle")
@@ -257,6 +266,7 @@ class MainWindow(QMainWindow):
             self.session_summary.setText("Log an ingestion to start a new session.")
             self.end_session_button.setEnabled(False)
             self.log_effect_button.setEnabled(False)
+            self.effect_graph.set_points([])
             return
 
         substances_by_key = {s.key: s for s in self.store.list_substances()}
@@ -291,6 +301,9 @@ class MainWindow(QMainWindow):
         self.session_summary.setText(f"{len(ingestions)} ingestion(s), {len(effect_logs)} effect(s) logged.")
         self.end_session_button.setEnabled(session.ended_at is None)
         self.log_effect_button.setEnabled(True)
+
+        series = session_effect_series(ingestions, substances_by_key)
+        self.effect_graph.set_points(series, markers=[i.occurred_at for i in ingestions])
 
     def refresh_quick_add_row(self) -> None:
         while self.quick_add_layout.count():

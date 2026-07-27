@@ -33,6 +33,7 @@ Write-Host "Checking Python syntax..."
     substance_journal\core\database.py `
     substance_journal\core\interactions.py `
     substance_journal\core\tolerance.py `
+    substance_journal\core\effect_curve.py `
     substance_journal\core\alcohol_import.py `
     substance_journal\ui\theme.py `
     substance_journal\ui\widgets.py `

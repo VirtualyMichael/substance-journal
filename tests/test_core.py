@@ -253,6 +253,87 @@ class InteractionCheckerTests(unittest.TestCase):
         self.assertEqual(warnings, [])
 
 
+class EffectCurveTests(unittest.TestCase):
+    def setUp(self) -> None:
+        from substance_journal.core.database import Store
+
+        db_path = Path(tempfile.gettempdir()) / f"substance_journal_test_ec_{os.getpid()}_{id(self)}.db"
+        if db_path.exists():
+            db_path.unlink()
+        self.db_path = db_path
+        self.store = Store(db_path)
+        self.substances_by_key = {s.key: s for s in self.store.list_substances()}
+
+    def tearDown(self) -> None:
+        if self.db_path.exists():
+            self.db_path.unlink()
+
+    def test_no_ingestions_returns_no_points(self) -> None:
+        from substance_journal.core.effect_curve import session_effect_series
+
+        self.assertEqual(session_effect_series([], self.substances_by_key), [])
+
+    def test_curve_rises_peaks_and_falls_back_to_zero(self) -> None:
+        from substance_journal.core.effect_curve import session_effect_series
+        from substance_journal.core.models import Ingestion
+
+        lsd = self.substances_by_key["lsd"]
+        roa = lsd.roas[0]
+        dosed_at = datetime(2026, 7, 1, 20, 0, 0)
+        ingestions = [
+            Ingestion(
+                id=None, session_id=1, substance_key="lsd", roa_id=roa.id,
+                amount=roa.dose_common.min, unit=roa.unit, occurred_at=dosed_at, consumer="Me",
+            )
+        ]
+        series = session_effect_series(ingestions, self.substances_by_key)
+        self.assertGreater(len(series), 0)
+
+        at_time = {t: v for t, v in series}
+        onset = roa.duration("onset")
+        comeup = roa.duration("comeup")
+        peak = roa.duration("peak")
+        offset = roa.duration("offset")
+        ramp_end = dosed_at + timedelta(minutes=onset.max_minutes + comeup.max_minutes)
+        peak_end = ramp_end + timedelta(minutes=peak.max_minutes)
+        offset_end = peak_end + timedelta(minutes=offset.max_minutes)
+
+        before_dose = min(series, key=lambda p: abs((p[0] - dosed_at).total_seconds()))
+        self.assertLess(before_dose[1], 0.2)
+
+        mid_peak = min(series, key=lambda p: abs((p[0] - (ramp_end + (peak_end - ramp_end) / 2)).total_seconds()))
+        self.assertGreater(mid_peak[1], 0.8)
+
+        after_offset = [v for t, v in series if t > offset_end + timedelta(minutes=5)]
+        if after_offset:
+            self.assertAlmostEqual(after_offset[0], 0.0, places=2)
+
+    def test_two_simultaneous_ingestions_stack(self) -> None:
+        from substance_journal.core.effect_curve import session_effect_series
+        from substance_journal.core.models import Ingestion
+
+        lsd = self.substances_by_key["lsd"]
+        mdma = self.substances_by_key["mdma"]
+        dosed_at = datetime(2026, 7, 1, 20, 0, 0)
+        ingestions = [
+            Ingestion(
+                id=None, session_id=1, substance_key="lsd", roa_id=lsd.roas[0].id,
+                amount=lsd.roas[0].dose_common.min, unit=lsd.roas[0].unit, occurred_at=dosed_at, consumer="Me",
+            ),
+            Ingestion(
+                id=None, session_id=1, substance_key="mdma", roa_id=mdma.roas[0].id,
+                amount=mdma.roas[0].dose_common.min, unit=mdma.roas[0].unit, occurred_at=dosed_at, consumer="Me",
+            ),
+        ]
+        combined = session_effect_series(ingestions, self.substances_by_key)
+        lsd_only = session_effect_series(ingestions[:1], self.substances_by_key)
+
+        combined_at = {t: v for t, v in combined}
+        lsd_at = {t: v for t, v in lsd_only}
+        common_time = next(t for t in combined_at if t in lsd_at and lsd_at[t] > 0.5)
+        self.assertGreaterEqual(combined_at[common_time], lsd_at[common_time])
+
+
 class ToleranceTests(unittest.TestCase):
     def setUp(self) -> None:
         from substance_journal.core.database import Store
