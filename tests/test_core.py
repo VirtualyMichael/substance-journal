@@ -184,5 +184,73 @@ class StoreTests(unittest.TestCase):
         self.assertEqual(self.store.list_presets("cannabis"), [])
 
 
+class InteractionCheckerTests(unittest.TestCase):
+    def setUp(self) -> None:
+        from substance_journal.core.database import Store
+
+        db_path = Path(tempfile.gettempdir()) / f"substance_journal_test_ix_{os.getpid()}_{id(self)}.db"
+        if db_path.exists():
+            db_path.unlink()
+        self.db_path = db_path
+        self.store = Store(db_path)
+
+    def tearDown(self) -> None:
+        if self.db_path.exists():
+            self.db_path.unlink()
+
+    def _log(self, session_id: int, substance_key: str, when: datetime) -> None:
+        from substance_journal.core.models import Ingestion
+
+        substance = self.store.get_substance(substance_key)
+        roa = substance.roas[0]
+        self.store.add_ingestion(
+            Ingestion(
+                id=None,
+                session_id=session_id,
+                substance_key=substance_key,
+                roa_id=roa.id,
+                amount=roa.dose_common.min if roa.dose_common else 1.0,
+                unit=roa.unit,
+                occurred_at=when,
+                consumer="Me",
+            )
+        )
+
+    def test_no_warnings_with_no_open_session(self) -> None:
+        from substance_journal.core.interactions import check_new_ingestion
+
+        self.assertEqual(check_new_ingestion(self.store, "Me", "alcohol"), [])
+
+    def test_dangerous_combo_is_flagged(self) -> None:
+        from substance_journal.core.interactions import check_new_ingestion
+
+        session_id = self.store.start_session("Me", datetime(2026, 7, 27, 22, 0, 0))
+        self._log(session_id, "ketamine", datetime(2026, 7, 27, 22, 0, 0))
+
+        warnings = check_new_ingestion(self.store, "Me", "alcohol")
+        self.assertEqual(len(warnings), 1)
+        self.assertEqual(warnings[0].other_substance_key, "ketamine")
+        self.assertEqual(warnings[0].interaction.risk_level, "Dangerous")
+
+    def test_low_risk_combo_is_not_flagged(self) -> None:
+        from substance_journal.core.interactions import check_new_ingestion
+
+        session_id = self.store.start_session("Me", datetime(2026, 7, 27, 22, 0, 0))
+        self._log(session_id, "alcohol", datetime(2026, 7, 27, 22, 0, 0))
+
+        warnings = check_new_ingestion(self.store, "Me", "lsd")
+        self.assertEqual(warnings, [])
+
+    def test_closed_session_does_not_leak_into_a_new_session(self) -> None:
+        from substance_journal.core.interactions import check_new_ingestion
+
+        session_id = self.store.start_session("Me", datetime(2026, 7, 27, 20, 0, 0))
+        self._log(session_id, "ketamine", datetime(2026, 7, 27, 20, 0, 0))
+        self.store.end_session(session_id, datetime(2026, 7, 28, 2, 0, 0))
+
+        warnings = check_new_ingestion(self.store, "Me", "alcohol")
+        self.assertEqual(warnings, [])
+
+
 if __name__ == "__main__":
     unittest.main()

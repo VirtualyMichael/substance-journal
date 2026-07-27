@@ -21,6 +21,7 @@ from PySide6.QtWidgets import (
 )
 
 from substance_journal.core.database import Store
+from substance_journal.core.interactions import check_new_ingestion
 from substance_journal.core.models import Ingestion, SubstancePreset
 from substance_journal.core.paths import default_db_path
 from substance_journal.ui.dialogs import SubstanceIngestionDialog, SubstancePresetDialog
@@ -271,6 +272,35 @@ class MainWindow(QMainWindow):
             return open_session.id
         return self.store.start_session(consumer, occurred_at)
 
+    def _confirm_interaction_warnings(self, consumer: str, substance_key: str) -> bool:
+        warnings = check_new_ingestion(self.store, consumer, substance_key)
+        if not warnings:
+            return True
+
+        substances_by_key = {s.key: s for s in self.store.list_substances()}
+        lines = []
+        most_severe = "Caution"
+        for warning in warnings:
+            other = substances_by_key.get(warning.other_substance_key)
+            other_name = other.name if other else warning.other_substance_key
+            line = f"With {other_name}: {warning.interaction.risk_level}"
+            if warning.interaction.note:
+                line += f"\n{warning.interaction.note}"
+            lines.append(line)
+            if warning.interaction.risk_level == "Dangerous":
+                most_severe = "Dangerous"
+
+        message = (
+            "This combination has a flagged interaction risk (source: TripSit):\n\n"
+            + "\n\n".join(lines)
+            + "\n\nLog it anyway?"
+        )
+        default_button = QMessageBox.No if most_severe == "Dangerous" else QMessageBox.Yes
+        result = QMessageBox.warning(
+            self, "Interaction warning", message, QMessageBox.Yes | QMessageBox.No, default_button
+        )
+        return result == QMessageBox.Yes
+
     # ---- actions ----
 
     def add_ingestion(self) -> None:
@@ -279,6 +309,8 @@ class MainWindow(QMainWindow):
             return
         values = dialog.result_values()
         if values["roa_id"] is None:
+            return
+        if not self._confirm_interaction_warnings(values["consumer"], values["substance_key"]):
             return
         session_id = self._open_or_start_session(values["consumer"], values["occurred_at"])
         self.store.add_ingestion(
@@ -302,6 +334,9 @@ class MainWindow(QMainWindow):
         substance = self.store.get_substance(preset.substance_key)
         roa = next((r for r in substance.roas if r.id == preset.roa_id), None) if substance else None
         if roa is None:
+            return
+        consumer = self.current_consumer if self.current_consumer != "All" else "Me"
+        if not self._confirm_interaction_warnings(consumer, preset.substance_key):
             return
         now = datetime.now()
         session_id = self._open_or_start_session(self.current_consumer if self.current_consumer != "All" else "Me", now)

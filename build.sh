@@ -37,6 +37,7 @@ echo "Checking Python syntax..."
     substance_journal/core/models.py \
     substance_journal/core/reference_data.py \
     substance_journal/core/database.py \
+    substance_journal/core/interactions.py \
     substance_journal/ui/theme.py \
     substance_journal/ui/dialogs.py \
     substance_journal/ui/main_window.py \
