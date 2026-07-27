@@ -52,6 +52,33 @@ TOLERANCE_GROUP_OVERRIDES = {
     "2c-b": "psychedelics",
 }
 
+# PsychonautWiki's `tolerance.zero` field ("how long until tolerance resets") is
+# free text and, like crossTolerances, is sometimes missing even for substances with
+# well-established tolerance timelines. These are conservative fallback estimates
+# (in days) used only when the field can't be parsed, sourced from general
+# harm-reduction consensus for each drug class.
+TOLERANCE_ZERO_DAYS_OVERRIDES = {
+    "2c-b": 7.0,  # same class/timeline as other serotonergic psychedelics
+    "ketamine": 14.0,
+}
+
+_DAYS_PER_UNIT = {"day": 1.0, "days": 1.0, "week": 7.0, "weeks": 7.0, "month": 30.0, "months": 30.0}
+_TOLERANCE_ZERO_RE = re.compile(
+    r"(?P<lo>\d+(?:\.\d+)?)\s*(?:-\s*(?P<hi>\d+(?:\.\d+)?)\s*)?(?P<unit>day|days|week|weeks|month|months)"
+)
+
+
+def _parse_tolerance_zero_days(text: str | None) -> float | None:
+    if not text:
+        return None
+    match = _TOLERANCE_ZERO_RE.search(text.lower())
+    if not match:
+        return None
+    factor = _DAYS_PER_UNIT[match.group("unit")]
+    lo = float(match.group("lo"))
+    hi = float(match.group("hi")) if match.group("hi") else lo
+    return ((lo + hi) / 2) * factor
+
 # TripSit's combo chart keys are broad substance/family slugs, not every individual
 # compound - 2C-B has no dedicated entry and is approximated by the "2c-x" family
 # entry (2C-series phenethylamines). Nicotine has no combo-chart entry in TripSit's
@@ -127,6 +154,11 @@ def fetch_substances() -> list[dict]:
 
         roas = [roa for roa in match["roas"] if roa["name"] in keep_roas and roa.get("dose")]
 
+        tolerance_zero = (match["tolerance"] or {}).get("zero")
+        tolerance_zero_days = _parse_tolerance_zero_days(tolerance_zero) or (
+            TOLERANCE_ZERO_DAYS_OVERRIDES.get(key) if has_tolerance else None
+        )
+
         substances.append(
             {
                 "key": key,
@@ -140,7 +172,8 @@ def fetch_substances() -> list[dict]:
                 "tolerance_group": tolerance_group if has_tolerance else None,
                 "tolerance_full": tolerance_full or None,
                 "tolerance_half": (match["tolerance"] or {}).get("half"),
-                "tolerance_zero": (match["tolerance"] or {}).get("zero"),
+                "tolerance_zero": tolerance_zero,
+                "tolerance_zero_days": tolerance_zero_days,
                 "addiction_potential": match["addictionPotential"],
                 "roas": [
                     {

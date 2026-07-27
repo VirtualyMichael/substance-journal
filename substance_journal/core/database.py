@@ -31,6 +31,7 @@ CREATE TABLE IF NOT EXISTS substances (
     wiki_url TEXT,
     has_tolerance INTEGER NOT NULL,
     tolerance_group TEXT,
+    tolerance_zero_days REAL,
     addiction_potential TEXT
 );
 
@@ -166,8 +167,8 @@ class Store:
                     """
                     INSERT INTO substances (
                         key, name, common_names, category, chemical_class, summary,
-                        wiki_url, has_tolerance, tolerance_group, addiction_potential
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        wiki_url, has_tolerance, tolerance_group, tolerance_zero_days, addiction_potential
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """,
                     (
                         substance["key"],
@@ -179,6 +180,7 @@ class Store:
                         substance["wiki_url"],
                         1 if substance["has_tolerance"] else 0,
                         substance["tolerance_group"],
+                        substance.get("tolerance_zero_days"),
                         substance["addiction_potential"],
                     ),
                 )
@@ -290,6 +292,7 @@ class Store:
                         wiki_url=srow["wiki_url"],
                         has_tolerance=bool(srow["has_tolerance"]),
                         tolerance_group=srow["tolerance_group"],
+                        tolerance_zero_days=srow["tolerance_zero_days"],
                         addiction_potential=srow["addiction_potential"],
                         roas=roas,
                     )
@@ -437,6 +440,16 @@ class Store:
             rows = connection.execute(
                 "SELECT * FROM ingestions WHERE session_id = ? ORDER BY occurred_at", (session_id,)
             ).fetchall()
+        return [self._row_to_ingestion(row) for row in rows]
+
+    def list_ingestions(self, consumer: str | None = None) -> list[Ingestion]:
+        with closing(self._connect()) as connection:
+            if consumer and consumer != "All":
+                rows = connection.execute(
+                    "SELECT * FROM ingestions WHERE consumer = ? ORDER BY occurred_at", (consumer,)
+                ).fetchall()
+            else:
+                rows = connection.execute("SELECT * FROM ingestions ORDER BY occurred_at").fetchall()
         return [self._row_to_ingestion(row) for row in rows]
 
     def delete_ingestion(self, ingestion_id: int) -> None:

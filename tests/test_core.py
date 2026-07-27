@@ -1,7 +1,7 @@
 import os
 import tempfile
 import unittest
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 
 
@@ -250,6 +250,87 @@ class InteractionCheckerTests(unittest.TestCase):
 
         warnings = check_new_ingestion(self.store, "Me", "alcohol")
         self.assertEqual(warnings, [])
+
+
+class ToleranceTests(unittest.TestCase):
+    def setUp(self) -> None:
+        from substance_journal.core.database import Store
+
+        db_path = Path(tempfile.gettempdir()) / f"substance_journal_test_tol_{os.getpid()}_{id(self)}.db"
+        if db_path.exists():
+            db_path.unlink()
+        self.db_path = db_path
+        self.store = Store(db_path)
+        self.substances_by_key = {s.key: s for s in self.store.list_substances()}
+
+    def tearDown(self) -> None:
+        if self.db_path.exists():
+            self.db_path.unlink()
+
+    def test_dmt_has_no_tolerance_track(self) -> None:
+        from substance_journal.core.tolerance import tolerance_tracks
+
+        tracks = tolerance_tracks(self.store.list_substances())
+        all_keys = {s.key for substances in tracks.values() for s in substances}
+        self.assertNotIn("dmt", all_keys)
+
+    def test_lsd_and_psilocybin_share_one_pooled_track(self) -> None:
+        from substance_journal.core.tolerance import tolerance_tracks
+
+        tracks = tolerance_tracks(self.store.list_substances())
+        psychedelics_track = tracks["psychedelics"]
+        keys = {s.key for s in psychedelics_track}
+        self.assertIn("lsd", keys)
+        self.assertIn("psilocybin_mushrooms", keys)
+
+    def test_tolerance_decays_toward_zero_over_time(self) -> None:
+        from substance_journal.core.models import Ingestion
+        from substance_journal.core.tolerance import current_tolerance_level
+
+        lsd = self.substances_by_key["lsd"]
+        dosed_at = datetime(2026, 7, 1, 20, 0, 0)
+        ingestions = [
+            Ingestion(
+                id=None,
+                session_id=1,
+                substance_key="lsd",
+                roa_id=lsd.roas[0].id,
+                amount=100,
+                unit=lsd.roas[0].unit,
+                occurred_at=dosed_at,
+                consumer="Me",
+            )
+        ]
+
+        just_after = current_tolerance_level(ingestions, self.substances_by_key, "psychedelics", dosed_at + timedelta(minutes=1))
+        one_half_life_later = current_tolerance_level(
+            ingestions, self.substances_by_key, "psychedelics", dosed_at + timedelta(days=lsd.tolerance_zero_days / 4)
+        )
+        long_after = current_tolerance_level(ingestions, self.substances_by_key, "psychedelics", dosed_at + timedelta(days=60))
+
+        self.assertAlmostEqual(just_after, 1.0, places=2)
+        self.assertAlmostEqual(one_half_life_later, 0.5, places=2)
+        self.assertLess(long_after, 0.01)
+
+    def test_pooled_group_combines_contributions_from_both_substances(self) -> None:
+        from substance_journal.core.models import Ingestion
+        from substance_journal.core.tolerance import current_tolerance_level
+
+        lsd = self.substances_by_key["lsd"]
+        psilocybin = self.substances_by_key["psilocybin_mushrooms"]
+        at = datetime(2026, 7, 1, 20, 0, 0)
+        ingestions = [
+            Ingestion(
+                id=None, session_id=1, substance_key="lsd", roa_id=lsd.roas[0].id,
+                amount=100, unit=lsd.roas[0].unit, occurred_at=at, consumer="Me",
+            ),
+            Ingestion(
+                id=None, session_id=1, substance_key="psilocybin_mushrooms", roa_id=psilocybin.roas[0].id,
+                amount=2, unit=psilocybin.roas[0].unit, occurred_at=at, consumer="Me",
+            ),
+        ]
+        level = current_tolerance_level(ingestions, self.substances_by_key, "psychedelics", at + timedelta(minutes=1))
+        self.assertAlmostEqual(level, 2.0, places=2)
 
 
 if __name__ == "__main__":

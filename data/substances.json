@@ -20,6 +20,7 @@
     "tolerance_full": "develops with prolonged and repeated use",
     "tolerance_half": "3 - 7 days",
     "tolerance_zero": "1 - 2 weeks",
+    "tolerance_zero_days": 10.5,
     "addiction_potential": "extremely addictive with a high potential for abuse",
     "roas": [
       {
@@ -117,6 +118,7 @@
     "tolerance_full": "rapidly develops with prolonged and repeated use",
     "tolerance_half": "3 - 7 days",
     "tolerance_zero": "1 - 2 weeks",
+    "tolerance_zero_days": 10.5,
     "addiction_potential": "extremely addictive with a high potential for abuse",
     "roas": [
       {
@@ -299,6 +301,7 @@
     "tolerance_full": "develops with prolonged and repeated use",
     "tolerance_half": "1 - 2 weeks",
     "tolerance_zero": "2 - 3 weeks",
+    "tolerance_zero_days": 17.5,
     "addiction_potential": "moderately habit-forming",
     "roas": [
       {
@@ -440,6 +443,7 @@
     "tolerance_full": "almost immediately after ingestion",
     "tolerance_half": "3 days",
     "tolerance_zero": "7 days",
+    "tolerance_zero_days": 7.0,
     "addiction_potential": "low abuse potential, no physical dependence potential",
     "roas": [
       {
@@ -526,6 +530,7 @@
     "tolerance_full": "almost immediately after ingestion",
     "tolerance_half": null,
     "tolerance_zero": "5 days",
+    "tolerance_zero_days": 5.0,
     "addiction_potential": "non-addictive with a low abuse potential",
     "roas": [
       {
@@ -612,6 +617,7 @@
     "tolerance_full": "does not appear to occur",
     "tolerance_half": null,
     "tolerance_zero": null,
+    "tolerance_zero_days": null,
     "addiction_potential": "non-addictive with a low abuse potential",
     "roas": [
       {
@@ -702,6 +708,7 @@
     "tolerance_full": "with prolonged and repeated use",
     "tolerance_half": "1 month",
     "tolerance_zero": "2.5 months",
+    "tolerance_zero_days": 75.0,
     "addiction_potential": "moderately addictive with a high potential for abuse",
     "roas": [
       {
@@ -798,6 +805,7 @@
     "tolerance_full": null,
     "tolerance_half": null,
     "tolerance_zero": null,
+    "tolerance_zero_days": 7.0,
     "addiction_potential": "non-addictive with a low potential for abuse",
     "roas": [
       {
@@ -938,6 +946,7 @@
     "tolerance_full": "develops with prolonged and repeated use",
     "tolerance_half": null,
     "tolerance_zero": null,
+    "tolerance_zero_days": 14.0,
     "addiction_potential": "moderate to high abuse potential and produces psychological dependence with chronic use",
     "roas": [
       {

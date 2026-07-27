@@ -45,6 +45,7 @@ class Substance:
     wiki_url: str | None
     has_tolerance: bool
     tolerance_group: str | None
+    tolerance_zero_days: float | None
     addiction_potential: str | None
     roas: tuple[RouteOfAdministration, ...] = field(default_factory=tuple)
 

@@ -1,8 +1,6 @@
 from __future__ import annotations
 
-import os
 from datetime import datetime
-from pathlib import Path
 
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
@@ -24,7 +22,9 @@ from substance_journal.core.database import Store
 from substance_journal.core.interactions import check_new_ingestion
 from substance_journal.core.models import EffectLog, Ingestion, SubjectiveEffect, SubstancePreset
 from substance_journal.core.paths import default_db_path
+from substance_journal.core.tolerance import tolerance_series, tolerance_tracks
 from substance_journal.ui.dialogs import EffectPickerDialog, SubstanceIngestionDialog, SubstancePresetDialog
+from substance_journal.ui.widgets import TimelineGraph
 
 
 class MainWindow(QMainWindow):
@@ -160,6 +160,21 @@ class MainWindow(QMainWindow):
         lists_row.addLayout(ingestions_column, 1)
         lists_row.addLayout(effects_column, 1)
         layout.addLayout(lists_row, 1)
+
+        tolerance_header = QHBoxLayout()
+        tolerance_label = QLabel("Tolerance")
+        tolerance_label.setObjectName("SectionTitle")
+        self.tolerance_track_combo = QComboBox()
+        self.tolerance_track_combo.currentIndexChanged.connect(self.refresh_tolerance_graph)
+        tolerance_header.addWidget(tolerance_label)
+        tolerance_header.addWidget(self.tolerance_track_combo)
+        tolerance_header.addStretch(1)
+        layout.addLayout(tolerance_header)
+
+        self.tolerance_graph = TimelineGraph(
+            "Tolerance Trend", "Pooled recent-use score with substance-specific decay."
+        )
+        layout.addWidget(self.tolerance_graph)
         return frame
 
     # ---- refresh ----
@@ -169,6 +184,7 @@ class MainWindow(QMainWindow):
         self.refresh_quick_add_row()
         self.refresh_recent_effects_row()
         self.refresh_sessions()
+        self._refresh_tolerance_track_combo()
 
     def _refresh_consumer_filter(self) -> None:
         self.consumer_filter.blockSignals(True)
@@ -183,6 +199,7 @@ class MainWindow(QMainWindow):
     def set_consumer(self, consumer: str) -> None:
         self.current_consumer = consumer
         self.refresh_sessions()
+        self.refresh_tolerance_graph()
 
     def refresh_sessions(self) -> None:
         self.sessions_list.blockSignals(True)
@@ -326,6 +343,32 @@ class MainWindow(QMainWindow):
             btn.clicked.connect(lambda checked, e=effect: self.quick_log_effect(e))
             self.recent_effects_layout.addWidget(btn)
         self.recent_effects_layout.addStretch(1)
+
+    def _refresh_tolerance_track_combo(self) -> None:
+        tracks = tolerance_tracks(self.store.list_substances())
+        current = self.tolerance_track_combo.currentData()
+        self.tolerance_track_combo.blockSignals(True)
+        self.tolerance_track_combo.clear()
+        for track_key, substances in sorted(tracks.items()):
+            names = ", ".join(sorted(s.name for s in substances))
+            self.tolerance_track_combo.addItem(f"{track_key} ({names})", track_key)
+        if current is not None:
+            idx = self.tolerance_track_combo.findData(current)
+            if idx >= 0:
+                self.tolerance_track_combo.setCurrentIndex(idx)
+        self.tolerance_track_combo.blockSignals(False)
+        self.refresh_tolerance_graph()
+
+    def refresh_tolerance_graph(self) -> None:
+        track_key = self.tolerance_track_combo.currentData()
+        if track_key is None:
+            self.tolerance_graph.set_points([])
+            return
+        consumer = self.current_consumer if self.current_consumer != "All" else None
+        ingestions = self.store.list_ingestions(consumer)
+        substances_by_key = {s.key: s for s in self.store.list_substances()}
+        series = tolerance_series(ingestions, substances_by_key, track_key, datetime.now(), days_back=30)
+        self.tolerance_graph.set_points([(p.at, p.value) for p in series])
 
     # ---- session attach helper ----
 
