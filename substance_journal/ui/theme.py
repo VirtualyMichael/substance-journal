@@ -138,5 +138,25 @@ def apply_dark_theme(app: QApplication) -> None:
             color: #e05252;
             font-weight: 700;
         }
+        QDockWidget {
+            color: #ececef;
+            font-weight: 650;
+            titlebar-close-icon: none;
+        }
+        QDockWidget::title {
+            background: #1b1e22;
+            border: 1px solid #30343b;
+            border-bottom: none;
+            border-radius: 8px 8px 0 0;
+            padding: 8px 10px;
+        }
+        QMainWindow::separator {
+            background: #101113;
+            width: 8px;
+            height: 8px;
+        }
+        QMainWindow::separator:hover {
+            background: #c99700;
+        }
         """
     )

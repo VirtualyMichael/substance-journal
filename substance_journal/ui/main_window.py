@@ -7,9 +7,9 @@ from pathlib import Path
 from PySide6.QtCore import QSettings, Qt, QTimer
 from PySide6.QtWidgets import (
     QComboBox,
+    QDockWidget,
     QFileDialog,
     QFrame,
-    QGridLayout,
     QHBoxLayout,
     QLabel,
     QListWidget,
@@ -42,37 +42,37 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("Substance Journal")
         self.resize(1280, 820)
         self.setMinimumSize(1020, 680)
-        self.setCentralWidget(self._build_content())
+
+        self.setDockOptions(
+            QMainWindow.AnimatedDocks | QMainWindow.AllowNestedDocks | QMainWindow.AllowTabbedDocks
+        )
+        self.setMenuWidget(self._build_header())
+        self.setCentralWidget(self._build_sidebar())
+        self._build_docks()
+        self._restore_layout()
+
         self.refresh_all()
         QTimer.singleShot(150, self._maybe_prompt_alcohol_import)
 
-    def _build_content(self) -> QWidget:
-        root = QWidget()
-        layout = QGridLayout(root)
-        layout.setContentsMargins(18, 18, 18, 18)
-        layout.setHorizontalSpacing(16)
-        layout.setVerticalSpacing(16)
-        layout.setColumnStretch(0, 0)
-        layout.setColumnStretch(1, 1)
-        layout.setRowStretch(1, 1)
+    def closeEvent(self, event) -> None:  # noqa: N802 - Qt API naming
+        settings = QSettings()
+        settings.setValue("layout/geometry", self.saveGeometry())
+        settings.setValue("layout/window_state", self.saveState())
+        super().closeEvent(event)
 
-        self.session_title = QLabel("No session selected")
-        self.session_title.setObjectName("Title")
-        self.session_summary = QLabel("")
-        self.session_summary.setObjectName("Muted")
-        self.sessions_list = QListWidget()
-        self.ingestion_list = QListWidget()
-        self.effect_log_list = QListWidget()
-
-        layout.addWidget(self._build_header(), 0, 0, 1, 2)
-        layout.addWidget(self._build_sidebar(), 1, 0)
-        layout.addWidget(self._build_main_panel(), 1, 1)
-        return root
+    def _restore_layout(self) -> None:
+        settings = QSettings()
+        geometry = settings.value("layout/geometry")
+        if geometry is not None:
+            self.restoreGeometry(geometry)
+        state = settings.value("layout/window_state")
+        if state is not None:
+            self.restoreState(state)
 
     def _build_header(self) -> QWidget:
         frame = QWidget()
         layout = QVBoxLayout(frame)
-        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setContentsMargins(18, 14, 18, 4)
 
         title = QLabel("Substance Journal")
         title.setObjectName("Title")
@@ -96,10 +96,13 @@ class MainWindow(QMainWindow):
         delete_button.clicked.connect(self.delete_selected_ingestion)
         import_button = QPushButton("Import Alcohol Tracker Data")
         import_button.clicked.connect(self.import_alcohol_data)
+        reset_layout_button = QPushButton("Reset Layout")
+        reset_layout_button.clicked.connect(self.reset_layout)
 
         top_row = QHBoxLayout()
         top_row.addLayout(text_layout)
         top_row.addStretch(1)
+        top_row.addWidget(reset_layout_button)
         top_row.addWidget(import_button)
         top_row.addWidget(delete_button)
         top_row.addWidget(end_session_button)
@@ -114,15 +117,23 @@ class MainWindow(QMainWindow):
         self.recent_effects_layout = QHBoxLayout(self.recent_effects_row)
         self.recent_effects_layout.setContentsMargins(0, 4, 0, 0)
 
+        self.session_title = QLabel("No session selected")
+        self.session_title.setObjectName("SectionTitle")
+        self.session_summary = QLabel("")
+        self.session_summary.setObjectName("Muted")
+
         layout.addLayout(top_row)
         layout.addWidget(self.quick_add_row)
         layout.addWidget(self.recent_effects_row)
+        layout.addSpacing(6)
+        layout.addWidget(self.session_title)
+        layout.addWidget(self.session_summary)
         return frame
 
     def _build_sidebar(self) -> QFrame:
         frame = QFrame()
         frame.setObjectName("Panel")
-        frame.setFixedWidth(320)
+        frame.setFixedWidth(300)
         layout = QVBoxLayout(frame)
         layout.setContentsMargins(14, 14, 14, 14)
         layout.setSpacing(10)
@@ -136,6 +147,7 @@ class MainWindow(QMainWindow):
         self.consumer_filter = QComboBox()
         self.consumer_filter.currentTextChanged.connect(self.set_consumer)
 
+        self.sessions_list = QListWidget()
         self.sessions_list.currentRowChanged.connect(self.select_session_by_row)
 
         layout.addWidget(title)
@@ -144,55 +156,52 @@ class MainWindow(QMainWindow):
         layout.addWidget(self.sessions_list, 1)
         return frame
 
-    def _build_main_panel(self) -> QWidget:
-        frame = QFrame()
-        frame.setObjectName("Panel")
-        layout = QVBoxLayout(frame)
-        layout.setContentsMargins(14, 14, 14, 14)
-        layout.setSpacing(10)
-        layout.addWidget(self.session_title)
-        layout.addWidget(self.session_summary)
+    def _make_dock(self, title: str, content: QWidget, object_name: str) -> QDockWidget:
+        dock = QDockWidget(title, self)
+        dock.setObjectName(object_name)
+        dock.setFeatures(QDockWidget.DockWidgetMovable | QDockWidget.DockWidgetFloatable)
+        dock.setWidget(content)
+        return dock
 
-        lists_row = QHBoxLayout()
-        ingestions_column = QVBoxLayout()
-        ingestions_label = QLabel("Ingestions")
-        ingestions_label.setObjectName("SectionTitle")
-        ingestions_column.addWidget(ingestions_label)
-        ingestions_column.addWidget(self.ingestion_list, 1)
-
-        effects_column = QVBoxLayout()
-        effects_label = QLabel("Subjective Effects")
-        effects_label.setObjectName("SectionTitle")
-        effects_column.addWidget(effects_label)
-        effects_column.addWidget(self.effect_log_list, 1)
-
-        lists_row.addLayout(ingestions_column, 1)
-        lists_row.addLayout(effects_column, 1)
-        layout.addLayout(lists_row, 1)
-
-        effect_timeline_label = QLabel("Effect Timeline")
-        effect_timeline_label.setObjectName("SectionTitle")
-        layout.addWidget(effect_timeline_label)
+    def _build_docks(self) -> None:
+        self.ingestion_list = QListWidget()
+        self.effect_log_list = QListWidget()
         self.effect_graph = TimelineGraph(
             "Effect Timeline", "Estimated combined intensity across this session's ingestions."
         )
-        layout.addWidget(self.effect_graph)
 
+        tolerance_content = QWidget()
+        tolerance_layout = QVBoxLayout(tolerance_content)
+        tolerance_layout.setContentsMargins(4, 4, 4, 4)
         tolerance_header = QHBoxLayout()
-        tolerance_label = QLabel("Tolerance")
-        tolerance_label.setObjectName("SectionTitle")
+        tolerance_header_label = QLabel("Track:")
+        tolerance_header_label.setObjectName("Muted")
         self.tolerance_track_combo = QComboBox()
         self.tolerance_track_combo.currentIndexChanged.connect(self.refresh_tolerance_graph)
-        tolerance_header.addWidget(tolerance_label)
-        tolerance_header.addWidget(self.tolerance_track_combo)
-        tolerance_header.addStretch(1)
-        layout.addLayout(tolerance_header)
-
+        tolerance_header.addWidget(tolerance_header_label)
+        tolerance_header.addWidget(self.tolerance_track_combo, 1)
+        tolerance_layout.addLayout(tolerance_header)
         self.tolerance_graph = TimelineGraph(
             "Tolerance Trend", "Pooled recent-use score with substance-specific decay."
         )
-        layout.addWidget(self.tolerance_graph)
-        return frame
+        tolerance_layout.addWidget(self.tolerance_graph, 1)
+
+        ingestions_dock = self._make_dock("Ingestions", self.ingestion_list, "dock_ingestions")
+        effects_dock = self._make_dock("Subjective Effects", self.effect_log_list, "dock_subjective_effects")
+        effect_timeline_dock = self._make_dock("Effect Timeline", self.effect_graph, "dock_effect_timeline")
+        tolerance_dock = self._make_dock("Tolerance Trend", tolerance_content, "dock_tolerance")
+
+        self.addDockWidget(Qt.RightDockWidgetArea, ingestions_dock)
+        self.splitDockWidget(ingestions_dock, effects_dock, Qt.Horizontal)
+        self.splitDockWidget(ingestions_dock, effect_timeline_dock, Qt.Vertical)
+        self.splitDockWidget(effect_timeline_dock, tolerance_dock, Qt.Vertical)
+
+        self._default_docks = [ingestions_dock, effects_dock, effect_timeline_dock, tolerance_dock]
+        self._default_dock_state = self.saveState()
+
+    def reset_layout(self) -> None:
+        if hasattr(self, "_default_dock_state"):
+            self.restoreState(self._default_dock_state)
 
     # ---- refresh ----
 
