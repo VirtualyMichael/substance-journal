@@ -387,9 +387,9 @@ class AlcoholImportTests(unittest.TestCase):
             self.export_path.unlink()
 
     def test_import_creates_one_session_per_consumer_per_day(self) -> None:
-        from substance_journal.core.alcohol_import import import_alcohol_tracker_export
+        from substance_journal.core.alcohol_import import import_alcohol_tracker_data
 
-        result = import_alcohol_tracker_export(self.store, self.export_path)
+        result = import_alcohol_tracker_data(self.store, self.export_path)
         self.assertEqual(result.imported, 3)
         self.assertEqual(result.sessions_created, 2)  # Me/June 1 and Alex/June 3
         self.assertEqual(result.skipped_duplicates, 0)
@@ -402,9 +402,9 @@ class AlcoholImportTests(unittest.TestCase):
         self.assertEqual(me_sessions[0].ended_at.isoformat(), "2026-06-01T22:00:00")
 
     def test_import_computes_pure_alcohol_grams_matching_alcohol_tracker_formula(self) -> None:
-        from substance_journal.core.alcohol_import import import_alcohol_tracker_export
+        from substance_journal.core.alcohol_import import import_alcohol_tracker_data
 
-        import_alcohol_tracker_export(self.store, self.export_path)
+        import_alcohol_tracker_data(self.store, self.export_path)
         me_sessions = self.store.list_sessions("Me")
         ingestions = self.store.list_ingestions_for_session(me_sessions[0].id)
         shot = next(i for i in ingestions if "Shot" in i.notes)
@@ -414,12 +414,60 @@ class AlcoholImportTests(unittest.TestCase):
         self.assertEqual(shot.unit, "g")
 
     def test_reimport_skips_duplicates(self) -> None:
-        from substance_journal.core.alcohol_import import import_alcohol_tracker_export
+        from substance_journal.core.alcohol_import import import_alcohol_tracker_data
 
-        import_alcohol_tracker_export(self.store, self.export_path)
-        second_result = import_alcohol_tracker_export(self.store, self.export_path)
+        import_alcohol_tracker_data(self.store, self.export_path)
+        second_result = import_alcohol_tracker_data(self.store, self.export_path)
         self.assertEqual(second_result.imported, 0)
         self.assertEqual(second_result.skipped_duplicates, 3)
+
+    def test_import_reads_directly_from_alcohol_tracker_sqlite_db(self) -> None:
+        import sqlite3
+
+        from substance_journal.core.alcohol_import import import_alcohol_tracker_data
+
+        db_path = Path(tempfile.gettempdir()) / f"alcohol_tracker_fake_{os.getpid()}_{id(self)}.db"
+        if db_path.exists():
+            db_path.unlink()
+        connection = sqlite3.connect(db_path)
+        connection.execute(
+            """
+            CREATE TABLE ingestions (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                occurred_at TEXT NOT NULL,
+                amount REAL NOT NULL,
+                unit TEXT NOT NULL,
+                abv_percent REAL NOT NULL,
+                label TEXT NOT NULL,
+                notes TEXT NOT NULL DEFAULT '',
+                duration_minutes REAL NOT NULL DEFAULT 0,
+                consumer TEXT NOT NULL DEFAULT 'Me',
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL
+            )
+            """
+        )
+        connection.execute(
+            "INSERT INTO ingestions (occurred_at, amount, unit, abv_percent, label, notes, consumer, created_at, updated_at) "
+            "VALUES ('2026-06-05T21:00:00', 12.0, 'fl_oz', 5.0, 'Beer - 12 oz 5%', '', 'Me', '2026-06-05T21:00:00', '2026-06-05T21:00:00')"
+        )
+        connection.commit()
+        connection.close()
+
+        try:
+            result = import_alcohol_tracker_data(self.store, db_path)
+            self.assertEqual(result.imported, 1)
+            me_sessions = self.store.list_sessions("Me")
+            self.assertEqual(len(me_sessions), 1)
+        finally:
+            db_path.unlink()
+
+    def test_default_alcohol_tracker_db_path_matches_alcohol_tracker_own_layout(self) -> None:
+        from substance_journal.core.alcohol_import import default_alcohol_tracker_db_path
+
+        path = default_alcohol_tracker_db_path()
+        self.assertEqual(path.name, "alcohol_tracker.db")
+        self.assertIn("AlcoholTracker", path.parts)
 
 
 if __name__ == "__main__":

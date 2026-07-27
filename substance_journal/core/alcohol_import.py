@@ -1,11 +1,22 @@
-"""Import ingestion history from Alcohol Tracker's JSON export (MainWindow.export_data
-in the sibling "Alcohol ingestion marking app" project) into this app's alcohol
-substance/oral route, grouping each consumer's per-day entries into one closed
-session per day (Alcohol Tracker has no session concept of its own)."""
+"""Import ingestion history from Alcohol Tracker (the sibling "Alcohol ingestion
+marking app" project) into this app's alcohol substance/oral route, grouping each
+consumer's per-day entries into one closed session per day (Alcohol Tracker has no
+session concept of its own).
+
+Supports two source formats:
+- Alcohol Tracker's own SQLite database (its default on-disk storage) - read
+  directly, no export step needed.
+- Alcohol Tracker's JSON export (MainWindow.export_data), for when a user wants to
+  import from a file that isn't at the default location.
+"""
 from __future__ import annotations
 
 import json
+import os
+import sqlite3
+import sys
 from collections import defaultdict
+from contextlib import closing
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
@@ -15,6 +26,18 @@ from substance_journal.core.models import Ingestion
 
 ALCOHOL_DENSITY_GRAMS_PER_FL_OZ = 23.36
 SHOT_VOLUME_OZ = 1.5
+
+
+def default_alcohol_tracker_db_path() -> Path:
+    """Mirrors Alcohol Tracker's own core/paths.py default_db_path() exactly, so this
+    always points at where Alcohol Tracker actually stores its data."""
+    if sys.platform == "win32":
+        base = Path(os.environ.get("LOCALAPPDATA", Path.home() / "AppData" / "Local"))
+    elif sys.platform == "darwin":
+        base = Path.home() / "Library" / "Application Support"
+    else:
+        base = Path(os.environ.get("XDG_DATA_HOME", Path.home() / ".local" / "share"))
+    return base / "AlcoholTracker" / "alcohol_tracker.db"
 
 
 @dataclass(frozen=True)
@@ -30,9 +53,39 @@ def _pure_alcohol_grams(amount: float, unit: str, abv_percent: float) -> float:
     return pure_alcohol_oz * ALCOHOL_DENSITY_GRAMS_PER_FL_OZ
 
 
-def import_alcohol_tracker_export(store: Store, json_path: Path) -> ImportResult:
-    with open(json_path, "r", encoding="utf-8") as f:
-        rows = json.load(f)
+def _read_rows_from_json(path: Path) -> list[dict]:
+    with open(path, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+
+def _read_rows_from_sqlite(path: Path) -> list[dict]:
+    with closing(sqlite3.connect(path)) as connection:
+        connection.row_factory = sqlite3.Row
+        rows = connection.execute(
+            "SELECT occurred_at, amount, unit, abv_percent, label, notes, consumer FROM ingestions"
+        ).fetchall()
+    return [
+        {
+            "occurred_at": row["occurred_at"],
+            "amount": row["amount"],
+            "unit": row["unit"],
+            "abv_percent": row["abv_percent"],
+            "label": row["label"],
+            "notes": row["notes"],
+            "consumer": row["consumer"],
+        }
+        for row in rows
+    ]
+
+
+def _read_rows(path: Path) -> list[dict]:
+    if path.suffix.lower() in (".db", ".sqlite", ".sqlite3"):
+        return _read_rows_from_sqlite(path)
+    return _read_rows_from_json(path)
+
+
+def import_alcohol_tracker_data(store: Store, path: Path) -> ImportResult:
+    rows = _read_rows(path)
 
     alcohol = store.get_substance("alcohol")
     if alcohol is None or not alcohol.roas:

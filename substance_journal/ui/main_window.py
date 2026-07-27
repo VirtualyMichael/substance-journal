@@ -4,7 +4,7 @@ from datetime import datetime
 
 from pathlib import Path
 
-from PySide6.QtCore import Qt
+from PySide6.QtCore import QSettings, Qt, QTimer
 from PySide6.QtWidgets import (
     QComboBox,
     QFileDialog,
@@ -21,7 +21,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from substance_journal.core.alcohol_import import import_alcohol_tracker_export
+from substance_journal.core.alcohol_import import default_alcohol_tracker_db_path, import_alcohol_tracker_data
 from substance_journal.core.database import Store
 from substance_journal.core.interactions import check_new_ingestion
 from substance_journal.core.models import EffectLog, Ingestion, SubjectiveEffect, SubstancePreset
@@ -43,6 +43,7 @@ class MainWindow(QMainWindow):
         self.setMinimumSize(1020, 680)
         self.setCentralWidget(self._build_content())
         self.refresh_all()
+        QTimer.singleShot(150, self._maybe_prompt_alcohol_import)
 
     def _build_content(self) -> QWidget:
         root = QWidget()
@@ -513,13 +514,18 @@ class MainWindow(QMainWindow):
         self.refresh_recent_effects_row()
 
     def import_alcohol_data(self) -> None:
+        default_path = default_alcohol_tracker_db_path()
+        start_dir = str(default_path.parent) if default_path.parent.exists() else ""
         path, _ = QFileDialog.getOpenFileName(
-            self, "Import Alcohol Tracker Data", "", "JSON Files (*.json)"
+            self, "Import Alcohol Tracker Data", start_dir, "Alcohol Tracker Data (*.db *.sqlite *.sqlite3 *.json)"
         )
         if not path:
             return
+        self._run_alcohol_import(Path(path))
+
+    def _run_alcohol_import(self, path: Path) -> None:
         try:
-            result = import_alcohol_tracker_export(self.store, Path(path))
+            result = import_alcohol_tracker_data(self.store, path)
         except Exception as e:
             QMessageBox.critical(self, "Import Failed", f"Could not import: {e}")
             return
@@ -530,6 +536,34 @@ class MainWindow(QMainWindow):
             f"Skipped {result.skipped_duplicates} already-imported duplicate(s).",
         )
         self.refresh_all()
+
+    def _maybe_prompt_alcohol_import(self) -> None:
+        settings = QSettings()
+        if settings.value("onboarding/alcohol_import_prompted", False, type=bool):
+            return
+        settings.setValue("onboarding/alcohol_import_prompted", True)
+
+        default_path = default_alcohol_tracker_db_path()
+        if not default_path.exists():
+            return
+
+        box = QMessageBox(self)
+        box.setWindowTitle("Import Alcohol Tracker Data?")
+        box.setText(
+            f"Found existing Alcohol Tracker data at:\n{default_path}\n\n"
+            "Would you like to import your drinking history into Substance Journal now?"
+        )
+        import_button = box.addButton("Import Now", QMessageBox.AcceptRole)
+        choose_button = box.addButton("Choose a Different File...", QMessageBox.ActionRole)
+        box.addButton("Not Now", QMessageBox.RejectRole)
+        box.setDefaultButton(import_button)
+        box.exec()
+
+        clicked = box.clickedButton()
+        if clicked is import_button:
+            self._run_alcohol_import(default_path)
+        elif clicked is choose_button:
+            self.import_alcohol_data()
 
     def end_selected_session(self) -> None:
         if self.selected_session_id is None:

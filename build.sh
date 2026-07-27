@@ -42,6 +42,7 @@ echo "Checking Python syntax..."
     substance_journal/core/alcohol_import.py \
     substance_journal/ui/theme.py \
     substance_journal/ui/widgets.py \
+    substance_journal/ui/cannabis_calculator.py \
     substance_journal/ui/dialogs.py \
     substance_journal/ui/main_window.py \
     tests/test_core.py

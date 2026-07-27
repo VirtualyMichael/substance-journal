@@ -11,6 +11,14 @@ substances instead of just alcohol.
 Tracked substances (v1): Alcohol, Nicotine, Cannabis (flower/concentrate/edible),
 Psilocybin, LSD, DMT, MDMA, 2C-B, Ketamine.
 
+Logging a smoked cannabis ingestion includes a flower dose calculator: pick Joint
+(1g default) or Blunt (2g default) or a custom amount, enter the flower's THC%, and
+the mg amount is computed automatically (grams x THC% = mg THC).
+
+On first launch, if an existing Alcohol Tracker database is found at its default
+location, you'll be prompted to import your drinking history straight from it (no
+manual export step needed) - or point the import at a different file instead.
+
 ## Data sources
 
 Reference data (dosing, duration, interactions, subjective effects) is synced from:

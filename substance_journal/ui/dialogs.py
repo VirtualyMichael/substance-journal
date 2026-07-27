@@ -23,6 +23,7 @@ from PySide6.QtWidgets import (
 
 from substance_journal.core.database import Store
 from substance_journal.core.models import EffectLog, RouteOfAdministration, SubjectiveEffect, Substance
+from substance_journal.ui.cannabis_calculator import CannabisFlowerCalculator
 
 
 def _format_dose(unit: str, threshold: float | None, light, common, strong, heavy: float | None) -> str:
@@ -111,6 +112,10 @@ class SubstanceIngestionDialog(QDialog):
         self.amount.setDecimals(2)
         self.amount.setSingleStep(1.0)
 
+        self.cannabis_calculator = CannabisFlowerCalculator()
+        self.cannabis_calculator.dose_mg_changed.connect(self._on_cannabis_dose_changed)
+        self.cannabis_calculator.setVisible(False)
+
         self.occurred_at = QDateTimeEdit()
         self.occurred_at.setCalendarPopup(True)
         self.occurred_at.setDisplayFormat("yyyy-MM-dd h:mm AP")
@@ -130,6 +135,7 @@ class SubstanceIngestionDialog(QDialog):
         form.addRow("", self.dose_hint)
         form.addRow("", self.duration_hint)
         form.addRow("Amount", self.amount)
+        form.addRow(self.cannabis_calculator)
         form.addRow("Time", self.occurred_at)
         form.addRow("Consumer", self.consumer)
         form.addRow("Notes", self.notes)
@@ -176,19 +182,33 @@ class SubstanceIngestionDialog(QDialog):
         substance = self._current_substance()
         return next((r for r in substance.roas if r.id == roa_id), None)
 
+    def _is_cannabis_smoked(self) -> bool:
+        roa = self._current_roa()
+        return self._current_substance().key == "cannabis" and roa is not None and roa.route == "smoked"
+
+    def _on_cannabis_dose_changed(self, mg: float) -> None:
+        if self._is_cannabis_smoked():
+            self.amount.setValue(mg)
+
     def _on_roa_changed(self) -> None:
         roa = self._current_roa()
         if roa is None:
             self.dose_hint.setText("")
             self.duration_hint.setText("")
             self.amount.setSuffix("")
+            self.cannabis_calculator.setVisible(False)
             return
         self.amount.setSuffix(f" {roa.unit}")
         self.dose_hint.setText(
             _format_dose(roa.unit, roa.dose_threshold, roa.dose_light, roa.dose_common, roa.dose_strong, roa.dose_heavy)
         )
         self.duration_hint.setText(_format_duration(roa))
-        if roa.dose_common and roa.dose_common.min is not None:
+
+        is_cannabis_smoked = self._is_cannabis_smoked()
+        self.cannabis_calculator.setVisible(is_cannabis_smoked)
+        if is_cannabis_smoked:
+            self.amount.setValue(self.cannabis_calculator.current_dose_mg())
+        elif roa.dose_common and roa.dose_common.min is not None:
             self.amount.setValue(roa.dose_common.min)
 
     def result_values(self) -> dict:
