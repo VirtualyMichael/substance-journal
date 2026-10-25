@@ -48,7 +48,9 @@ class ReferenceDataTests(unittest.TestCase):
 
         by_key = {s["key"]: s for s in load_substances()}
         self.assertEqual(by_key["lsd"]["tolerance_group"], by_key["psilocybin_mushrooms"]["tolerance_group"])
-        self.assertEqual(by_key["lsd"]["tolerance_group"], by_key["2c-b"]["tolerance_group"])
+        # PsychonautWiki: 2C-B has no cross-tolerance with other serotonergic psychedelics,
+        # so it keeps its own tolerance track rather than joining the pooled one.
+        self.assertIsNone(by_key["2c-b"]["tolerance_group"])
 
     def test_load_effects_returns_full_subjective_effect_index(self) -> None:
         from substance_journal.core.reference_data import load_effects

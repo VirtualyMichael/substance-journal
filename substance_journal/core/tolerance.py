@@ -18,10 +18,12 @@ def tolerance_track_key(substance: Substance) -> str:
 
 
 def half_life_days(substance: Substance) -> float:
-    """Approximate decay half-life from PsychonautWiki's "time to zero tolerance"
-    estimate - zero_days is treated as ~4 half-lives (93.75% decayed), which is a
-    reasonable rule of thumb for an exponential decay curve reaching "back to
-    baseline" by that point."""
+    """Decay half-life in days. PsychonautWiki's published "half tolerance" time is used
+    directly when it exists. Otherwise the "time to zero tolerance" estimate is treated
+    as ~4 half-lives (93.75% decayed), a rule of thumb for an exponential decay curve
+    reaching "back to baseline" by that point."""
+    if substance.tolerance_half_days:
+        return max(substance.tolerance_half_days, 0.25)
     if substance.tolerance_zero_days:
         return max(substance.tolerance_zero_days / 4.0, 0.25)
     return _DEFAULT_HALF_LIFE_DAYS

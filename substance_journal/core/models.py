@@ -48,6 +48,9 @@ class Substance:
     tolerance_zero_days: float | None
     addiction_potential: str | None
     roas: tuple[RouteOfAdministration, ...] = field(default_factory=tuple)
+    tolerance_half_days: float | None = None
+    sources: tuple[str, ...] = field(default_factory=tuple)
+    safety_notes: tuple[str, ...] = field(default_factory=tuple)
 
 
 @dataclass(frozen=True)

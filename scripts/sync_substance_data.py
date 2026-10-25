@@ -12,11 +12,19 @@ Usage:
 """
 from __future__ import annotations
 
+import argparse
 import json
 import re
+import sys
 from pathlib import Path
 
-import requests
+try:
+    import requests
+except ImportError:  # only needed for the network fetch, not --overrides-only
+    requests = None
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from substance_journal.core.reference_overrides import apply_overrides, parse_tolerance_days  # noqa: E402
 
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 PW_GRAPHQL_URL = "https://api.psychonautwiki.org/"
@@ -45,11 +53,12 @@ TARGET_SUBSTANCES = [
 # classic 5-HT2A psychedelic with the same cross-tolerance as LSD/psilocybin, same as
 # every other serotonergic psychedelic). These overrides normalize/fill that field
 # into the tolerance_group used for pooled tolerance modeling.
+# DMT is deliberately absent (no tolerance occurs) and so is 2C-B: PsychonautWiki reports
+# no cross-tolerance between 2C-B and other serotonergic psychedelics, so it keeps its
+# own track (see substance_journal/core/reference_overrides.py and docs/data-audit/).
 TOLERANCE_GROUP_OVERRIDES = {
     "lsd": "psychedelics",
     "psilocybin_mushrooms": "psychedelics",
-    "dmt": "psychedelics",
-    "2c-b": "psychedelics",
 }
 
 # PsychonautWiki's `tolerance.zero` field ("how long until tolerance resets") is
@@ -59,25 +68,13 @@ TOLERANCE_GROUP_OVERRIDES = {
 # harm-reduction consensus for each drug class.
 TOLERANCE_ZERO_DAYS_OVERRIDES = {
     "2c-b": 7.0,  # same class/timeline as other serotonergic psychedelics
-    "ketamine": 14.0,
+    "ketamine": 28.0,  # PsychonautWiki: half 14 days, baseline 28 days
 }
-
-_DAYS_PER_UNIT = {"day": 1.0, "days": 1.0, "week": 7.0, "weeks": 7.0, "month": 30.0, "months": 30.0}
-_TOLERANCE_ZERO_RE = re.compile(
-    r"(?P<lo>\d+(?:\.\d+)?)\s*(?:-\s*(?P<hi>\d+(?:\.\d+)?)\s*)?(?P<unit>day|days|week|weeks|month|months)"
-)
 
 
 def _parse_tolerance_zero_days(text: str | None) -> float | None:
-    if not text:
-        return None
-    match = _TOLERANCE_ZERO_RE.search(text.lower())
-    if not match:
-        return None
-    factor = _DAYS_PER_UNIT[match.group("unit")]
-    lo = float(match.group("lo"))
-    hi = float(match.group("hi")) if match.group("hi") else lo
-    return ((lo + hi) / 2) * factor
+    return parse_tolerance_days(text)
+
 
 # TripSit's combo chart keys are broad substance/family slugs, not every individual
 # compound - 2C-B has no dedicated entry and is approximated by the "2c-x" family
@@ -309,10 +306,25 @@ def fetch_interactions() -> list[dict]:
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--overrides-only",
+        action="store_true",
+        help="re-apply the audited overrides to the existing data/substances.json without fetching anything",
+    )
+    args = parser.parse_args()
+
     DATA_DIR.mkdir(parents=True, exist_ok=True)
 
+    if args.overrides_only:
+        path = DATA_DIR / "substances.json"
+        substances = apply_overrides(json.loads(path.read_text(encoding="utf-8")))
+        path.write_text(json.dumps(substances, ensure_ascii=False, indent=2), encoding="utf-8")
+        print(f"Applied overrides to data/substances.json ({len(substances)} substances)")
+        return
+
     print("Fetching substances from PsychonautWiki...")
-    substances = fetch_substances()
+    substances = apply_overrides(fetch_substances())
     (DATA_DIR / "substances.json").write_text(
         json.dumps(substances, ensure_ascii=False, indent=2), encoding="utf-8"
     )

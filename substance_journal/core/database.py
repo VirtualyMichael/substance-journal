@@ -32,7 +32,10 @@ CREATE TABLE IF NOT EXISTS substances (
     has_tolerance INTEGER NOT NULL,
     tolerance_group TEXT,
     tolerance_zero_days REAL,
-    addiction_potential TEXT
+    addiction_potential TEXT,
+    tolerance_half_days REAL,
+    sources TEXT,
+    safety_notes TEXT
 );
 
 CREATE TABLE IF NOT EXISTS interactions (
@@ -161,6 +164,16 @@ class Store:
     def _init_schema(self) -> None:
         with closing(self._connect()) as connection:
             connection.executescript(SCHEMA)
+            # Databases created before the data audit lack these reference columns; the
+            # substances table is wiped and reseeded on every start, so adding is safe.
+            existing = {row["name"] for row in connection.execute("PRAGMA table_info(substances)")}
+            for column, ddl in (
+                ("tolerance_half_days", "REAL"),
+                ("sources", "TEXT"),
+                ("safety_notes", "TEXT"),
+            ):
+                if column not in existing:
+                    connection.execute(f"ALTER TABLE substances ADD COLUMN {column} {ddl}")
             connection.executescript("DROP TABLE IF EXISTS duration_phases; DROP TABLE IF EXISTS routes_of_administration; DROP TABLE IF EXISTS subjective_effects;")
             connection.executescript(EPHEMERAL_REFERENCE_SCHEMA)
             connection.commit()
@@ -217,8 +230,9 @@ class Store:
                     """
                     INSERT INTO substances (
                         key, name, common_names, category, chemical_class, summary,
-                        wiki_url, has_tolerance, tolerance_group, tolerance_zero_days, addiction_potential
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        wiki_url, has_tolerance, tolerance_group, tolerance_zero_days, addiction_potential,
+                        tolerance_half_days, sources, safety_notes
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """,
                     (
                         substance["key"],
@@ -232,6 +246,9 @@ class Store:
                         substance["tolerance_group"],
                         substance.get("tolerance_zero_days"),
                         substance["addiction_potential"],
+                        substance.get("tolerance_half_days"),
+                        json.dumps(substance.get("sources", [])),
+                        json.dumps(substance.get("safety_notes", [])),
                     ),
                 )
                 for roa in substance["roas"]:
@@ -346,6 +363,9 @@ class Store:
                         tolerance_zero_days=srow["tolerance_zero_days"],
                         addiction_potential=srow["addiction_potential"],
                         roas=roas,
+                        tolerance_half_days=srow["tolerance_half_days"],
+                        sources=tuple(json.loads(srow["sources"] or "[]")),
+                        safety_notes=tuple(json.loads(srow["safety_notes"] or "[]")),
                     )
                 )
             return result
