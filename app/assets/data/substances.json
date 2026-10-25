@@ -1,0 +1,1245 @@
+[
+  {
+    "key": "alcohol",
+    "name": "Alcohol",
+    "common_names": [
+      "Alcohol",
+      "Booze",
+      "Liquor",
+      "Moonshine",
+      "Sauce",
+      "Juice",
+      "Bevvy"
+    ],
+    "category": "Depressant",
+    "chemical_class": "Alcohol",
+    "summary": "Ethanol, the legal depressant in beer, wine and spirits. Effects follow blood alcohol concentration, and the body clears it at a roughly constant rate, so heavy sessions take many hours to wear off. Combining it with other depressants is especially dangerous.",
+    "wiki_url": "https://psychonautwiki.org/wiki/Alcohol",
+    "has_tolerance": true,
+    "tolerance_group": "gaba",
+    "tolerance_full": "develops with prolonged and repeated use",
+    "tolerance_half": "3 - 7 days",
+    "tolerance_zero": "1 - 2 weeks",
+    "tolerance_zero_days": 10.5,
+    "addiction_potential": "extremely addictive with a high potential for abuse",
+    "roas": [
+      {
+        "route": "oral",
+        "unit": "g",
+        "dose_threshold": 10.0,
+        "dose_light": {
+          "min": 10.0,
+          "max": 20.0
+        },
+        "dose_common": {
+          "min": 20.0,
+          "max": 30.0
+        },
+        "dose_strong": {
+          "min": 30.0,
+          "max": 40.0
+        },
+        "dose_heavy": 40.0,
+        "duration": {
+          "onset": {
+            "min": 2.0,
+            "max": 5.0,
+            "units": "minutes"
+          },
+          "comeup": {
+            "min": 15.0,
+            "max": 45.0,
+            "units": "minutes"
+          },
+          "peak": {
+            "min": 30.0,
+            "max": 90.0,
+            "units": "minutes"
+          },
+          "offset": {
+            "min": 45.0,
+            "max": 120.0,
+            "units": "minutes"
+          },
+          "total": {
+            "min": 1.5,
+            "max": 5.0,
+            "units": "hours"
+          },
+          "afterglow": {
+            "min": 6.0,
+            "max": 48.0,
+            "units": "hours"
+          }
+        }
+      }
+    ],
+    "uncertain_interactions": [
+      "Stimulants",
+      "Cannabis",
+      "Amphetamines",
+      "AMT",
+      "MDMA",
+      "Nitrous",
+      "SSRIs"
+    ],
+    "unsafe_interactions": [
+      "Cocaine",
+      "MAOIs",
+      "PCP",
+      "ALDH2 inhibitors",
+      "Hepatotoxic drugs"
+    ],
+    "dangerous_interactions": [
+      "Depressants",
+      "Dissociatives",
+      "Benzodiazepines",
+      "DXM",
+      "GHB",
+      "GBL",
+      "Ketamine",
+      "MXE",
+      "Opioids",
+      "Tramadol"
+    ],
+    "sources": [
+      "https://psychonautwiki.org/wiki/Alcohol",
+      "https://pubmed.ncbi.nlm.nih.gov/17064864/"
+    ],
+    "safety_notes": [
+      "PsychonautWiki doses are grams of ethanol with a 10 g standard drink; the US standard drink is 14 g."
+    ],
+    "tolerance_half_days": 5.0,
+    "overrides": [
+      "Replaced placeholder or off-topic summary."
+    ]
+  },
+  {
+    "key": "nicotine",
+    "name": "Nicotine",
+    "common_names": [
+      "Nicotine"
+    ],
+    "category": "Stimulant",
+    "chemical_class": "Pyridine, Substituted pyrrolidines",
+    "summary": "The main stimulant in tobacco, also delivered by vapes, pouches, gum and lozenges. Effects are brief but dependence and tolerance develop quickly. The dose you absorb depends heavily on the product and how it is used.",
+    "wiki_url": "https://psychonautwiki.org/wiki/Nicotine",
+    "has_tolerance": true,
+    "tolerance_group": null,
+    "tolerance_full": "rapidly develops with prolonged and repeated use",
+    "tolerance_half": "3 - 7 days",
+    "tolerance_zero": "1 - 2 weeks",
+    "tolerance_zero_days": 10.5,
+    "addiction_potential": "extremely addictive with a high potential for abuse",
+    "roas": [
+      {
+        "route": "buccal",
+        "unit": "mg",
+        "dose_threshold": 0.2,
+        "dose_light": {
+          "min": 0.5,
+          "max": 2.0
+        },
+        "dose_common": {
+          "min": 2.0,
+          "max": 4.0
+        },
+        "dose_strong": {
+          "min": 4.0,
+          "max": 6.0
+        },
+        "dose_heavy": 6.0,
+        "duration": {
+          "onset": {
+            "min": 3.0,
+            "max": 15.0,
+            "units": "minutes"
+          },
+          "comeup": {
+            "min": 3.0,
+            "max": 15.0,
+            "units": "minutes"
+          },
+          "peak": {
+            "min": 5.0,
+            "max": 20.0,
+            "units": "minutes"
+          },
+          "offset": {
+            "min": 1.0,
+            "max": 2.0,
+            "units": "hours"
+          },
+          "total": {
+            "min": 45.0,
+            "max": 90.0,
+            "units": "minutes"
+          },
+          "afterglow": {
+            "min": 2.0,
+            "max": 6.0,
+            "units": "hours"
+          }
+        }
+      },
+      {
+        "route": "oral",
+        "unit": "mg",
+        "dose_threshold": 0.2,
+        "dose_light": {
+          "min": 1.0,
+          "max": 3.0
+        },
+        "dose_common": {
+          "min": 3.0,
+          "max": 5.0
+        },
+        "dose_strong": {
+          "min": 5.0,
+          "max": 7.0
+        },
+        "dose_heavy": 7.0,
+        "duration": {
+          "onset": {
+            "min": 20.0,
+            "max": 40.0,
+            "units": "minutes"
+          },
+          "comeup": {
+            "min": 60.0,
+            "max": 90.0,
+            "units": "minutes"
+          },
+          "peak": {
+            "min": 60.0,
+            "max": 90.0,
+            "units": "minutes"
+          },
+          "offset": {
+            "min": 2.5,
+            "max": 3.5,
+            "units": "hours"
+          },
+          "total": {
+            "min": 5.0,
+            "max": 7.0,
+            "units": "hours"
+          },
+          "afterglow": {
+            "min": 2.0,
+            "max": 4.0,
+            "units": "hours"
+          }
+        }
+      },
+      {
+        "route": "smoked",
+        "unit": "mg",
+        "dose_threshold": 0.2,
+        "dose_light": {
+          "min": 0.3,
+          "max": 0.8
+        },
+        "dose_common": {
+          "min": 0.8,
+          "max": 1.5
+        },
+        "dose_strong": {
+          "min": 1.5,
+          "max": 3.5
+        },
+        "dose_heavy": 3.5,
+        "duration": {
+          "onset": {
+            "min": 5.0,
+            "max": 20.0,
+            "units": "seconds"
+          },
+          "comeup": {
+            "min": 5.0,
+            "max": 10.0,
+            "units": "seconds"
+          },
+          "peak": {
+            "min": 2.0,
+            "max": 5.0,
+            "units": "minutes"
+          },
+          "offset": {
+            "min": 5.0,
+            "max": 20.0,
+            "units": "minutes"
+          },
+          "total": {
+            "min": 10.0,
+            "max": 30.0,
+            "units": "minutes"
+          },
+          "afterglow": {
+            "min": 1.0,
+            "max": 3.0,
+            "units": "hours"
+          }
+        }
+      }
+    ],
+    "uncertain_interactions": [],
+    "unsafe_interactions": [],
+    "dangerous_interactions": [],
+    "sources": [
+      "https://psychonautwiki.org/wiki/Nicotine",
+      "https://erowid.org/chemicals/nicotine/nicotine_dose.shtml",
+      "https://cancercontrol.cancer.gov/brp/tcrb/monographs/7/m7_7.pdf"
+    ],
+    "safety_notes": [
+      "Doses are mg absorbed, not mg in the product. A cigarette delivers roughly 1-2 mg (range about 0.4-3.5), while a pouch or gum lists its content, of which only part is absorbed."
+    ],
+    "tolerance_half_days": 5.0,
+    "overrides": [
+      "Replaced placeholder or off-topic summary.",
+      "Set category.",
+      "Smoked: active effect 10-30 min (total) with offset 5-20 min; the 1-3 h figure is the after-effect window."
+    ]
+  },
+  {
+    "key": "cannabis",
+    "name": "Cannabis",
+    "common_names": [
+      "Cannabis",
+      "Marijuana",
+      "Weed",
+      "Pot",
+      "Mary Jane",
+      "Grass",
+      "Herb",
+      "Green",
+      "Bud",
+      "Tree",
+      "THC"
+    ],
+    "category": "Cannabinoid",
+    "chemical_class": "Cannabinoid",
+    "summary": "Plant containing THC and CBD, used smoked, vaporised, as edibles or as tinctures. Smoked effects arrive within minutes and last a few hours; edibles are slower, stronger per mg absorbed and last much longer. Potency and absorbed dose vary widely between products.",
+    "wiki_url": "https://psychonautwiki.org/wiki/Cannabis",
+    "has_tolerance": true,
+    "tolerance_group": "cannabinoids",
+    "tolerance_full": "develops with prolonged and repeated use",
+    "tolerance_half": "1 - 2 weeks",
+    "tolerance_zero": "2 - 3 weeks",
+    "tolerance_zero_days": 17.5,
+    "addiction_potential": "moderately habit-forming",
+    "roas": [
+      {
+        "route": "oral",
+        "unit": "mg",
+        "dose_threshold": 1.0,
+        "dose_light": {
+          "min": 2.5,
+          "max": 5.0
+        },
+        "dose_common": {
+          "min": 5.0,
+          "max": 10.0
+        },
+        "dose_strong": {
+          "min": 10.0,
+          "max": 25.0
+        },
+        "dose_heavy": 25.0,
+        "duration": {
+          "onset": {
+            "min": 20.0,
+            "max": 120.0,
+            "units": "minutes"
+          },
+          "comeup": {
+            "min": 30.0,
+            "max": 60.0,
+            "units": "minutes"
+          },
+          "peak": {
+            "min": 1.0,
+            "max": 3.0,
+            "units": "hours"
+          },
+          "offset": {
+            "min": 4.0,
+            "max": 6.0,
+            "units": "hours"
+          },
+          "total": {
+            "min": 4.0,
+            "max": 10.0,
+            "units": "hours"
+          },
+          "afterglow": {
+            "min": 6.0,
+            "max": 12.0,
+            "units": "hours"
+          }
+        }
+      },
+      {
+        "route": "smoked",
+        "unit": "mg",
+        "dose_threshold": 0.4,
+        "dose_light": {
+          "min": 0.4,
+          "max": 2.0
+        },
+        "dose_common": {
+          "min": 2.0,
+          "max": 4.0
+        },
+        "dose_strong": {
+          "min": 4.0,
+          "max": 10.0
+        },
+        "dose_heavy": 10.0,
+        "duration": {
+          "onset": {
+            "min": 0.1,
+            "max": 10.0,
+            "units": "minutes"
+          },
+          "comeup": {
+            "min": 5.0,
+            "max": 10.0,
+            "units": "minutes"
+          },
+          "peak": {
+            "min": 15.0,
+            "max": 45.0,
+            "units": "minutes"
+          },
+          "offset": {
+            "min": 3.0,
+            "max": 4.0,
+            "units": "hours"
+          },
+          "total": {
+            "min": 2.5,
+            "max": 5.0,
+            "units": "hours"
+          },
+          "afterglow": {
+            "min": 45.0,
+            "max": 180.0,
+            "units": "minutes"
+          }
+        }
+      },
+      {
+        "route": "sublingual",
+        "unit": "mg",
+        "dose_threshold": null,
+        "dose_light": null,
+        "dose_common": null,
+        "dose_strong": null,
+        "dose_heavy": null,
+        "duration": {
+          "onset": {
+            "min": 1.0,
+            "max": 10.0,
+            "units": "minutes"
+          },
+          "comeup": {
+            "min": 15.0,
+            "max": 30.0,
+            "units": "minutes"
+          },
+          "peak": {
+            "min": 30.0,
+            "max": 60.0,
+            "units": "minutes"
+          },
+          "offset": {
+            "min": 4.0,
+            "max": 6.0,
+            "units": "hours"
+          },
+          "total": {
+            "min": 3.0,
+            "max": 7.0,
+            "units": "hours"
+          },
+          "afterglow": null
+        }
+      }
+    ],
+    "uncertain_interactions": [
+      "2C-T-x",
+      "2C-x",
+      "5-MeO-xxT",
+      "Amphetamines",
+      "aMT",
+      "Cocaine",
+      "DMT",
+      "DOx",
+      "LSD",
+      "Mescaline",
+      "Mushrooms",
+      "25x-NBOMe"
+    ],
+    "unsafe_interactions": [],
+    "dangerous_interactions": [
+      "Lithium"
+    ],
+    "sources": [
+      "https://psychonautwiki.org/wiki/Cannabis",
+      "https://www.erowid.org/plants/cannabis/cannabis_dose.shtml",
+      "https://erowid.org/references/refs_view.php?ID=6617"
+    ],
+    "safety_notes": [
+      "Doses are mg of THC reaching you, not mg of THC in the flower. Only about 10-35% of smoked THC and 4-20% of oral THC is absorbed.",
+      "New users: Erowid's strong oral range starts at 4 mg and PsychonautWiki's at 10 mg. Start with 2.5 mg and wait."
+    ],
+    "tolerance_half_days": 10.5,
+    "overrides": [
+      "Replaced placeholder or off-topic summary.",
+      "Set category.",
+      "Oral onset widened to 20-120 min and peak to 1-3 h (Erowid, Grotenhermen).",
+      "Sublingual route present (PsychonautWiki durations; it publishes no dose table)."
+    ]
+  },
+  {
+    "key": "psilocybin_mushrooms",
+    "name": "Psilocybin mushrooms",
+    "common_names": [
+      "Psilocybin",
+      "Psilocybin mushrooms",
+      "Magic Mushrooms",
+      "Shrooms",
+      "4-PO-DMT"
+    ],
+    "category": "Psychedelic",
+    "chemical_class": "Substituted tryptamines",
+    "summary": "Mushrooms containing psilocybin, which the body converts to the psychedelic psilocin. Potency varies between species and batches. Never eat wild mushrooms you cannot identify with certainty, because poisonous look-alikes exist.",
+    "wiki_url": "https://psychonautwiki.org/wiki/Psilocybin%20mushrooms",
+    "has_tolerance": true,
+    "tolerance_group": "psychedelics",
+    "tolerance_full": "almost immediately after ingestion",
+    "tolerance_half": "3 days",
+    "tolerance_zero": "7 days",
+    "tolerance_zero_days": 7.0,
+    "addiction_potential": "low abuse potential, no physical dependence potential",
+    "roas": [
+      {
+        "route": "oral",
+        "unit": "mg",
+        "dose_threshold": 2.5,
+        "dose_light": {
+          "min": 2.5,
+          "max": 10.0
+        },
+        "dose_common": {
+          "min": 10.0,
+          "max": 25.0
+        },
+        "dose_strong": {
+          "min": 25.0,
+          "max": 50.0
+        },
+        "dose_heavy": 50.0,
+        "duration": {
+          "onset": {
+            "min": 20.0,
+            "max": 45.0,
+            "units": "minutes"
+          },
+          "comeup": {
+            "min": 1.0,
+            "max": 1.5,
+            "units": "hours"
+          },
+          "peak": {
+            "min": 2.0,
+            "max": 2.5,
+            "units": "hours"
+          },
+          "offset": {
+            "min": 2.5,
+            "max": 3.5,
+            "units": "hours"
+          },
+          "total": {
+            "min": 6.0,
+            "max": 8.0,
+            "units": "hours"
+          },
+          "afterglow": {
+            "min": 4.0,
+            "max": 24.0,
+            "units": "hours"
+          }
+        }
+      }
+    ],
+    "uncertain_interactions": [
+      "Cannabis",
+      "Amphetamines",
+      "Cocaine"
+    ],
+    "unsafe_interactions": [
+      "Tramadol"
+    ],
+    "dangerous_interactions": [
+      "Lithium"
+    ],
+    "sources": [
+      "https://psychonautwiki.org/wiki/Psilocybin_mushrooms",
+      "https://erowid.org/plants/mushrooms/mushrooms_dose.shtml",
+      "https://pubmed.ncbi.nlm.nih.gov/39812743/"
+    ],
+    "safety_notes": [
+      "Dried P. cubensis holds roughly 6-12 mg psilocybin per gram and varies up to 10x between batches.",
+      "Erowid puts heavy at 35 mg+ (PsychonautWiki 50 mg+)."
+    ],
+    "tolerance_half_days": 3.0,
+    "overrides": [
+      "Replaced placeholder or off-topic summary.",
+      "Lithium moved to dangerous, matching LSD/DMT/2C-B (PsychonautWiki: strictly avoid)."
+    ]
+  },
+  {
+    "key": "lsd",
+    "name": "LSD",
+    "common_names": [
+      "LSD",
+      "LSD-25",
+      "Lucy",
+      "L",
+      "Acid",
+      "Cid",
+      "Tabs",
+      "Blotter"
+    ],
+    "category": "Psychedelic",
+    "chemical_class": "Lysergamides",
+    "summary": "A potent synthetic psychedelic dosed in micrograms, usually on blotter paper. A trip lasts roughly 8-12 hours and longer at higher doses. Tolerance builds within hours and resets in about five days.",
+    "wiki_url": "https://psychonautwiki.org/wiki/LSD",
+    "has_tolerance": true,
+    "tolerance_group": "psychedelics",
+    "tolerance_full": "almost immediately after ingestion",
+    "tolerance_half": null,
+    "tolerance_zero": "5 days",
+    "tolerance_zero_days": 5.0,
+    "addiction_potential": "non-addictive with a low abuse potential",
+    "roas": [
+      {
+        "route": "sublingual",
+        "unit": "µg",
+        "dose_threshold": 15.0,
+        "dose_light": {
+          "min": 15.0,
+          "max": 75.0
+        },
+        "dose_common": {
+          "min": 75.0,
+          "max": 150.0
+        },
+        "dose_strong": {
+          "min": 150.0,
+          "max": 300.0
+        },
+        "dose_heavy": 300.0,
+        "duration": {
+          "onset": {
+            "min": 15.0,
+            "max": 30.0,
+            "units": "minutes"
+          },
+          "comeup": {
+            "min": 45.0,
+            "max": 90.0,
+            "units": "minutes"
+          },
+          "peak": {
+            "min": 3.0,
+            "max": 5.0,
+            "units": "hours"
+          },
+          "offset": {
+            "min": 3.0,
+            "max": 5.0,
+            "units": "hours"
+          },
+          "total": {
+            "min": 8.0,
+            "max": 12.0,
+            "units": "hours"
+          },
+          "afterglow": {
+            "min": 12.0,
+            "max": 48.0,
+            "units": "hours"
+          }
+        }
+      }
+    ],
+    "uncertain_interactions": [
+      "Cannabis",
+      "Stimulants",
+      "SSRIs",
+      "MDMA"
+    ],
+    "unsafe_interactions": [
+      "Tramadol",
+      "Deliriants",
+      "Tricyclic antidepressants",
+      "Ritonavir"
+    ],
+    "dangerous_interactions": [
+      "Lithium"
+    ],
+    "sources": [
+      "https://psychonautwiki.org/wiki/LSD",
+      "https://erowid.org/chemicals/lsd/lsd_dose.shtml",
+      "https://edoc.unibas.ch/56155"
+    ],
+    "safety_notes": [
+      "Blotter is often NBOMe sold as LSD; reagent test it.",
+      "Duration scales with dose: about 8 h at 100 ug and 12 h at 200 ug (Dolder 2017).",
+      "SSRIs and antipsychotics can blunt LSD, which may lead to dangerous redosing.",
+      "Cannabis with LSD has a strong, unpredictable synergy that can cause anxiety, paranoia and panic."
+    ],
+    "tolerance_half_days": null,
+    "overrides": [
+      "Replaced placeholder or off-topic summary.",
+      "Added SSRIs and MDMA as uncertain."
+    ]
+  },
+  {
+    "key": "dmt",
+    "name": "DMT",
+    "common_names": [
+      "DMT",
+      "N,N-DMT",
+      "Dmitry",
+      "The Glory",
+      "The Spirit Molecule"
+    ],
+    "category": "Psychedelic",
+    "chemical_class": "Substituted tryptamines",
+    "summary": "A short-acting, very intense psychedelic, usually vaporised. Effects start within seconds, peak within minutes and are largely over in 20 minutes. A sober sitter is recommended.",
+    "wiki_url": "https://psychonautwiki.org/wiki/DMT",
+    "has_tolerance": false,
+    "tolerance_group": null,
+    "tolerance_full": "does not appear to occur",
+    "tolerance_half": null,
+    "tolerance_zero": null,
+    "tolerance_zero_days": null,
+    "addiction_potential": "non-addictive with a low abuse potential",
+    "roas": [
+      {
+        "route": "smoked",
+        "unit": "mg",
+        "dose_threshold": 2.0,
+        "dose_light": {
+          "min": 10.0,
+          "max": 20.0
+        },
+        "dose_common": {
+          "min": 20.0,
+          "max": 40.0
+        },
+        "dose_strong": {
+          "min": 40.0,
+          "max": 60.0
+        },
+        "dose_heavy": 60.0,
+        "duration": {
+          "onset": {
+            "min": 15.0,
+            "max": 60.0,
+            "units": "seconds"
+          },
+          "comeup": {
+            "min": 1.0,
+            "max": 3.0,
+            "units": "minutes"
+          },
+          "peak": {
+            "min": 2.0,
+            "max": 8.0,
+            "units": "minutes"
+          },
+          "offset": {
+            "min": 1.0,
+            "max": 6.0,
+            "units": "minutes"
+          },
+          "total": {
+            "min": 5.0,
+            "max": 20.0,
+            "units": "minutes"
+          },
+          "afterglow": {
+            "min": 10.0,
+            "max": 60.0,
+            "units": "minutes"
+          }
+        }
+      }
+    ],
+    "uncertain_interactions": [
+      "Cannabis",
+      "Stimulants"
+    ],
+    "unsafe_interactions": [
+      "Tramadol",
+      "MAOIs"
+    ],
+    "dangerous_interactions": [
+      "Lithium"
+    ],
+    "sources": [
+      "https://psychonautwiki.org/wiki/DMT",
+      "https://erowid.org/chemicals/dmt/dmt_dose.shtml"
+    ],
+    "safety_notes": [
+      "Residue left in a pipe can add up to ~20 mg to the next load.",
+      "Changa (DMT on an MAOI herb blend) needs lower doses and lasts longer.",
+      "Cannabis with DMT has a strong, unpredictable synergy."
+    ],
+    "tolerance_half_days": null,
+    "overrides": [
+      "Replaced placeholder or off-topic summary.",
+      "Added MAOIs as unsafe: an unplanned MAOI drastically changes dose and duration.",
+      "Onset widened to 15-60 s (Erowid)."
+    ]
+  },
+  {
+    "key": "mdma",
+    "name": "MDMA",
+    "common_names": [
+      "MDMA",
+      "Molly",
+      "Mandy",
+      "Emma",
+      "MD",
+      "Ecstasy",
+      "E",
+      "X",
+      "XTC",
+      "Rolls",
+      "Beans",
+      "Pingers"
+    ],
+    "category": "Entactogen, Stimulants",
+    "chemical_class": "Amphetamine, MDxx, Substituted amphetamines",
+    "summary": "An entactogen-stimulant that raises serotonin, dopamine and noradrenaline. Risks include overheating, hyponatremia and serotonin syndrome, and tolerance builds quickly. Blood levels rise faster than the dose, so larger doses are disproportionately stronger.",
+    "wiki_url": "https://psychonautwiki.org/wiki/MDMA",
+    "has_tolerance": true,
+    "tolerance_group": "dopaminergic",
+    "tolerance_full": "with prolonged and repeated use",
+    "tolerance_half": "1 month",
+    "tolerance_zero": "2.5 months",
+    "tolerance_zero_days": 75.0,
+    "addiction_potential": "moderately addictive with a high potential for abuse",
+    "roas": [
+      {
+        "route": "oral",
+        "unit": "mg",
+        "dose_threshold": 20.0,
+        "dose_light": {
+          "min": 20.0,
+          "max": 80.0
+        },
+        "dose_common": {
+          "min": 80.0,
+          "max": 120.0
+        },
+        "dose_strong": {
+          "min": 120.0,
+          "max": 150.0
+        },
+        "dose_heavy": 150.0,
+        "duration": {
+          "onset": {
+            "min": 20.0,
+            "max": 70.0,
+            "units": "minutes"
+          },
+          "comeup": {
+            "min": 15.0,
+            "max": 30.0,
+            "units": "minutes"
+          },
+          "peak": {
+            "min": 1.5,
+            "max": 2.5,
+            "units": "hours"
+          },
+          "offset": {
+            "min": 1.0,
+            "max": 1.5,
+            "units": "hours"
+          },
+          "total": {
+            "min": 3.0,
+            "max": 6.0,
+            "units": "hours"
+          },
+          "afterglow": {
+            "min": 12.0,
+            "max": 48.0,
+            "units": "hours"
+          }
+        }
+      }
+    ],
+    "uncertain_interactions": [
+      "5-MeO-xxT",
+      "Alcohol",
+      "Cocaine",
+      "DOx",
+      "MXE",
+      "ΑMT",
+      "SSRIs",
+      "SNRIs"
+    ],
+    "unsafe_interactions": [
+      "25x-NBOMe",
+      "PCP",
+      "Serotonin releasers",
+      "2C-T-x",
+      "5-HTP",
+      "Protease Inhibitors",
+      "GHB",
+      "GBL"
+    ],
+    "dangerous_interactions": [
+      "Tramadol",
+      "MAOIs",
+      "DXM"
+    ],
+    "sources": [
+      "https://psychonautwiki.org/wiki/MDMA",
+      "https://erowid.org/chemicals/mdma/mdma_dose.shtml",
+      "https://pmc.ncbi.nlm.nih.gov/articles/PMC2014905"
+    ],
+    "safety_notes": [
+      "Blood levels rise more than proportionally with dose (de la Torre 2000); do not scale doses linearly.",
+      "Wait 1-3 months between uses. Avoid redosing, overheating, and more than ~3 L of water in a few hours.",
+      "Erowid puts strong at 150-200 mg (PsychonautWiki 120-150 mg)."
+    ],
+    "tolerance_half_days": 30.0,
+    "overrides": [
+      "Replaced placeholder or off-topic summary.",
+      "Protease inhibitors, GHB and GBL raised to unsafe (slowed clearance; unconsciousness risk).",
+      "Onset widened to 20-70 min (Erowid)."
+    ]
+  },
+  {
+    "key": "2c-b",
+    "name": "2C-B",
+    "common_names": [
+      "2C-B",
+      "Nexus",
+      "Bees"
+    ],
+    "category": "Psychedelic",
+    "chemical_class": "Substituted phenethylamines",
+    "summary": "A phenethylamine psychedelic with a stimulating, visual character, taken orally or insufflated. Oral doses take up to 90 minutes to peak. Effects last 4-7 hours.",
+    "wiki_url": "https://psychonautwiki.org/wiki/2C-B",
+    "has_tolerance": true,
+    "tolerance_group": null,
+    "tolerance_full": null,
+    "tolerance_half": null,
+    "tolerance_zero": null,
+    "tolerance_zero_days": 7.0,
+    "addiction_potential": "non-addictive with a low potential for abuse",
+    "roas": [
+      {
+        "route": "insufflated",
+        "unit": "mg",
+        "dose_threshold": 1.0,
+        "dose_light": {
+          "min": 5.0,
+          "max": 8.0
+        },
+        "dose_common": {
+          "min": 8.0,
+          "max": 12.0
+        },
+        "dose_strong": {
+          "min": 12.0,
+          "max": 23.0
+        },
+        "dose_heavy": 23.0,
+        "duration": {
+          "onset": {
+            "min": 1.0,
+            "max": 5.0,
+            "units": "minutes"
+          },
+          "comeup": {
+            "min": 15.0,
+            "max": 30.0,
+            "units": "minutes"
+          },
+          "peak": {
+            "min": 60.0,
+            "max": 90.0,
+            "units": "minutes"
+          },
+          "offset": {
+            "min": 2.0,
+            "max": 3.0,
+            "units": "hours"
+          },
+          "total": {
+            "min": 4.0,
+            "max": 6.0,
+            "units": "hours"
+          },
+          "afterglow": {
+            "min": 2.0,
+            "max": 4.0,
+            "units": "hours"
+          }
+        }
+      },
+      {
+        "route": "oral",
+        "unit": "mg",
+        "dose_threshold": 5.0,
+        "dose_light": {
+          "min": 10.0,
+          "max": 15.0
+        },
+        "dose_common": {
+          "min": 15.0,
+          "max": 25.0
+        },
+        "dose_strong": {
+          "min": 25.0,
+          "max": 45.0
+        },
+        "dose_heavy": 45.0,
+        "duration": {
+          "onset": {
+            "min": 20.0,
+            "max": 40.0,
+            "units": "minutes"
+          },
+          "comeup": {
+            "min": 60.0,
+            "max": 90.0,
+            "units": "minutes"
+          },
+          "peak": {
+            "min": 60.0,
+            "max": 90.0,
+            "units": "minutes"
+          },
+          "offset": {
+            "min": 2.5,
+            "max": 3.5,
+            "units": "hours"
+          },
+          "total": {
+            "min": 5.0,
+            "max": 7.0,
+            "units": "hours"
+          },
+          "afterglow": {
+            "min": 2.0,
+            "max": 4.0,
+            "units": "hours"
+          }
+        }
+      }
+    ],
+    "uncertain_interactions": [
+      "Cannabis",
+      "Stimulants"
+    ],
+    "unsafe_interactions": [
+      "Tramadol"
+    ],
+    "dangerous_interactions": [
+      "Lithium"
+    ],
+    "sources": [
+      "https://psychonautwiki.org/wiki/2C-B",
+      "https://erowid.org/chemicals/2cb/2cb_dose.shtml"
+    ],
+    "safety_notes": [
+      "Pills are frequently under- or mis-dosed.",
+      "Oral 2C-B can take up to 90 minutes to peak; do not redose early."
+    ],
+    "tolerance_half_days": null,
+    "overrides": [
+      "Replaced placeholder or off-topic summary.",
+      "Own tolerance track: PsychonautWiki reports no cross-tolerance with other serotonergic psychedelics."
+    ]
+  },
+  {
+    "key": "ketamine",
+    "name": "Ketamine",
+    "common_names": [
+      "Ketamine",
+      "K",
+      "Ket",
+      "Kitty",
+      "Special K",
+      "Cat Tranquilizer",
+      "Ketaset",
+      "Ketalar",
+      "Ketanest",
+      "Vitamin K",
+      "Purple",
+      "Jet"
+    ],
+    "category": "Dissociatives",
+    "chemical_class": "Arylcyclohexylamines",
+    "summary": "A dissociative anaesthetic that causes sedation, numbness and detachment. Effects are brief when insufflated and slower to start when swallowed. Frequent use is linked to severe bladder damage and long-lasting tolerance.",
+    "wiki_url": "https://psychonautwiki.org/wiki/Ketamine",
+    "has_tolerance": true,
+    "tolerance_group": "dissociative",
+    "tolerance_full": "develops with prolonged and repeated use",
+    "tolerance_half": "2 weeks",
+    "tolerance_zero": "4 weeks",
+    "tolerance_zero_days": 28.0,
+    "addiction_potential": "moderate to high abuse potential and produces psychological dependence with chronic use",
+    "roas": [
+      {
+        "route": "insufflated",
+        "unit": "mg",
+        "dose_threshold": 5.0,
+        "dose_light": {
+          "min": 10.0,
+          "max": 30.0
+        },
+        "dose_common": {
+          "min": 30.0,
+          "max": 75.0
+        },
+        "dose_strong": {
+          "min": 75.0,
+          "max": 150.0
+        },
+        "dose_heavy": 150.0,
+        "duration": {
+          "onset": {
+            "min": 1.0,
+            "max": 15.0,
+            "units": "minutes"
+          },
+          "comeup": {
+            "min": 5.0,
+            "max": 15.0,
+            "units": "minutes"
+          },
+          "peak": {
+            "min": 15.0,
+            "max": 45.0,
+            "units": "minutes"
+          },
+          "offset": {
+            "min": 30.0,
+            "max": 60.0,
+            "units": "minutes"
+          },
+          "total": {
+            "min": 45.0,
+            "max": 120.0,
+            "units": "minutes"
+          },
+          "afterglow": {
+            "min": 2.0,
+            "max": 12.0,
+            "units": "hours"
+          }
+        }
+      },
+      {
+        "route": "oral",
+        "unit": "mg",
+        "dose_threshold": 50.0,
+        "dose_light": {
+          "min": 50.0,
+          "max": 100.0
+        },
+        "dose_common": {
+          "min": 100.0,
+          "max": 300.0
+        },
+        "dose_strong": {
+          "min": 300.0,
+          "max": 450.0
+        },
+        "dose_heavy": 450.0,
+        "duration": {
+          "onset": {
+            "min": 5.0,
+            "max": 30.0,
+            "units": "minutes"
+          },
+          "comeup": {
+            "min": 5.0,
+            "max": 20.0,
+            "units": "minutes"
+          },
+          "peak": {
+            "min": 45.0,
+            "max": 90.0,
+            "units": "minutes"
+          },
+          "offset": {
+            "min": 1.0,
+            "max": 2.0,
+            "units": "hours"
+          },
+          "total": {
+            "min": 1.5,
+            "max": 3.0,
+            "units": "hours"
+          },
+          "afterglow": {
+            "min": 4.0,
+            "max": 8.0,
+            "units": "hours"
+          }
+        }
+      }
+    ],
+    "uncertain_interactions": [
+      "Amphetamines",
+      "Cocaine",
+      "MAOIs",
+      "Trazodone",
+      "Grapefruit"
+    ],
+    "unsafe_interactions": [
+      "Benzodiazepines"
+    ],
+    "dangerous_interactions": [
+      "Alcohol",
+      "GHB",
+      "GBL",
+      "Opioids",
+      "Tramadol"
+    ],
+    "sources": [
+      "https://psychonautwiki.org/wiki/Ketamine",
+      "https://erowid.org/chemicals/ketamine/ketamine_dose.shtml",
+      "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10479106/"
+    ],
+    "safety_notes": [
+      "Erowid's k-hole range begins around 100 mg insufflated (PsychonautWiki heavy is 150 mg).",
+      "Frequent use risks severe bladder and liver injury, and long-lasting tolerance.",
+      "Grapefruit can double oral exposure."
+    ],
+    "tolerance_half_days": 14.0,
+    "overrides": [
+      "Replaced placeholder or off-topic summary.",
+      "Tolerance: 14 days is the half time, baseline is 28 days (was stored as 14).",
+      "Benzodiazepines raised to unsafe (potentiated sedation, unexpected unconsciousness).",
+      "Insufflated onset widened to 1-15 min and total to 45-120 min (Erowid: 5-15 min, 45-60 min).",
+      "Oral active effects shortened: offset 1-2 h (was 3-6 h), total 1.5-3 h; Erowid gives ~90 min."
+    ]
+  }
+]

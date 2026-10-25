@@ -1,0 +1,170 @@
+[
+  {
+    "substance_a": "alcohol",
+    "substance_b": "cannabis",
+    "risk_level": "Low Risk & Synergy",
+    "note": "In excess, this combination can cause nausea."
+  },
+  {
+    "substance_a": "alcohol",
+    "substance_b": "psilocybin_mushrooms",
+    "risk_level": "Low Risk & Decrease",
+    "note": null
+  },
+  {
+    "substance_a": "alcohol",
+    "substance_b": "lsd",
+    "risk_level": "Low Risk & Decrease",
+    "note": null
+  },
+  {
+    "substance_a": "alcohol",
+    "substance_b": "dmt",
+    "risk_level": "Low Risk & Decrease",
+    "note": null
+  },
+  {
+    "substance_a": "alcohol",
+    "substance_b": "mdma",
+    "risk_level": "Caution",
+    "note": "The combination of MDMA and alcohol may increase strain on the cardiovascular system and lead to increased alcohol consumption. MDMA may also impair one's ability to recognize their level of drunkenness, leading to increased alcohol consumption and poor decision-making. Alcohol may also increase the risk of dehydration and hyperthermia (increased body temperature) when combined with MDMA."
+  },
+  {
+    "substance_a": "2c-b",
+    "substance_b": "alcohol",
+    "risk_level": "Low Risk & Decrease",
+    "note": null
+  },
+  {
+    "substance_a": "alcohol",
+    "substance_b": "ketamine",
+    "risk_level": "Dangerous",
+    "note": "Both substances cause ataxia and bring a very high risk of vomiting and unconsciousness. If the user falls unconscious while under the influence there is a severe risk of vomit aspiration if they are not placed in the recovery position."
+  },
+  {
+    "substance_a": "cannabis",
+    "substance_b": "psilocybin_mushrooms",
+    "risk_level": "Caution",
+    "note": "Cannabis has an unexpectedly strong and somewhat unpredictable synergy with psychedelics."
+  },
+  {
+    "substance_a": "cannabis",
+    "substance_b": "lsd",
+    "risk_level": "Caution",
+    "note": "Cannabis has an unexpectedly strong and somewhat unpredictable synergy with psychedelics."
+  },
+  {
+    "substance_a": "cannabis",
+    "substance_b": "dmt",
+    "risk_level": "Caution",
+    "note": "Cannabis has an unexpectedly strong and somewhat unpredictable synergy with psychedelics."
+  },
+  {
+    "substance_a": "cannabis",
+    "substance_b": "mdma",
+    "risk_level": "Low Risk & Synergy",
+    "note": "Large amounts of cannabis may cause strong and somewhat unpredictable experiences in combination with MDMA. Cannabis should be saved for towards the end of the experience if possible."
+  },
+  {
+    "substance_a": "2c-b",
+    "substance_b": "cannabis",
+    "risk_level": "Caution",
+    "note": "Cannabis has an unexpectedly strong and somewhat unpredictable synergy with psychedelics."
+  },
+  {
+    "substance_a": "cannabis",
+    "substance_b": "ketamine",
+    "risk_level": "Low Risk & Synergy",
+    "note": null
+  },
+  {
+    "substance_a": "lsd",
+    "substance_b": "psilocybin_mushrooms",
+    "risk_level": "Low Risk & Synergy",
+    "note": null
+  },
+  {
+    "substance_a": "dmt",
+    "substance_b": "psilocybin_mushrooms",
+    "risk_level": "Low Risk & Synergy",
+    "note": null
+  },
+  {
+    "substance_a": "mdma",
+    "substance_b": "psilocybin_mushrooms",
+    "risk_level": "Low Risk & Synergy",
+    "note": null
+  },
+  {
+    "substance_a": "2c-b",
+    "substance_b": "psilocybin_mushrooms",
+    "risk_level": "Low Risk & Synergy",
+    "note": null
+  },
+  {
+    "substance_a": "ketamine",
+    "substance_b": "psilocybin_mushrooms",
+    "risk_level": "Low Risk & Synergy",
+    "note": null
+  },
+  {
+    "substance_a": "dmt",
+    "substance_b": "lsd",
+    "risk_level": "Low Risk & Synergy",
+    "note": null
+  },
+  {
+    "substance_a": "lsd",
+    "substance_b": "mdma",
+    "risk_level": "Low Risk & Synergy",
+    "note": null
+  },
+  {
+    "substance_a": "2c-b",
+    "substance_b": "lsd",
+    "risk_level": "Low Risk & Synergy",
+    "note": null
+  },
+  {
+    "substance_a": "ketamine",
+    "substance_b": "lsd",
+    "risk_level": "Low Risk & Synergy",
+    "note": null
+  },
+  {
+    "substance_a": "dmt",
+    "substance_b": "mdma",
+    "risk_level": "Low Risk & Synergy",
+    "note": null
+  },
+  {
+    "substance_a": "2c-b",
+    "substance_b": "dmt",
+    "risk_level": "Low Risk & Synergy",
+    "note": null
+  },
+  {
+    "substance_a": "dmt",
+    "substance_b": "ketamine",
+    "risk_level": "Low Risk & Synergy",
+    "note": null
+  },
+  {
+    "substance_a": "2c-b",
+    "substance_b": "mdma",
+    "risk_level": "Low Risk & Synergy",
+    "note": null
+  },
+  {
+    "substance_a": "ketamine",
+    "substance_b": "mdma",
+    "risk_level": "Low Risk & Synergy",
+    "note": "No unexpected interactions, though likely to increase blood pressure but not an issue with sensible doses. Moving around on high doses of  this combination may be ill advised due to risk of physical injury."
+  },
+  {
+    "substance_a": "2c-b",
+    "substance_b": "ketamine",
+    "risk_level": "Low Risk & Synergy",
+    "note": null
+  }
+]

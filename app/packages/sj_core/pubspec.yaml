@@ -1,0 +1,11 @@
+name: sj_core
+description: Pure-Dart domain logic for Substance Journal (models, clocks, tolerance, curves). No Flutter dependency, so it is unit-testable and shareable.
+version: 0.1.0
+publish_to: none
+
+environment:
+  sdk: ^3.13.7
+
+dev_dependencies:
+  lints: ^6.0.0
+  test: ^1.25.6

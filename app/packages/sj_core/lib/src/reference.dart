@@ -1,0 +1,154 @@
+import 'dart:convert';
+
+/// Reference data models, parsed from the bundled `data/substances.json`
+/// (produced by scripts/sync_substance_data.py plus the audited overrides).
+
+class DoseRange {
+  const DoseRange(this.min, this.max);
+  final double? min;
+  final double? max;
+
+  static DoseRange? fromJson(Object? json) {
+    if (json is! Map<String, dynamic>) return null;
+    return DoseRange((json['min'] as num?)?.toDouble(), (json['max'] as num?)?.toDouble());
+  }
+}
+
+class DurationPhase {
+  const DurationPhase(this.phase, this.minMinutes, this.maxMinutes);
+  final String phase;
+  final double? minMinutes;
+  final double? maxMinutes;
+}
+
+class RouteOfAdministration {
+  const RouteOfAdministration({
+    required this.id,
+    required this.substanceKey,
+    required this.route,
+    required this.unit,
+    this.doseThreshold,
+    this.doseLight,
+    this.doseCommon,
+    this.doseStrong,
+    this.doseHeavy,
+    this.durations = const [],
+  });
+
+  /// Stable `substance:route` key, e.g. `cannabis:smoked`.
+  final String id;
+  final String substanceKey;
+  final String route;
+  final String unit;
+  final double? doseThreshold;
+  final DoseRange? doseLight;
+  final DoseRange? doseCommon;
+  final DoseRange? doseStrong;
+  final double? doseHeavy;
+  final List<DurationPhase> durations;
+
+  DurationPhase? duration(String phase) {
+    for (final d in durations) {
+      if (d.phase == phase) return d;
+    }
+    return null;
+  }
+}
+
+class Substance {
+  const Substance({
+    required this.key,
+    required this.name,
+    required this.category,
+    required this.summary,
+    required this.hasTolerance,
+    this.toleranceGroup,
+    this.toleranceZeroDays,
+    this.toleranceHalfDays,
+    this.roas = const [],
+    this.commonNames = const [],
+    this.sources = const [],
+    this.safetyNotes = const [],
+    this.dangerous = const [],
+    this.unsafe = const [],
+    this.uncertain = const [],
+  });
+
+  final String key;
+  final String name;
+  final String category;
+  final String summary;
+  final bool hasTolerance;
+  final String? toleranceGroup;
+  final double? toleranceZeroDays;
+  final double? toleranceHalfDays;
+  final List<RouteOfAdministration> roas;
+  final List<String> commonNames;
+  final List<String> sources;
+  final List<String> safetyNotes;
+  final List<String> dangerous;
+  final List<String> unsafe;
+  final List<String> uncertain;
+
+  RouteOfAdministration? route(String route) {
+    for (final r in roas) {
+      if (r.route == route) return r;
+    }
+    return null;
+  }
+}
+
+const _unitMinutes = {'seconds': 1 / 60, 'minutes': 1.0, 'hours': 60.0};
+
+List<String> _strings(Object? json) => (json as List?)?.map((e) => e as String).toList() ?? const [];
+
+Substance _parseSubstance(Map<String, dynamic> j) {
+  final key = j['key'] as String;
+  final roas = <RouteOfAdministration>[];
+  for (final r in (j['roas'] as List).cast<Map<String, dynamic>>()) {
+    final durations = <DurationPhase>[];
+    final dur = (r['duration'] as Map<String, dynamic>?) ?? const {};
+    for (final phase in const ['onset', 'comeup', 'peak', 'offset', 'total', 'afterglow']) {
+      final span = dur[phase];
+      if (span is! Map<String, dynamic>) continue;
+      final factor = _unitMinutes[span['units']] ?? 1.0;
+      final lo = (span['min'] as num?)?.toDouble();
+      final hi = (span['max'] as num?)?.toDouble();
+      if (lo == null && hi == null) continue;
+      durations.add(DurationPhase(phase, lo == null ? null : lo * factor, hi == null ? null : hi * factor));
+    }
+    roas.add(RouteOfAdministration(
+      id: '$key:${r['route']}',
+      substanceKey: key,
+      route: r['route'] as String,
+      unit: r['unit'] as String,
+      doseThreshold: (r['dose_threshold'] as num?)?.toDouble(),
+      doseLight: DoseRange.fromJson(r['dose_light']),
+      doseCommon: DoseRange.fromJson(r['dose_common']),
+      doseStrong: DoseRange.fromJson(r['dose_strong']),
+      doseHeavy: (r['dose_heavy'] as num?)?.toDouble(),
+      durations: durations,
+    ));
+  }
+  return Substance(
+    key: key,
+    name: j['name'] as String,
+    category: j['category'] as String? ?? '',
+    summary: j['summary'] as String? ?? '',
+    hasTolerance: j['has_tolerance'] as bool,
+    toleranceGroup: j['tolerance_group'] as String?,
+    toleranceZeroDays: (j['tolerance_zero_days'] as num?)?.toDouble(),
+    toleranceHalfDays: (j['tolerance_half_days'] as num?)?.toDouble(),
+    roas: roas,
+    commonNames: _strings(j['common_names']),
+    sources: _strings(j['sources']),
+    safetyNotes: _strings(j['safety_notes']),
+    dangerous: _strings(j['dangerous_interactions']),
+    unsafe: _strings(j['unsafe_interactions']),
+    uncertain: _strings(j['uncertain_interactions']),
+  );
+}
+
+/// Parses the text of `substances.json`.
+List<Substance> parseSubstances(String jsonText) =>
+    (jsonDecode(jsonText) as List).cast<Map<String, dynamic>>().map(_parseSubstance).toList();
