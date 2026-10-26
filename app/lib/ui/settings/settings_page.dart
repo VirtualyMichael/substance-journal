@@ -9,6 +9,7 @@ import '../units/custom_units_page.dart';
 import '../sync/sync_page.dart';
 import 'backup_section.dart';
 import '../products/products_page.dart';
+import '../safety/safer_use_page.dart';
 import 'reminders_section.dart';
 import 'pw_import_flow.dart';
 
@@ -216,6 +217,13 @@ class SettingsPage extends ConsumerWidget {
               icon: const Icon(Icons.grass),
               label: const Text('Cannabis products'),
               onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ProductsPage())),
+            ),
+            const SizedBox(height: Gap.sm),
+            OutlinedButton.icon(
+              key: const ValueKey('open-safer-use'),
+              icon: const Icon(Icons.health_and_safety_outlined),
+              label: const Text('Safer use'),
+              onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const SaferUsePage())),
             ),
             const SizedBox(height: Gap.lg),
             const RemindersSection(),
