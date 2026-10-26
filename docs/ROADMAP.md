@@ -76,11 +76,13 @@ Each phase ends with passing tests, and a build you can open.
 - Browser/web build is possible later (Flutter web) but is not planned.
 - Alcohol Tracker's MCP server reads its own SQLite file today; it will need to point at the new database in phase 9.
 
-## Status (2026-10-25)
-- **Phase 1 done:** Flutter app, core package, sync-ready database, compound ordering.
-- **Phase 2 done:** alcohol model, generic curves and cannabis dosing in Dart, checked against Python goldens.
-- **Phase 3 done:** people with strict per-person scoping, experiences, the add flow (compound, route, interaction check, dose, time), compound picker (search, history, favourites, hidden), timeline chart, timed notes, ratings, settings, adaptive phone/desktop layout, light and dark themes, custom compounds (own unit and rough timing), custom units ("1 pill = 120 mg", pick a count, edit, archive, delete) and editing an ingestion's time, dose, compound and route. The database is at schema v2 with a tested v1 upgrade.
-- **Phase 4 done (core):** calendar with multi-person progress badges (whole-number percent per person, tested to never mix people); Alcohol mode (per-device switch swapping the app to Today, History, Analytics and Settings) with drink presets, quick add (top drinks plus any saved drink, undo), custom drinks and editing, an estimated BAC curve from the ported Alcohol Tracker model, previous drinking days, daily bars, month heatmap, averages, tolerance with projected return to baseline, and per-person body and model settings.
-- **Alcohol Tracker parity still missing:** importing an existing Alcohol Tracker database and presets, cocktail recipes, appearance options (colours, rainbow accent, window transparency), daily and pre-write backups, the MCP/voice server, Linux and Windows installers, and exporting reports.
-- **Still to build elsewhere:** per-ingestion colour choice, cannabis products and strain tracking, analytics across all substances (phase 5), sync (phase 6).
+## Status (2026-10-26)
+- **Done:** reference data audit; Flutter app with people (strictly separate), experiences, the add flow, compound picker, timelines with hover read-outs, timed notes and ratings, custom compounds and units, calendar with multi-person progress badges, and Alcohol mode with presets, quick add, BAC model, history, analytics, limits and a recipe library.
+- **Imports:** Alcohol Tracker (drinks, presets, recipes) and PsychonautWiki Journal (with a review screen to pick experiences and map compounds and routes). Re-importing never overwrites, resurrects or duplicates anything you edited or deleted.
+- **Catalog:** the nine audited substances plus 272 copied from PsychonautWiki (CC BY-SA 4.0, marked not audited; see `ATTRIBUTION.md`).
+- **Sync (no server):** pair devices once (QR or pasted code), then pass encrypted packages as QR codes, a file, a share, or text sent any way you like. Per-peer deltas, last-edit-wins merge by hybrid logical clock, deletes included, each device's default person (and same-named people) merged into one.
+- **Safety:** passphrase-encrypted backup, restore-by-merge, CSV/JSON export, daily and pre-upgrade database copies, dose advisories (strong or heavy dose, repeat dose while still active, high 24-hour total, raised tolerance), tolerance and break projection.
+- **Insights:** monthly summary per person (doses, days, by substance, busiest weekday, change from last month).
+- **Packaging:** conditional Android release signing (`scripts/make_android_keystore.ps1`), Inno Setup installer script (`scripts/build_windows_installer.ps1`), CI workflow for Windows, Linux, Android and unsigned iOS.
+- **Not done:** push-notification reminders; the voice/MCP server for the new database (`my-mcp` still reads Alcohol Tracker's own file); LAN/Wi-Fi live sync (packages are transferred, not streamed); Linux and iOS builds have not been run (CI is set up for them); the Safer-use content pages, per-ingestion colours, cannabis product and strain tracking.
 - **Screenshots without launching the app:** `SJ_SCREENSHOTS_DIR=<dir> flutter test test/screenshots_test.dart` renders the main screens to PNG.
