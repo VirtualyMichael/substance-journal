@@ -1,0 +1,13 @@
+dist/
+build/
+*.png
+*.jpg
+*.mp4
+*.json
+*.apk
+*.zip
+data/
+docs/
+assets/
+.dart_tool/
+*.g.dart

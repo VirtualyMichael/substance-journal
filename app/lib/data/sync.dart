@@ -4,6 +4,7 @@ import 'package:drift/drift.dart';
 import 'package:sj_core/sj_core.dart';
 
 import 'database.dart';
+import 'dedupe.dart';
 
 /// Syncing journals between devices.
 ///
@@ -245,6 +246,7 @@ class SyncService {
     var maxHlc = '';
     final aliases = await _personAliases((tables['people'] as List?)?.cast<Map<String, dynamic>>() ?? const []);
     if (aliases.isNotEmpty) _applyAliases(tables, aliases);
+    await _aliasDuplicates(tables);
     for (final t in _tables) {
       final rows = (tables[t.name] as List?)?.cast<Map<String, dynamic>>() ?? const [];
       final result = await t.apply(db, rows);
@@ -273,6 +275,228 @@ class SyncService {
       }
     }
     return _TableResult(applied, skipped, maxHlc);
+  }
+
+  /// Recognises incoming entries that are already here under a different id, so a history imported
+  /// on both devices is not doubled when they sync. The match is remembered (`alias:` settings), so
+  /// later edits to either copy still land on the one entry. Nothing is deleted: a matched entry
+  /// keeps its local id and the usual last-edit-wins rule decides its fields.
+  Future<void> _aliasDuplicates(Map<String, dynamic> tables) async {
+    List<Map<String, dynamic>> rows(String t) => [...((tables[t] as List?)?.cast<Map<String, dynamic>>() ?? const [])];
+    final stored = {
+      for (final s in await (db.select(db.settings)..where((t) => t.key.like('alias:%'))).get()) s.key: s.value,
+    };
+    final fresh = <String, String>{};
+    void remember(String table, String remote, String local) {
+      stored['alias:$table:$remote'] = local;
+      fresh['alias:$table:$remote'] = local;
+    }
+
+    String? known(String table, String id) => stored['alias:$table:$id'];
+
+    // ---- custom compounds, matched by name ----
+    final subRows = rows('custom_substances');
+    final keyRewrite = <String, String>{}; // 'custom:remote' -> 'custom:local'
+    if (subRows.isNotEmpty) {
+      final local = [for (final c in await db.select(db.customSubstances).get()) if (!c.deleted) c];
+      final localIds = {for (final c in await db.select(db.customSubstances).get()) c.id};
+      final kept = <Map<String, dynamic>>[];
+      for (final r in subRows) {
+        final id = r['id'] as String;
+        if (localIds.contains(id)) {
+          kept.add(r);
+          continue;
+        }
+        final target = known('custom_substances', id) ?? local.where((c) => c.name.toLowerCase() == (r['name'] as String).toLowerCase()).firstOrNull?.id;
+        if (target == null) {
+          kept.add(r);
+        } else {
+          remember('custom_substances', id, target);
+          keyRewrite['custom:$id'] = 'custom:$target';
+        }
+      }
+      tables['custom_substances'] = kept;
+    }
+    String rekey(String k) => keyRewrite[k] ?? k;
+    for (final t in const ['custom_units', 'ingestions', 'presets']) {
+      final list = tables[t] as List?;
+      if (list == null || keyRewrite.isEmpty) continue;
+      tables[t] = [for (final r in list.cast<Map<String, dynamic>>()) {...r, 'substanceKey': rekey(r['substanceKey'] as String)}];
+    }
+
+    // ---- custom units ----
+    final unitRows = rows('custom_units');
+    final unitAlias = <String, String>{};
+    if (unitRows.isNotEmpty) {
+      final all = await db.select(db.customUnits).get();
+      final localIds = {for (final u in all) u.id};
+      String key(String substance, String route, String name, num? dose) => '$substance|$route|${name.toLowerCase()}|${dose ?? ''}';
+      final byKey = {for (final u in all) if (!u.deleted) key(u.substanceKey, u.route, u.name, u.doseOfOneUnit): u.id};
+      final kept = <Map<String, dynamic>>[];
+      for (final r in unitRows) {
+        final id = r['id'] as String;
+        if (localIds.contains(id)) {
+          kept.add(r);
+          continue;
+        }
+        final target = known('custom_units', id) ?? byKey[key(r['substanceKey'] as String, r['route'] as String, r['name'] as String, r['doseOfOneUnit'] as num?)];
+        if (target == null) {
+          kept.add(r);
+        } else {
+          unitAlias[id] = target;
+          remember('custom_units', id, target);
+        }
+      }
+      tables['custom_units'] = kept;
+    }
+
+    // ---- doses ----
+    final incomingDoses = rows('ingestions');
+    final expVotes = <String, Map<String, int>>{}; // incoming experience -> local experience -> votes
+    if (incomingDoses.isNotEmpty) {
+      final all = await db.select(db.ingestions).get();
+      final localIds = {for (final i in all) i.id};
+      final packageIds = {for (final r in incomingDoses) r['id'] as String};
+      final byId = {for (final i in all) i.id: i};
+      final claimed = <String>{...stored.entries.where((e) => e.key.startsWith('alias:ingestions:')).map((e) => e.value)};
+      final free = <String, List<Ingestion>>{}; // key -> local doses not yet matched, by id
+      for (final i in all) {
+        if (packageIds.contains(i.id) || claimed.contains(i.id)) continue;
+        free.putIfAbsent(doseKey(i.personId, i.substanceKey, i.route, i.time, i.dose), () => []).add(i);
+      }
+      for (final list in free.values) {
+        list.sort((a, b) => a.id.compareTo(b.id));
+      }
+      final rewritten = <Map<String, dynamic>>[];
+      for (final r in [...incomingDoses]..sort((a, b) => (a['id'] as String).compareTo(b['id'] as String))) {
+        final id = r['id'] as String;
+        var row = r;
+        if (unitAlias.containsKey(r['customUnitId'])) row = {...row, 'customUnitId': unitAlias[r['customUnitId']]};
+        if (!localIds.contains(id)) {
+          var target = known('ingestions', id);
+          if (target == null) {
+            final time = DateTime.fromMillisecondsSinceEpoch((r['time'] as num).toInt());
+            final k = doseKey(r['personId'] as String, r['substanceKey'] as String, r['route'] as String, time, (r['dose'] as num?)?.toDouble());
+            final candidates = free[k];
+            if (candidates != null && candidates.isNotEmpty) {
+              target = candidates.removeAt(0).id;
+              remember('ingestions', id, target);
+            }
+          }
+          final local = target == null ? null : byId[target];
+          if (local != null) {
+            row = {...row, 'id': local.id, 'experienceId': local.experienceId};
+            final votes = expVotes.putIfAbsent(r['experienceId'] as String, () => {});
+            votes[local.experienceId] = (votes[local.experienceId] ?? 0) + 1;
+          }
+        }
+        rewritten.add(row);
+      }
+      tables['ingestions'] = rewritten;
+    }
+
+    // ---- experiences: an incoming one that holds already-known doses is the same experience ----
+    final expRows = rows('experiences');
+    final expAlias = <String, String>{};
+    if (expRows.isNotEmpty || expVotes.isNotEmpty) {
+      final all = await db.select(db.experiences).get();
+      final localById = {for (final e in all) e.id: e};
+      final kept = <Map<String, dynamic>>[];
+      for (final r in expRows) {
+        final id = r['id'] as String;
+        if (localById.containsKey(id)) {
+          kept.add(r);
+          continue;
+        }
+        String? target = known('experiences', id);
+        if (target == null) {
+          final votes = expVotes[id];
+          if (votes != null && votes.isNotEmpty) {
+            target = (votes.entries.toList()..sort((a, b) => b.value.compareTo(a.value))).first.key;
+            remember('experiences', id, target);
+          }
+        }
+        final local = target == null ? null : localById[target];
+        if (local == null) {
+          kept.add(r);
+          continue;
+        }
+        expAlias[id] = local.id;
+        // Fill in what the local one lacks from the incoming one; both devices end up with the union.
+        final incoming = Experience.fromJson(r);
+        final localJson = local.toJson();
+        var changed = false;
+        void fill(String field, Object? value) {
+          if ((localJson[field] == null || localJson[field] == '' || localJson[field] == false) && value != null && value != '' && value != false) {
+            localJson[field] = value;
+            changed = true;
+          }
+        }
+
+        fill('title', incoming.title);
+        fill('notes', incoming.notes);
+        fill('locationName', incoming.locationName);
+        fill('latitude', incoming.latitude);
+        fill('longitude', incoming.longitude);
+        fill('isFavorite', incoming.isFavorite);
+        if (changed) {
+          localJson['hlc'] = db.nextHlc();
+          kept.add(localJson);
+        } else if (_newer(incoming.hlc, local.hlc)) {
+          kept.add({...r, 'id': local.id, 'personId': local.personId});
+        }
+      }
+      tables['experiences'] = kept;
+    }
+    // Rows for an experience matched in this package or in an earlier sync point at the local one.
+    String experienceFor(String id) => expAlias[id] ?? known('experiences', id) ?? id;
+    for (final t in const ['ingestions', 'timed_notes', 'ratings']) {
+      final list = tables[t] as List?;
+      if (list == null) continue;
+      tables[t] = [for (final r in list.cast<Map<String, dynamic>>()) {...r, 'experienceId': experienceFor(r['experienceId'] as String)}];
+    }
+
+    // ---- notes and ratings that are already on the matched experience ----
+    final noteRows = rows('timed_notes');
+    if (noteRows.isNotEmpty) {
+      final all = await db.select(db.timedNotes).get();
+      final localIds = {for (final n in all) n.id};
+      final byKey = {for (final n in all) '${n.experienceId}|${noteKey(n)}': n.id};
+      tables['timed_notes'] = [
+        for (final r in noteRows)
+          () {
+            final id = r['id'] as String;
+            if (localIds.contains(id)) return r;
+            final note = TimedNote.fromJson(r);
+            final target = known('timed_notes', id) ?? byKey['${note.experienceId}|${noteKey(note)}'];
+            if (target == null) return r;
+            remember('timed_notes', id, target);
+            return {...r, 'id': target};
+          }(),
+      ];
+    }
+    final ratingRows = rows('ratings');
+    if (ratingRows.isNotEmpty) {
+      final all = await db.select(db.ratings).get();
+      final localIds = {for (final x in all) x.id};
+      final byKey = {for (final x in all) '${x.experienceId}|${ratingKey(x)}': x.id};
+      tables['ratings'] = [
+        for (final r in ratingRows)
+          () {
+            final id = r['id'] as String;
+            if (localIds.contains(id)) return r;
+            final rating = Rating.fromJson(r);
+            final target = known('ratings', id) ?? byKey['${rating.experienceId}|${ratingKey(rating)}'];
+            if (target == null) return r;
+            remember('ratings', id, target);
+            return {...r, 'id': target};
+          }(),
+      ];
+    }
+
+    for (final e in fresh.entries) {
+      await db.into(db.settings).insertOnConflictUpdate(SettingsCompanion.insert(key: e.key, value: e.value, hlc: db.nextHlc()));
+    }
   }
 
   /// Incoming people who are already here under another id. Each device creates its own "Me" on

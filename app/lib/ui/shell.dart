@@ -48,6 +48,13 @@ class _AppShellState extends ConsumerState<AppShell> {
   int _index = 0;
   bool? _lastMode;
 
+  @override
+  void initState() {
+    super.initState();
+    // Start answering Wi-Fi sync requests from paired devices for as long as the app is open.
+    ref.read(lanServerProvider);
+  }
+
   Future<void> _setMode(bool on) async {
     final db = ref.read(databaseProvider);
     if (on) await db.ensureDefaultDrinkPresets();

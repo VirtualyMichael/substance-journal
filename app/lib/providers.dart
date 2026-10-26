@@ -13,6 +13,7 @@ import 'data/alcohol_import.dart';
 import 'data/custom_substances.dart';
 import 'data/database.dart';
 import 'data/reference_repository.dart';
+import 'data/lan_sync.dart';
 import 'data/sync.dart';
 
 /// Overridden at startup (and in tests) with real instances.
@@ -191,6 +192,19 @@ final deviceNameProvider = StreamProvider<String>(
 
 final syncServiceProvider = Provider<SyncService>(
   (ref) => SyncService(ref.watch(databaseProvider), deviceName: ref.watch(deviceNameProvider).value ?? defaultDeviceName()),
+);
+
+/// Answers sync requests from your other devices while the app is open. Not started in tests.
+final lanServerProvider = Provider<LanSyncServer?>((ref) {
+  if (Platform.environment.containsKey('FLUTTER_TEST')) return null;
+  final server = LanSyncServer(ref.watch(syncServiceProvider), ref.watch(databaseProvider).deviceId);
+  ref.onDispose(server.stop);
+  server.start();
+  return server;
+});
+
+final lanClientProvider = Provider<LanSyncClient>(
+  (ref) => LanSyncClient(ref.watch(syncServiceProvider), ref.watch(databaseProvider).deviceId),
 );
 
 /// Cameras are for phones and tablets; computers use paste, a file or Share instead.

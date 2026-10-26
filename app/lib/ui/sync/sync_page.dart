@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sj_core/sj_core.dart';
 
+import '../../data/dedupe.dart';
+import '../../data/lan_sync.dart';
 import '../../data/sync.dart';
 import '../../providers.dart';
 import '../design.dart';
@@ -24,6 +26,9 @@ class SyncPage extends ConsumerStatefulWidget {
 class _SyncPageState extends ConsumerState<SyncPage> {
   List<SyncPeer> _peers = const [];
   bool _loaded = false;
+  bool _wifiBusy = false;
+  List<String> _addresses = const [];
+  bool _canUndoCleanup = false;
 
   SyncService get _sync => ref.read(syncServiceProvider);
 
@@ -35,11 +40,98 @@ class _SyncPageState extends ConsumerState<SyncPage> {
 
   Future<void> _refresh() async {
     final peers = await _sync.peers();
+    final undo = await DuplicateCleaner(ref.read(databaseProvider)).hasUndo();
+    final addresses = await LanSyncClient.localAddresses();
     if (!mounted) return;
     setState(() {
       _peers = peers;
       _loaded = true;
+      _canUndoCleanup = undo;
+      _addresses = addresses;
     });
+  }
+
+  /// Syncs with one paired device over the network, or with every paired device.
+  Future<void> _wifiSync({SyncPeer? only, String? address}) async {
+    final targets = only != null ? [only] : [for (final p in _peers) if (!p.pending) p];
+    if (targets.isEmpty) return _message('Pair with a device first, and start the first sync from the device that scanned the code.');
+    setState(() => _wifiBusy = true);
+    final lines = <String>[];
+    try {
+      final client = ref.read(lanClientProvider);
+      for (final peer in targets) {
+        try {
+          final host = address?.split(':').first;
+          final port = address != null && address.contains(':') ? int.tryParse(address.split(':').last) : null;
+          final r = await client.syncWith(peer.deviceId, address: host, port: port);
+          lines.add('${r.peerName}: ${r.received == 0 ? 'up to date' : '${r.received} changes merged'}');
+        } on LanSyncException catch (e) {
+          lines.add('${peer.name}: ${e.message}');
+        } catch (e) {
+          lines.add('${peer.name}: $e');
+        }
+      }
+    } finally {
+      if (mounted) setState(() => _wifiBusy = false);
+    }
+    await _refresh();
+    _message(lines.join('\n'));
+  }
+
+  Future<void> _connectByAddress(SyncPeer peer) async {
+    final controller = TextEditingController();
+    final text = await showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Connect to ${peer.name}'),
+        content: TextField(
+          key: const ValueKey('address-field'),
+          controller: controller,
+          autofocus: true,
+          decoration: const InputDecoration(labelText: 'Address', hintText: '192.168.1.20  or  192.168.1.20:47832'),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+          FilledButton(onPressed: () => Navigator.pop(context, controller.text.trim()), child: const Text('Sync')),
+        ],
+      ),
+    );
+    if (text != null && text.isNotEmpty) await _wifiSync(only: peer, address: text);
+  }
+
+  Future<void> _findDuplicates() async {
+    final cleaner = DuplicateCleaner(ref.read(databaseProvider));
+    final scan = await cleaner.scan();
+    if (!mounted) return;
+    if (scan.isEmpty) return _message('No duplicates found.');
+    final go = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Duplicates found'),
+        content: Text(
+          '${scan.doseCopies} doses are copies of another dose'
+          '${scan.experienceMerges.isEmpty ? '' : ', spread over ${scan.experienceMerges.fold<int>(0, (n, g) => n + g.length)} experiences that will become ${scan.experienceGroups}'}'
+          '${scan.noteCopies + scan.ratingCopies == 0 ? '' : ', plus ${scan.noteCopies + scan.ratingCopies} repeated notes or ratings'}.\n\n'
+          'Nothing is lost: each kept entry gets any note, time or detail its copy had, experiences are combined with everything in them, '
+          'and real twins (two identical drinks in one experience) are left alone. You can undo this afterwards.',
+          key: const ValueKey('duplicates-summary'),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
+          FilledButton(key: const ValueKey('cleanup-go'), onPressed: () => Navigator.pop(context, true), child: const Text('Merge duplicates')),
+        ],
+      ),
+    );
+    if (go != true || !mounted) return;
+    final result = await cleaner.apply(scan);
+    await _refresh();
+    _message('Merged ${result.dosesMerged} doses and ${result.experiencesMerged} experiences. Use "Undo last cleanup" to reverse it.');
+  }
+
+  Future<void> _undoCleanup() async {
+    final n = await DuplicateCleaner(ref.read(databaseProvider)).undo();
+    await _refresh();
+    _message('Restored $n entries.');
   }
 
   void _message(String text) {
@@ -256,6 +348,19 @@ class _SyncPageState extends ConsumerState<SyncPage> {
                 subtitle: Text(name),
                 trailing: TextButton(onPressed: _rename, child: const Text('Rename')),
               ),
+              const SizedBox(height: Gap.sm),
+              FilledButton.icon(
+                key: const ValueKey('wifi-sync'),
+                icon: _wifiBusy ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2)) : const Icon(Icons.wifi),
+                label: const Text('Sync now over Wi-Fi'),
+                onPressed: _wifiBusy ? null : () => _wifiSync(),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'Both devices need the app open on the same Wi-Fi. The first sync must be started from the device that scanned the pairing code.'
+                '${_addresses.isEmpty ? '' : ' This device: ${_addresses.join(', ')}.'}',
+                style: text.bodySmall,
+              ),
               const Divider(),
               Text('Pair a device', style: text.titleMedium),
               const SizedBox(height: 4),
@@ -315,6 +420,19 @@ class _SyncPageState extends ConsumerState<SyncPage> {
                         ),
                         const SizedBox(height: Gap.sm),
                         Wrap(spacing: Gap.sm, children: [
+                          if (!peer.pending) ...[
+                            FilledButton.tonalIcon(
+                              key: ValueKey('wifi-${peer.deviceId}'),
+                              icon: const Icon(Icons.wifi),
+                              label: const Text('Wi-Fi'),
+                              onPressed: _wifiBusy ? null : () => _wifiSync(only: peer),
+                            ),
+                            TextButton(
+                              key: ValueKey('address-${peer.deviceId}'),
+                              onPressed: _wifiBusy ? null : () => _connectByAddress(peer),
+                              child: const Text('By address'),
+                            ),
+                          ],
                           FilledButton.tonalIcon(
                             key: ValueKey('send-${peer.deviceId}'),
                             icon: const Icon(Icons.upload),
@@ -332,6 +450,30 @@ class _SyncPageState extends ConsumerState<SyncPage> {
                     ),
                   ),
                 ),
+              const SizedBox(height: Gap.lg),
+              Text('Duplicates', style: text.titleMedium),
+              const SizedBox(height: 4),
+              Text(
+                'If syncing made copies of the same doses (for example you imported the same history on both devices), '
+                'this finds them and merges each set into one, keeping anything only one copy had.',
+                style: text.bodySmall,
+              ),
+              const SizedBox(height: Gap.sm),
+              Wrap(spacing: Gap.sm, runSpacing: Gap.sm, children: [
+                OutlinedButton.icon(
+                  key: const ValueKey('find-duplicates'),
+                  icon: const Icon(Icons.content_copy),
+                  label: const Text('Find and merge duplicates'),
+                  onPressed: _findDuplicates,
+                ),
+                if (_canUndoCleanup)
+                  OutlinedButton.icon(
+                    key: const ValueKey('undo-cleanup'),
+                    icon: const Icon(Icons.undo),
+                    label: const Text('Undo last cleanup'),
+                    onPressed: _undoCleanup,
+                  ),
+              ]),
               const SizedBox(height: Gap.md),
               Text(
                 'Tip: after pairing, send from one device, receive on the other, then send back. '

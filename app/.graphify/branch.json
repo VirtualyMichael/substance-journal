@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "branchName": "flutter-app",
+  "worktreePath": "C:\\Users\\micha\\Downloads\\Coding Projects\\Substance Journal",
+  "upstream": "origin/flutter-app",
+  "mergeBase": "8951c739a5d95528a5d0742830231d32129c3be8",
+  "firstSeenHead": "bd541407ee01579d9cf157e606feb38d5767fd52",
+  "lastSeenHead": "bd541407ee01579d9cf157e606feb38d5767fd52",
+  "lastAnalyzedHead": "bd541407ee01579d9cf157e606feb38d5767fd52",
+  "stale": false,
+  "staleReason": null,
+  "staleSince": null,
+  "lifecycleEvent": null,
+  "createdAt": "2026-10-26T17:54:05.712Z",
+  "updatedAt": "2026-10-26T17:54:05.712Z"
+}
