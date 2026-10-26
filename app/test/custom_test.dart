@@ -108,6 +108,12 @@ void main() {
               id TEXT NOT NULL PRIMARY KEY, hlc TEXT NOT NULL, deleted INTEGER NOT NULL DEFAULT 0,
               name TEXT NOT NULL, units TEXT NOT NULL, description TEXT NOT NULL DEFAULT ''
             )''');
+          // Version 1 already had the peers table (v3 adds a column to it).
+          raw.execute('''
+            CREATE TABLE peers (
+              device_id TEXT NOT NULL PRIMARY KEY, name TEXT NOT NULL, public_key TEXT NOT NULL,
+              last_known_address TEXT, last_synced_hlc TEXT NOT NULL DEFAULT '', paired_at INTEGER NOT NULL
+            )''');
           raw.execute("INSERT INTO custom_substances (id, hlc, name, units) VALUES ('old', '1-0-x', 'Old compound', 'mg')");
           raw.execute('PRAGMA user_version = 1');
         }),
@@ -118,6 +124,9 @@ void main() {
       expect(rows.single.name, 'Old compound');
       expect(rows.single.onsetMinutes, 30); // new columns get their defaults
       expect(rows.single.durationHours, 4.0);
+      // The sync key column was added to peers too.
+      final peers = await legacy.select(legacy.peers).get();
+      expect(peers, isEmpty);
     });
   });
 
