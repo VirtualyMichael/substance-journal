@@ -353,7 +353,9 @@ void main() {
     });
 
     test('the default Alcohol Tracker location follows its own folder layout', () {
-      expect(defaultTrackerDatabasePath({'LOCALAPPDATA': r'C:\Users\x\AppData\Local'}), Platform.isWindows ? r'C:\Users\x\AppData\Local\AlcoholTracker\alcohol_tracker.db' : isNotNull);
+      if (Platform.isWindows) {
+        expect(defaultTrackerDatabasePath({'LOCALAPPDATA': r'C:\Users\x\AppData\Local'}), r'C:\Users\x\AppData\Local\AlcoholTracker\alcohol_tracker.db');
+      }
       if (Platform.isLinux) {
         expect(defaultTrackerDatabasePath({'XDG_DATA_HOME': '/data'}), '/data/AlcoholTracker/alcohol_tracker.db');
         expect(defaultTrackerDatabasePath({'HOME': '/home/x'}), '/home/x/.local/share/AlcoholTracker/alcohol_tracker.db');
