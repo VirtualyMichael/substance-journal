@@ -1,7 +1,11 @@
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sj_core/sj_core.dart';
 
+import 'data/alcohol_import.dart';
 import 'data/custom_substances.dart';
 import 'data/database.dart';
 import 'data/reference_repository.dart';
@@ -86,6 +90,24 @@ final drinkPresetsProvider = StreamProvider<List<Preset>>((ref) => ref.watch(dat
 final alcoholDrinksProvider = Provider.autoDispose.family<List<Ingestion>, String>((ref, personId) {
   final all = ref.watch(personIngestionsProvider(personId)).value ?? const <Ingestion>[];
   return [for (final i in all) if (i.substanceKey == 'alcohol') i];
+});
+
+// ---- importing from Alcohol Tracker ----
+
+/// Asks the user for a file. Replaced in tests so no real dialog opens.
+final trackerFilePickerProvider = Provider<Future<String?> Function()>((ref) => () async {
+      final file = await FilePicker.pickFile(
+        type: FileType.custom,
+        allowedExtensions: const ['json', 'db', 'sqlite', 'sqlite3'],
+        dialogTitle: 'Choose an Alcohol Tracker export or database',
+      );
+      return file?.path;
+    });
+
+/// Alcohol Tracker's database on this computer, if it exists (never on phones).
+final trackerDefaultPathProvider = Provider<String?>((ref) {
+  final path = defaultTrackerDatabasePath();
+  return path != null && File(path).existsSync() ? path : null;
 });
 
 // ---- calendar (the one place that looks across people) ----

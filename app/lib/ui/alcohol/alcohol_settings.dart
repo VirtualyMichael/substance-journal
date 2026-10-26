@@ -6,6 +6,7 @@ import '../../data/database.dart';
 import '../../providers.dart';
 import '../design.dart';
 import 'drink_dialogs.dart';
+import 'import_flow.dart';
 
 /// Alcohol mode switch, the body and model settings behind the estimates, and drink presets.
 class AlcoholSettingsSection extends ConsumerWidget {
@@ -40,6 +41,34 @@ class AlcoholSettingsSection extends ConsumerWidget {
           },
         ),
         EstimateSettingsForm(key: ValueKey('estimates-${person.id}'), person: person),
+        const SizedBox(height: Gap.sm),
+        Text('Import from Alcohol Tracker', style: text.titleSmall),
+        const SizedBox(height: 4),
+        Text(
+          'Bring over your drinks and presets from an Alcohol Tracker export (.json) or its database. '
+          'Nothing in Alcohol Tracker is changed, and importing the same file twice adds nothing.',
+          style: text.bodySmall,
+        ),
+        const SizedBox(height: Gap.sm),
+        Wrap(
+          spacing: Gap.sm,
+          runSpacing: Gap.sm,
+          children: [
+            OutlinedButton.icon(
+              key: const ValueKey('import-tracker-file'),
+              icon: const Icon(Icons.file_open_outlined),
+              label: const Text('Choose a file...'),
+              onPressed: () => runTrackerImport(context, ref),
+            ),
+            if (ref.watch(trackerDefaultPathProvider) case final String found)
+              OutlinedButton.icon(
+                key: const ValueKey('import-tracker-pc'),
+                icon: const Icon(Icons.computer_outlined),
+                label: const Text('Use Alcohol Tracker on this computer'),
+                onPressed: () => runTrackerImport(context, ref, path: found),
+              ),
+          ],
+        ),
         const SizedBox(height: Gap.md),
         Row(
           children: [
