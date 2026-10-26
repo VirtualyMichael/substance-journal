@@ -87,6 +87,11 @@ class AppDatabase extends _$AppDatabase {
     required DateTime sortDate,
     String title = '',
     String notes = '',
+    bool isFavorite = false,
+    String? locationName,
+    double? latitude,
+    double? longitude,
+    DateTime? createdAt,
   }) async {
     final id = newId();
     await into(experiences).insert(ExperiencesCompanion.insert(
@@ -94,9 +99,13 @@ class AppDatabase extends _$AppDatabase {
       hlc: nextHlc(),
       personId: personId,
       sortDate: sortDate,
-      createdAt: DateTime.fromMillisecondsSinceEpoch(_nowMillis()),
+      createdAt: createdAt ?? DateTime.fromMillisecondsSinceEpoch(_nowMillis()),
       title: Value(title),
       notes: Value(notes),
+      isFavorite: Value(isFavorite),
+      locationName: Value(locationName),
+      latitude: Value(latitude),
+      longitude: Value(longitude),
     ));
     return (select(experiences)..where((t) => t.id.equals(id))).getSingle();
   }

@@ -94,6 +94,16 @@ final alcoholDrinksProvider = Provider.autoDispose.family<List<Ingestion>, Strin
 
 // ---- importing from Alcohol Tracker ----
 
+/// Asks for a PsychonautWiki Journal export. Replaced in tests so no real dialog opens.
+final pwFilePickerProvider = Provider<Future<String?> Function()>((ref) => () async {
+      final file = await FilePicker.pickFile(
+        type: FileType.custom,
+        allowedExtensions: const ['json'],
+        dialogTitle: 'Choose a PsychonautWiki Journal export',
+      );
+      return file?.path;
+    });
+
 /// Asks the user for a file. Replaced in tests so no real dialog opens.
 final trackerFilePickerProvider = Provider<Future<String?> Function()>((ref) => () async {
       final file = await FilePicker.pickFile(

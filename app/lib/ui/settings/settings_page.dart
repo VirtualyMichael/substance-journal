@@ -6,6 +6,7 @@ import '../../providers.dart';
 import '../design.dart';
 import '../alcohol/alcohol_settings.dart';
 import '../units/custom_units_page.dart';
+import 'pw_import_flow.dart';
 
 class SettingsPage extends ConsumerWidget {
   const SettingsPage({super.key, required this.person});
@@ -157,6 +158,21 @@ class SettingsPage extends ConsumerWidget {
               onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const CustomUnitsPage())),
             ),
             const SizedBox(height: Gap.lg),
+            Text('Import from PsychonautWiki Journal', style: text.titleMedium),
+            const SizedBox(height: 4),
+            Text(
+              'Export your journal from the PsychonautWiki Journal app, then choose the file here. '
+              'Experiences, ingestions, notes, ratings, custom units and consumers come across; importing the same file twice adds nothing.',
+              style: text.bodySmall,
+            ),
+            const SizedBox(height: Gap.sm),
+            OutlinedButton.icon(
+              key: const ValueKey('import-pw-file'),
+              icon: const Icon(Icons.file_open_outlined),
+              label: const Text('Choose an export...'),
+              onPressed: () => runPwImport(context, ref),
+            ),
+            const SizedBox(height: Gap.lg),
             Text('Hidden compounds', style: text.titleMedium),
             const SizedBox(height: 4),
             if (prefs.hidden.isEmpty)
@@ -179,7 +195,9 @@ class SettingsPage extends ConsumerWidget {
             const SizedBox(height: 4),
             Text(
               'Substance Journal keeps everything on your devices. Dose and duration reference data comes from '
-              'PsychonautWiki, TripSit and Erowid; estimates are a guide, not medical advice.',
+              'PsychonautWiki, TripSit and Erowid; estimates are a guide, not medical advice. The nine core compounds were '
+              'checked against several sources; the rest of the catalog is copied from PsychonautWiki (CC BY-SA 4.0, '
+              'psychonautwiki.org) and has not been independently checked.',
               style: text.bodySmall,
             ),
           ],
