@@ -195,10 +195,12 @@ void main() {
 
     await tester.tap(find.text('Compounds'));
     await settle(tester);
-    List<String> order() => tester
-        .widgetList<ListTile>(find.byType(ListTile))
-        .map((t) => (t.title as Text).data!)
-        .toList();
+    // Compound tiles only (the tolerance shortcut is a tile too); the name is the first thing in the title row.
+    List<String> order() => [
+          for (final t in tester.widgetList<ListTile>(find.byType(ListTile)))
+            if ((t.key as ValueKey?)?.value.toString().startsWith('compound-') ?? false)
+              (((t.title as Row).children.first as Flexible).child as Text).data!,
+        ];
 
     expect(order().first, 'Cannabis');
     expect(order().indexOf('Cannabis'), lessThan(order().indexOf('MDMA')));

@@ -6,6 +6,7 @@ import '../../data/database.dart';
 import '../../providers.dart';
 import '../compounds/compound_picker.dart';
 import '../design.dart';
+import 'advisory_card.dart';
 import 'dose_widgets.dart';
 
 enum AddStep { compound, route, warnings, dose, when }
@@ -323,6 +324,27 @@ class _AddIngestionPageState extends ConsumerState<AddIngestionPage> {
     );
   }
 
+  /// Heads-ups for the dose as typed, from what this person has logged before.
+  List<DoseAdvisory> _advisories(RouteOfAdministration roa) {
+    final substance = _substance;
+    if (substance == null) return const [];
+    final catalog = ref.read(catalogProvider);
+    final past = [
+      for (final i in ref.watch(personIngestionsProvider(widget.personId)).value ?? const <Ingestion>[])
+        PastDose(substanceKey: i.substanceKey, route: i.route, time: i.time, dose: i.dose, unit: i.unit),
+    ];
+    // Cannabis bands are absorbed THC, so compare the estimate rather than the product weight.
+    final dose = substance.key == 'cannabis' ? _dose.cannabisEstimate(roa)?.absorbedCentralMg : _dose.dose;
+    return doseAdvisories(
+      substance: substance,
+      roa: roa,
+      dose: _dose.unknown ? null : dose,
+      at: ref.read(clockProvider)(),
+      past: past,
+      byKey: catalog.byKey,
+    );
+  }
+
   Widget _doseStep() {
     final roa = _roa!;
     return Column(
@@ -342,6 +364,7 @@ class _AddIngestionPageState extends ConsumerState<AddIngestionPage> {
                   _error = null;
                 }),
               ),
+              AdvisoryList(advisories: _advisories(roa)),
               if (_error != null) _errorText(),
             ],
           ),

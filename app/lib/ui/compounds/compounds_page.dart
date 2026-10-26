@@ -9,6 +9,7 @@ import '../add/add_ingestion_page.dart';
 import '../design.dart';
 import '../journal/journal_page.dart';
 import 'compound_picker.dart';
+import 'tolerance_page.dart';
 import 'custom_substance_dialog.dart';
 
 /// Browse compounds; tap one for its reference page.
@@ -32,11 +33,27 @@ class CompoundsPage extends ConsumerWidget {
         alignment: Alignment.topCenter,
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: contentMaxWidth),
-          child: CompoundPicker(
-            personId: personId,
-            onSelected: (s) => Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => CompoundDetailPage(substanceKey: s.key, personId: personId)),
-            ),
+          child: Column(
+            children: [
+              ListTile(
+                key: const ValueKey('open-tolerance'),
+                leading: const Icon(Icons.trending_down),
+                title: const Text('Tolerance and breaks'),
+                subtitle: const Text('Where your tolerance stands and when it should reset'),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => TolerancePage(personId: personId)),
+                ),
+              ),
+              Expanded(
+                child: CompoundPicker(
+                  personId: personId,
+                  onSelected: (s) => Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => CompoundDetailPage(substanceKey: s.key, personId: personId)),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),

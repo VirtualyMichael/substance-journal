@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sj_core/sj_core.dart';
 
+import '../../data/custom_substances.dart';
 import '../../data/database.dart';
 import '../../providers.dart';
 import '../design.dart';
@@ -26,6 +27,7 @@ class _CompoundPickerState extends ConsumerState<CompoundPicker> {
   CompoundSort _sort = CompoundSort.mostUsed;
   bool _showHidden = false;
   String? _category;
+  bool _auditedOnly = false;
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +38,7 @@ class _CompoundPickerState extends ConsumerState<CompoundPicker> {
     final db = ref.read(databaseProvider);
 
     final compounds = orderCompounds(
-      all: reference.substances,
+      all: [for (final s in reference.substances) if (!_auditedOnly || s.audited) s],
       usage: usage,
       query: _query,
       sort: _sort,
@@ -77,6 +79,13 @@ class _CompoundPickerState extends ConsumerState<CompoundPicker> {
                   selected: _sort == sort,
                   onSelected: (_) => setState(() => _sort = sort),
                 ),
+              FilterChip(
+                key: const ValueKey('audited-only'),
+                avatar: const Icon(Icons.verified_outlined, size: 16),
+                label: const Text('Audited only'),
+                selected: _auditedOnly,
+                onSelected: (v) => setState(() => _auditedOnly = v),
+              ),
               if (prefs.hidden.isNotEmpty)
                 FilterChip(
                   label: Text(_showHidden ? 'Hiding off' : 'Hidden (${prefs.hidden.length})'),
@@ -125,7 +134,17 @@ class _CompoundPickerState extends ConsumerState<CompoundPicker> {
                         radius: 14,
                         child: Text(s.name.characters.first, style: const TextStyle(color: Colors.white, fontSize: 13)),
                       ),
-                      title: Text(s.name),
+                      title: Row(children: [
+                        Flexible(child: Text(s.name, overflow: TextOverflow.ellipsis)),
+                        if (s.audited && !isCustomKey(s.key))
+                          const Padding(
+                            padding: EdgeInsets.only(left: 6),
+                            child: Tooltip(
+                              message: 'Doses and timing checked against several sources',
+                              child: Icon(Icons.verified_outlined, size: 16),
+                            ),
+                          ),
+                      ]),
                       subtitle: Text(
                         stat == null
                             ? s.category
