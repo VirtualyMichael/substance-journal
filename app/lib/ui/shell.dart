@@ -3,16 +3,36 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../data/database.dart';
 import '../providers.dart';
+import 'alcohol/alcohol_analytics_page.dart';
+import 'alcohol/alcohol_day_view.dart';
+import 'alcohol/alcohol_history_page.dart';
 import 'calendar/calendar_page.dart';
 import 'compounds/compounds_page.dart';
 import 'design.dart';
 import 'journal/journal_page.dart';
 import 'settings/settings_page.dart';
 
-enum _Destination { journal, calendar, compounds, settings }
+enum _Destination { journal, calendar, compounds, settings, today, history, analytics }
+
+typedef _Item = (_Destination, IconData, IconData, String);
+
+const List<_Item> _fullItems = [
+  (_Destination.journal, Icons.menu_book_outlined, Icons.menu_book, 'Journal'),
+  (_Destination.calendar, Icons.calendar_month_outlined, Icons.calendar_month, 'Calendar'),
+  (_Destination.compounds, Icons.science_outlined, Icons.science, 'Compounds'),
+  (_Destination.settings, Icons.settings_outlined, Icons.settings, 'Settings'),
+];
+
+const List<_Item> _alcoholItems = [
+  (_Destination.today, Icons.local_bar_outlined, Icons.local_bar, 'Today'),
+  (_Destination.history, Icons.history, Icons.history, 'History'),
+  (_Destination.analytics, Icons.insights_outlined, Icons.insights, 'Analytics'),
+  (_Destination.settings, Icons.settings_outlined, Icons.settings, 'Settings'),
+];
 
 /// Navigation frame: a bottom bar on phones, a rail on wide windows. Shows the current
-/// person's pages and a switcher to change who is on screen.
+/// person's pages and a switcher to change who is on screen. In Alcohol mode the same frame
+/// holds the drink-tracker pages instead of the full journal.
 class AppShell extends ConsumerStatefulWidget {
   const AppShell({super.key});
 
@@ -21,37 +41,56 @@ class AppShell extends ConsumerStatefulWidget {
 }
 
 class _AppShellState extends ConsumerState<AppShell> {
-  _Destination _destination = _Destination.journal;
+  int _index = 0;
+  bool? _lastMode;
 
-  static const _items = [
-    (_Destination.journal, Icons.menu_book_outlined, Icons.menu_book, 'Journal'),
-    (_Destination.calendar, Icons.calendar_month_outlined, Icons.calendar_month, 'Calendar'),
-    (_Destination.compounds, Icons.science_outlined, Icons.science, 'Compounds'),
-    (_Destination.settings, Icons.settings_outlined, Icons.settings, 'Settings'),
-  ];
+  Future<void> _setMode(bool on) async {
+    final db = ref.read(databaseProvider);
+    if (on) await db.ensureDefaultDrinkPresets();
+    await db.setSetting('alcoholMode', on ? 'true' : 'false');
+  }
 
   @override
   Widget build(BuildContext context) {
     final person = ref.watch(currentPersonProvider);
     if (person == null) return const Scaffold(body: Center(child: CircularProgressIndicator()));
 
-    final wide = MediaQuery.sizeOf(context).width >= wideBreakpoint;
-    final index = _destination.index;
+    final alcoholMode = ref.watch(alcoholModeProvider).value ?? false;
+    // Switching mode swaps the whole set of pages, so start again at the first one.
+    if (_lastMode != null && _lastMode != alcoholMode) _index = 0;
+    _lastMode = alcoholMode;
 
-    final body = switch (_destination) {
+    final items = alcoholMode ? _alcoholItems : _fullItems;
+    final index = _index.clamp(0, items.length - 1);
+    final destination = items[index].$1;
+    final wide = MediaQuery.sizeOf(context).width >= wideBreakpoint;
+
+    final body = switch (destination) {
       // Keyed by person so no widget state (search text, scroll) leaks between people.
       _Destination.journal => JournalPage(key: ValueKey('journal-${person.id}'), person: person),
       _Destination.calendar => CalendarPage(key: ValueKey('calendar-${person.id}'), person: person),
       _Destination.compounds => CompoundsPage(key: ValueKey('compounds-${person.id}'), personId: person.id),
       _Destination.settings => SettingsPage(key: ValueKey('settings-${person.id}'), person: person),
+      _Destination.today => AlcoholDayView(key: ValueKey('today-${person.id}'), person: person),
+      _Destination.history => AlcoholHistoryPage(key: ValueKey('history-${person.id}'), person: person),
+      _Destination.analytics => AlcoholAnalyticsPage(key: ValueKey('analytics-${person.id}'), person: person),
     };
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(_items[index].$4),
-        actions: [PersonSwitcher(current: person), const SizedBox(width: Gap.sm)],
+        title: Text(items[index].$4),
+        actions: [
+          IconButton(
+            key: const ValueKey('mode-toggle'),
+            tooltip: alcoholMode ? 'Back to the full journal' : 'Alcohol mode',
+            icon: Icon(alcoholMode ? Icons.apps : Icons.local_bar_outlined),
+            onPressed: () => _setMode(!alcoholMode),
+          ),
+          PersonSwitcher(current: person),
+          const SizedBox(width: Gap.sm),
+        ],
       ),
-      floatingActionButton: _destination == _Destination.journal
+      floatingActionButton: destination == _Destination.journal
           ? FloatingActionButton.extended(
               key: const ValueKey('journal-add'),
               heroTag: null,
@@ -64,9 +103,9 @@ class _AppShellState extends ConsumerState<AppShell> {
           ? null
           : NavigationBar(
               selectedIndex: index,
-              onDestinationSelected: (i) => setState(() => _destination = _Destination.values[i]),
+              onDestinationSelected: (i) => setState(() => _index = i),
               destinations: [
-                for (final (_, icon, selected, label) in _items)
+                for (final (_, icon, selected, label) in items)
                   NavigationDestination(icon: Icon(icon), selectedIcon: Icon(selected), label: label),
               ],
             ),
@@ -76,9 +115,9 @@ class _AppShellState extends ConsumerState<AppShell> {
                 NavigationRail(
                   selectedIndex: index,
                   labelType: NavigationRailLabelType.all,
-                  onDestinationSelected: (i) => setState(() => _destination = _Destination.values[i]),
+                  onDestinationSelected: (i) => setState(() => _index = i),
                   destinations: [
-                    for (final (_, icon, selected, label) in _items)
+                    for (final (_, icon, selected, label) in items)
                       NavigationRailDestination(icon: Icon(icon), selectedIcon: Icon(selected), label: Text(label)),
                   ],
                 ),

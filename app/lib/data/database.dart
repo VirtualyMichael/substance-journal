@@ -467,6 +467,132 @@ class AppDatabase extends _$AppDatabase {
         .write(RatingsCompanion(deleted: const Value(true), hlc: Value(nextHlc())));
   }
 
+  // ---- Alcohol mode: drinks, presets and body settings ----
+
+  /// Experience a drink at [at] belongs to: that of the person's ingestion closest in time to it,
+  /// if one is within the [window] (either side, so back-dating works), else null.
+  Future<Experience?> recentExperienceFor(String personId, DateTime at, {Duration window = const Duration(hours: 12)}) async {
+    final nearby = await (select(ingestions)
+          ..where((t) =>
+              t.personId.equals(personId) &
+              t.deleted.equals(false) &
+              t.time.isBiggerOrEqualValue(at.subtract(window)) &
+              t.time.isSmallerOrEqualValue(at.add(window))))
+        .get();
+    if (nearby.isEmpty) return null;
+    nearby.sort((a, b) => a.time.difference(at).abs().compareTo(b.time.difference(at).abs()));
+    return (select(experiences)..where((t) => t.id.equals(nearby.first.experienceId) & t.deleted.equals(false))).getSingleOrNull();
+  }
+
+  /// Logs one drink for [personId], joining their recent experience or starting a new one.
+  ///
+  /// The dose is stored in grams of ethanol; the volume, unit and ABV go in `details` so the
+  /// estimate can be recomputed exactly (and a drink can be edited as a drink).
+  Future<LoggedDrink> logDrink({
+    required String personId,
+    required DateTime at,
+    required double volume,
+    required String volumeUnit,
+    required double abvPercent,
+    String name = '',
+    double durationMinutes = 0,
+    String notes = '',
+    double shotOz = shotVolumeOz,
+  }) async {
+    var experience = await recentExperienceFor(personId, at);
+    final created = experience == null;
+    experience ??= await addExperience(personId: personId, sortDate: at);
+    if (at.isBefore(experience.sortDate)) {
+      await updateExperience(experience.id, sortDate: at);
+    }
+    final ingestion = await addIngestion(
+      experience: experience,
+      substanceKey: 'alcohol',
+      route: 'oral',
+      time: at,
+      endTime: durationMinutes > 0 ? at.add(Duration(minutes: durationMinutes.round())) : null,
+      dose: drinkGrams(volume, volumeUnit, abvPercent, shotOz: shotOz),
+      unit: 'g',
+      notes: notes,
+      details: {'drink': name, 'volume': volume, 'volumeUnit': volumeUnit, 'abv': abvPercent},
+    );
+    return LoggedDrink(ingestion: ingestion, experienceId: experience.id, createdExperience: created);
+  }
+
+  /// Takes back a drink just logged; removes the experience too if the drink created it.
+  Future<void> undoLoggedDrink(LoggedDrink logged) async {
+    await setIngestionDeleted(logged.ingestion.id, true);
+    if (logged.createdExperience) await deleteExperience(logged.experienceId);
+  }
+
+  Stream<List<Preset>> watchDrinkPresets() => (select(presets)
+        ..where((t) => t.substanceKey.equals('alcohol') & t.deleted.equals(false))
+        ..orderBy([(t) => OrderingTerm.asc(t.name)]))
+      .watch();
+
+  Future<Preset> addDrinkPreset({
+    required String name,
+    required double volume,
+    required String volumeUnit,
+    required double abvPercent,
+  }) async {
+    final id = newId();
+    await into(presets).insert(PresetsCompanion.insert(
+      id: id,
+      hlc: nextHlc(),
+      substanceKey: 'alcohol',
+      route: 'oral',
+      name: name,
+      amount: volume,
+      unit: volumeUnit,
+      detailsJson: Value(jsonEncode({'abv': abvPercent})),
+    ));
+    return (select(presets)..where((t) => t.id.equals(id))).getSingle();
+  }
+
+  Future<void> updateDrinkPreset(
+    String id, {
+    String? name,
+    double? volume,
+    String? volumeUnit,
+    double? abvPercent,
+  }) async {
+    await (update(presets)..where((t) => t.id.equals(id))).write(PresetsCompanion(
+      name: name == null ? const Value.absent() : Value(name),
+      amount: volume == null ? const Value.absent() : Value(volume),
+      unit: volumeUnit == null ? const Value.absent() : Value(volumeUnit),
+      detailsJson: abvPercent == null ? const Value.absent() : Value(jsonEncode({'abv': abvPercent})),
+      hlc: Value(nextHlc()),
+    ));
+  }
+
+  Future<void> setDrinkPresetDeleted(String id, bool value) async {
+    await (update(presets)..where((t) => t.id.equals(id)))
+        .write(PresetsCompanion(deleted: Value(value), hlc: Value(nextHlc())));
+  }
+
+  /// Adds Alcohol Tracker's six starter drinks the first time, and only if there are none.
+  Future<void> ensureDefaultDrinkPresets() async {
+    final any = await (select(presets)..where((t) => t.substanceKey.equals('alcohol'))..limit(1)).getSingleOrNull();
+    if (any != null) return;
+    for (final d in defaultDrinkPresets) {
+      await addDrinkPreset(name: d.name, volume: d.volume, volumeUnit: d.unit, abvPercent: d.abv);
+    }
+  }
+
+  Stream<EstimateSettings> watchEstimateSettings(String personId) =>
+      watchSetting('estimate:$personId').map(_decodeEstimateSettings);
+
+  Future<EstimateSettings> getEstimateSettings(String personId) async =>
+      _decodeEstimateSettings(await getSetting('estimate:$personId'));
+
+  /// Body and model settings are per person: BAC depends on whose body it is.
+  Future<void> setEstimateSettings(String personId, EstimateSettings value) =>
+      setSetting('estimate:$personId', jsonEncode(value.toJson()), shared: true);
+
+  EstimateSettings _decodeEstimateSettings(String? text) =>
+      text == null || text.isEmpty ? const EstimateSettings() : estimateSettingsFromJson(jsonDecode(text) as Map<String, dynamic>);
+
   // ---- compound picker preferences (per person) ----
 
   Stream<CompoundPrefs> watchCompoundPrefs(String personId) =>
@@ -551,6 +677,32 @@ class AppDatabase extends _$AppDatabase {
       into(settings).insertOnConflictUpdate(
           SettingsCompanion.insert(key: key, value: value, hlc: nextHlc(), shared: Value(shared)));
 }
+
+/// A drink just logged, with what is needed to undo it.
+class LoggedDrink {
+  const LoggedDrink({required this.ingestion, required this.experienceId, required this.createdExperience});
+  final Ingestion ingestion;
+  final String experienceId;
+  final bool createdExperience;
+}
+
+class DrinkPresetDefault {
+  const DrinkPresetDefault(this.name, this.volume, this.unit, this.abv);
+  final String name;
+  final double volume;
+  final String unit;
+  final double abv;
+}
+
+/// Alcohol Tracker's starter presets.
+const List<DrinkPresetDefault> defaultDrinkPresets = [
+  DrinkPresetDefault('Shot - 40%', 1, 'shots', 40),
+  DrinkPresetDefault('Double shot - 40%', 2, 'shots', 40),
+  DrinkPresetDefault('Beer - 12 oz 5%', 12, 'oz', 5),
+  DrinkPresetDefault('Strong beer - 16 oz 8%', 16, 'oz', 8),
+  DrinkPresetDefault('Wine - 5 oz 12%', 5, 'oz', 12),
+  DrinkPresetDefault('Hard seltzer - 12 oz 5%', 12, 'oz', 5),
+];
 
 /// A person's favourite and hidden compounds in the picker.
 class CompoundPrefs {

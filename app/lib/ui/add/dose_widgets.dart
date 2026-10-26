@@ -184,8 +184,8 @@ class DoseInput {
     final volume = _num(volumeText);
     final abv = _num(abvText);
     if (volume == null || abv == null || volume <= 0 || abv <= 0 || abv > 100) return null;
-    final ml = volumeUnit == 'ml' ? volume : volume * 29.5735;
-    return ml * (abv / 100.0) * 0.789;
+    // Same formula as Alcohol mode and Alcohol Tracker, so a drink is the same number everywhere.
+    return drinkGrams(volume, volumeUnit, abv);
   }
 
   String? validate(RouteOfAdministration roa) {

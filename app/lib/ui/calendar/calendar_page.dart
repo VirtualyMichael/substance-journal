@@ -263,8 +263,16 @@ class _PersonBadge extends StatelessWidget {
           Icon(Icons.groups, size: 12, color: scheme.onSecondaryContainer),
           const SizedBox(width: 3),
           Flexible(
-            child: Text(
-              [for (final e in shown) '${e.percent}%'].join(' ') + (entries.length > shown.length ? ' +${entries.length - shown.length}' : ''),
+            child: Text.rich(
+              TextSpan(
+                children: [
+                  for (final e in shown) ...[
+                    TextSpan(text: '●', style: TextStyle(color: Color(e.person.colorValue))),
+                    TextSpan(text: '${e.percent}% '),
+                  ],
+                  if (entries.length > shown.length) TextSpan(text: '+${entries.length - shown.length}'),
+                ],
+              ),
               key: const ValueKey('badge-text'),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,

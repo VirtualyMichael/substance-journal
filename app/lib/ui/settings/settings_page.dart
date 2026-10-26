@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/database.dart';
 import '../../providers.dart';
 import '../design.dart';
+import '../alcohol/alcohol_settings.dart';
 import '../units/custom_units_page.dart';
 
 class SettingsPage extends ConsumerWidget {
@@ -142,6 +143,8 @@ class SettingsPage extends ConsumerWidget {
               selected: {themeMode},
               onSelectionChanged: (s) => db.setSetting('themeMode', s.first.name),
             ),
+            const SizedBox(height: Gap.lg),
+            AlcoholSettingsSection(person: person),
             const SizedBox(height: Gap.lg),
             Text('Custom units', style: text.titleMedium),
             const SizedBox(height: 4),

@@ -69,6 +69,25 @@ final compoundPrefsProvider = StreamProvider.autoDispose.family<CompoundPrefs, S
   (ref, personId) => ref.watch(databaseProvider).watchCompoundPrefs(personId),
 );
 
+// ---- Alcohol mode ----
+
+/// Whether this device shows the alcohol-only app. A per-device choice, not synced.
+final alcoholModeProvider = StreamProvider<bool>(
+  (ref) => ref.watch(databaseProvider).watchSetting('alcoholMode').map((v) => v == 'true'),
+);
+
+final estimateSettingsProvider = StreamProvider.autoDispose.family<EstimateSettings, String>(
+  (ref, personId) => ref.watch(databaseProvider).watchEstimateSettings(personId),
+);
+
+final drinkPresetsProvider = StreamProvider<List<Preset>>((ref) => ref.watch(databaseProvider).watchDrinkPresets());
+
+/// One person's alcohol ingestions, oldest first.
+final alcoholDrinksProvider = Provider.autoDispose.family<List<Ingestion>, String>((ref, personId) {
+  final all = ref.watch(personIngestionsProvider(personId)).value ?? const <Ingestion>[];
+  return [for (final i in all) if (i.substanceKey == 'alcohol') i];
+});
+
 // ---- calendar (the one place that looks across people) ----
 
 final allExperiencesProvider =

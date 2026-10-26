@@ -38,6 +38,7 @@ def main() -> None:
     _stub_pyside()
     sys.path.insert(0, str(tracker))
 
+    from alcohol_tracker.core import analytics
     from alcohol_tracker.core import calculations as calc
     from alcohol_tracker.core.settings import EstimateSettings
 
@@ -159,6 +160,58 @@ def main() -> None:
             "multiplier": {str(s): calc.tolerance_multiplier(s, settings) for s in (0.0, 0.5, 3.0, 20.0)},
         }
 
+    from datetime import date
+
+    totals_sets = {
+        "sparse": {date(2026, 7, 1): 3.0, date(2026, 7, 4): 1.5, date(2026, 7, 9): 6.25},
+        "single_day": {date(2026, 7, 5): 2.0},
+        "empty": {},
+        "across_month": {date(2026, 6, 28): 2.0, date(2026, 7, 2): 4.0, date(2026, 7, 3): 0.0},
+    }
+    ranges = [
+        (date(2026, 7, 1), date(2026, 7, 9)),
+        (date(2026, 7, 1), date(2026, 7, 31)),
+        (date(2026, 6, 25), date(2026, 7, 5)),
+        (date(2026, 7, 9), date(2026, 7, 1)),  # reversed: both functions clamp the end to the start
+        (date(2026, 7, 5), date(2026, 7, 5)),
+    ]
+    analytics_cases = []
+    for name, totals in totals_sets.items():
+        filled = analytics.fill_daily_totals(totals, today=date(2026, 7, 12))
+        analytics_cases.append(
+            {
+                "name": name,
+                "totals": [[d.isoformat(), v] for d, v in totals.items()],
+                "filled_through_12th": [[d.isoformat(), v] for d, v in filled.items()],
+                "ranges": [
+                    {
+                        "start": a.isoformat(),
+                        "end": b.isoformat(),
+                        "drinking_days_per_week": analytics.average_drinking_days(totals, a, b),
+                        "drinks_per_day": analytics.average_standard_drinks_per_day(totals, a, b),
+                    }
+                    for a, b in ranges
+                ],
+            }
+        )
+
+    drink_sizes = []
+    default = EstimateSettings()
+    for amount, unit, abv in [(1, "shots", 40), (2, "shots", 40), (12, "fl_oz", 5), (16, "fl_oz", 8), (5, "fl_oz", 12), (0.5, "shots", 80)]:
+        item = calc.Ingestion(
+            id=None, occurred_at=t0, amount=amount, unit=unit, abv_percent=abv, label="x"
+        )
+        drink_sizes.append(
+            {
+                "amount": amount,
+                "unit": unit,
+                "abv": abv,
+                "fluid_oz": item.fluid_ounces(default),
+                "grams": item.pure_alcohol_grams(default),
+                "standard_drinks": item.standard_drinks(default),
+            }
+        )
+
     scenario_inputs = {
         gname: [
             {
@@ -175,7 +228,7 @@ def main() -> None:
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(
-        json.dumps({"t0": iso(t0), "scenarios": scenario_inputs, "body": body, "cases": cases}),
+        json.dumps({"t0": iso(t0), "scenarios": scenario_inputs, "body": body, "cases": cases, "analytics": analytics_cases, "drink_sizes": drink_sizes}),
         encoding="utf-8",
     )
     print(f"Wrote {OUT} ({len(cases)} cases, {OUT.stat().st_size // 1024} KiB)")

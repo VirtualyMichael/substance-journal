@@ -239,7 +239,8 @@ void main() {
       }
 
       // The badge lists people alphabetically: Bob first, then Me.
-      final text = tester.widget<Text>(find.byKey(const ValueKey('badge-text'))).data!;
+      // Each percent follows a dot in that person's colour.
+      final text = tester.widget<Text>(find.byKey(const ValueKey('badge-text'))).textSpan!.toPlainText().replaceAll('●', '').trim();
       expect(text, '${percentFor(const Duration(hours: 2))}% ${percentFor(const Duration(hours: 4))}%');
       expect(RegExp(r'^\d+% \d+%$').hasMatch(text), isTrue);
       expect(meRow.id, isNot(bobRow.id));
