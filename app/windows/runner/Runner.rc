@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.substancejournal" "\0"
-            VALUE "FileDescription", "substance_journal_app" "\0"
+            VALUE "FileDescription", "Substance Journal" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
             VALUE "InternalName", "substance_journal_app" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2026 com.substancejournal. All rights reserved." "\0"
             VALUE "OriginalFilename", "substance_journal_app.exe" "\0"
-            VALUE "ProductName", "substance_journal_app" "\0"
+            VALUE "ProductName", "Substance Journal" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END
