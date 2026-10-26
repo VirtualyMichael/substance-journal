@@ -6,6 +6,7 @@ import '../../providers.dart';
 import '../design.dart';
 import '../alcohol/alcohol_settings.dart';
 import '../units/custom_units_page.dart';
+import '../sync/sync_page.dart';
 import 'pw_import_flow.dart';
 
 class SettingsPage extends ConsumerWidget {
@@ -156,6 +157,17 @@ class SettingsPage extends ConsumerWidget {
               icon: const Icon(Icons.medication_outlined),
               label: const Text('Manage custom units'),
               onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const CustomUnitsPage())),
+            ),
+            const SizedBox(height: Gap.lg),
+            Text('Sync', style: text.titleMedium),
+            const SizedBox(height: 4),
+            Text('Keep your phone and computer in step with QR codes, a file, or text. No account or server.', style: text.bodySmall),
+            const SizedBox(height: Gap.sm),
+            OutlinedButton.icon(
+              key: const ValueKey('open-sync'),
+              icon: const Icon(Icons.sync),
+              label: const Text('Sync devices'),
+              onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const SyncPage())),
             ),
             const SizedBox(height: Gap.lg),
             Text('Import from PsychonautWiki Journal', style: text.titleMedium),

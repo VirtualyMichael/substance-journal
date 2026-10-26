@@ -213,7 +213,9 @@ class SyncService {
       var applied = 0;
       var skipped = 0;
       var maxHlc = '';
-      final tables = (body['tables'] as Map<String, dynamic>?) ?? const {};
+      final tables = {...?(body['tables'] as Map<String, dynamic>?)};
+      final aliases = await _personAliases((tables['people'] as List?)?.cast<Map<String, dynamic>>() ?? const []);
+      if (aliases.isNotEmpty) _applyAliases(tables, aliases);
       for (final t in _tables) {
         final rows = (tables[t.name] as List?)?.cast<Map<String, dynamic>>() ?? const [];
         final result = await t.apply(db, rows);
@@ -252,6 +254,51 @@ class SyncService {
       await db.setSetting('syncLast:$sender', _now().toIso8601String());
       return ApplyResult(applied: applied, skipped: skipped, peerName: peerName, peerId: sender);
     });
+  }
+
+  /// Incoming people who are already here under another id. Each device creates its own "Me" on
+  /// first run, and the same person may have been added by name on both, so without this a sync
+  /// would leave two of everyone. The default person matches the default person; others match by name.
+  Future<Map<String, String>> _personAliases(List<Map<String, dynamic>> incoming) async {
+    if (incoming.isEmpty) return const {};
+    final local = await db.select(db.people).get();
+    final localIds = {for (final p in local) p.id};
+    final live = [for (final p in local) if (!p.deleted) p]..sort((a, b) => a.id.compareTo(b.id));
+    final aliases = <String, String>{};
+    for (final json in incoming) {
+      final id = json['id'] as String;
+      if (localIds.contains(id)) continue;
+      Person? match;
+      if (json['isDefault'] == true) match = live.where((p) => p.isDefault).firstOrNull;
+      match ??= live.where((p) => p.name.toLowerCase() == (json['name'] as String).toLowerCase()).firstOrNull;
+      if (match != null) aliases[id] = match.id;
+    }
+    return aliases;
+  }
+
+  /// Points incoming rows at the local person instead of the one they were made under.
+  void _applyAliases(Map<String, dynamic> tables, Map<String, String> aliases) {
+    tables['people'] = [
+      for (final p in (tables['people'] as List).cast<Map<String, dynamic>>())
+        if (!aliases.containsKey(p['id'])) p,
+    ];
+    for (final table in const ['experiences', 'ingestions']) {
+      final rows = (tables[table] as List?)?.cast<Map<String, dynamic>>();
+      if (rows == null) continue;
+      tables[table] = [
+        for (final r in rows) {...r, 'personId': aliases[r['personId']] ?? r['personId']},
+      ];
+    }
+    final settingRows = (tables['settings'] as List?)?.cast<Map<String, dynamic>>();
+    if (settingRows != null) {
+      tables['settings'] = [
+        for (final s in settingRows)
+          {
+            ...s,
+            'key': aliases.entries.fold<String>(s['key'] as String, (key, a) => key.endsWith(':${a.key}') ? key.replaceFirst(':${a.key}', ':${a.value}') : key),
+          },
+      ];
+    }
   }
 }
 

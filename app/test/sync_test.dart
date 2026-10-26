@@ -1,6 +1,5 @@
 import 'package:drift/drift.dart' show Value, driftRuntimeOptions;
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sj_core/sj_core.dart';
 import 'package:substance_journal_app/data/database.dart';
 import 'package:substance_journal_app/data/sync.dart';
 
@@ -170,6 +169,36 @@ void main() {
     expect(people.keys, {'Me', 'Alex'});
     expect((await phoneDb.ingestionsForPerson(people['Me']!.id)).single.substanceKey, 'lsd');
     expect((await phoneDb.ingestionsForPerson(people['Alex']!.id)).single.substanceKey, 'ketamine');
+  });
+
+  test('each device invents its own Me, and that and same-named people become one person, with their data and settings', () async {
+    await pair();
+    final pcMe = await addMe(pcDb);
+    final phoneMe = await addMe(phoneDb);
+    expect(pcMe.id, isNot(phoneMe.id)); // each device invented its own
+    final pcColby = await pcDb.addPerson('Colby');
+    final phoneColby = await phoneDb.addPerson('colby');
+    await drink(pcDb, pcMe, 'lsd', 100, DateTime(2026, 7, 1, 10));
+    await drink(pcDb, pcColby, 'ketamine', 30, DateTime(2026, 7, 1, 11));
+    await drink(phoneDb, phoneMe, 'mdma', 80, DateTime(2026, 7, 1, 12));
+    await drink(phoneDb, phoneColby, 'cannabis', 5, DateTime(2026, 7, 1, 13));
+    await pcDb.setCompoundPrefs(pcMe.id, const CompoundPrefs(favorites: {'lsd'}, hidden: {}));
+    tick();
+
+    await pcToPhone();
+    await phoneToPc();
+    await pcToPhone();
+
+    for (final db in [pcDb, phoneDb]) {
+      final people = await db.activePeople();
+      expect(people.map((p) => p.name.toLowerCase()).toList()..sort(), ['colby', 'me']); // not four
+      final me = people.firstWhere((p) => p.name == 'Me');
+      final colby = people.firstWhere((p) => p.name.toLowerCase() == 'colby');
+      expect((await db.ingestionsForPerson(me.id)).map((i) => i.substanceKey).toSet(), {'lsd', 'mdma'});
+      expect((await db.ingestionsForPerson(colby.id)).map((i) => i.substanceKey).toSet(), {'ketamine', 'cannabis'});
+    }
+    final phoneMeNow = (await phoneDb.activePeople()).firstWhere((p) => p.name == 'Me');
+    expect((await phoneDb.getCompoundPrefs(phoneMeNow.id)).favorites, {'lsd'}); // settings follow the person
   });
 
   test('wrong, tampered or unpaired packages are refused and change nothing', () async {

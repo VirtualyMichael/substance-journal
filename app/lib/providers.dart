@@ -1,14 +1,19 @@
+import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:sj_core/sj_core.dart';
 
 import 'data/alcohol_import.dart';
 import 'data/custom_substances.dart';
 import 'data/database.dart';
 import 'data/reference_repository.dart';
+import 'data/sync.dart';
 
 /// Overridden at startup (and in tests) with real instances.
 final databaseProvider = Provider<AppDatabase>((ref) => throw UnimplementedError('databaseProvider'));
@@ -157,3 +162,48 @@ final themeModeProvider = StreamProvider<ThemeMode>((ref) {
         },
       );
 });
+
+// ---- syncing between devices ----
+
+/// A readable default name for this device until the user names it.
+String defaultDeviceName() {
+  if (Platform.isAndroid) return 'Phone';
+  if (Platform.isIOS) return 'iPhone';
+  return Platform.localHostname;
+}
+
+final deviceNameProvider = StreamProvider<String>(
+  (ref) => ref.watch(databaseProvider).watchSetting('deviceName').map((v) => v ?? defaultDeviceName()),
+);
+
+final syncServiceProvider = Provider<SyncService>(
+  (ref) => SyncService(ref.watch(databaseProvider), deviceName: ref.watch(deviceNameProvider).value ?? defaultDeviceName()),
+);
+
+/// Cameras are for phones and tablets; computers use paste, a file or Share instead.
+final cameraScannerAvailableProvider = Provider<bool>((ref) => Platform.isAndroid || Platform.isIOS);
+
+/// Picks a sync package file and returns its text. Replaced in tests.
+final packageFilePickerProvider = Provider<Future<String?> Function()>((ref) => () async {
+      final file = await FilePicker.pickFile(dialogTitle: 'Choose a sync package (.sjsync)');
+      final path = file?.path;
+      return path == null ? null : File(path).readAsString();
+    });
+
+/// Saves package text to a file the user chooses; returns where, or null if cancelled.
+final packageSaverProvider = Provider<Future<String?> Function(String fileName, String text)>((ref) => (fileName, text) async {
+      final saved = await FilePicker.saveFile(
+        fileName: fileName,
+        bytes: Uint8List.fromList(utf8.encode(text)),
+        dialogTitle: 'Save sync package',
+      );
+      return saved?.toFilePath();
+    });
+
+/// Shares package text as a file through the system share sheet.
+final packageSharerProvider = Provider<Future<void> Function(String fileName, String text)>((ref) => (fileName, text) async {
+      final dir = await getTemporaryDirectory();
+      final file = File('${dir.path}/$fileName');
+      await file.writeAsString(text);
+      await SharePlus.instance.share(ShareParams(files: [XFile(file.path)], subject: 'Substance Journal sync'));
+    });
