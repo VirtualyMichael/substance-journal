@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:drift/drift.dart' show driftRuntimeOptions;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:substance_journal_app/data/auto_sync.dart';
 import 'package:substance_journal_app/data/database.dart';
 import 'package:substance_journal_app/data/lan_sync.dart';
 import 'package:substance_journal_app/data/sync.dart';
@@ -108,5 +109,37 @@ void main() {
     expect(bad.statusCode, 400);
     final get = await (await http.getUrl(Uri.parse('http://127.0.0.1:${server!.httpPort}/'))).close();
     expect(get.statusCode, 404);
+  });
+
+  group('automatic sync', () {
+    test('a pass syncs with every paired device, and does nothing when switched off or only pending', () async {
+      await seed(pcDb, 'mdma', DateTime(2026, 6, 1, 20));
+      final client = LanSyncClient(phone, 'phone');
+      final auto = AutoSync(phoneDb, phone, client);
+      await phoneDb.setSetting('peerAddr:pc', '127.0.0.1:${server!.httpPort}');
+
+      await phoneDb.setSetting('autoSync', 'false');
+      expect(await auto.run(), 0);
+      expect(await phoneDb.ingestionsForPerson((await phoneDb.ensureDefaultPerson()).id), isEmpty);
+
+      await phoneDb.setSetting('autoSync', 'true');
+      expect(await auto.run(), greaterThan(0));
+      expect(await doses(phoneDb), 1);
+      expect(await auto.run(), 0); // nothing new the second time
+    });
+
+    test('a device that is not reachable is skipped without an error', () async {
+      final client = LanSyncClient(phone, 'phone', discoveryTargets: [loopback], discoveryPort: 9, discoveryWait: const Duration(milliseconds: 200));
+      await phoneDb.setSetting('peerAddr:pc', '127.0.0.1:9');
+      expect(await AutoSync(phoneDb, phone, client).run(), 0);
+    });
+
+    test('with only a pending pairing there is nothing to do', () async {
+      final lonelyDb = AppDatabase.memory(deviceId: 'lonely', nowMillis: clock);
+      addTearDown(lonelyDb.close);
+      final lonely = SyncService(lonelyDb, deviceName: 'Lonely');
+      await lonely.offerPairing();
+      expect(await AutoSync(lonelyDb, lonely, LanSyncClient(lonely, 'lonely')).run(), 0);
+    });
   });
 }

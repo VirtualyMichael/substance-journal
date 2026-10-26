@@ -13,6 +13,7 @@ import 'data/alcohol_import.dart';
 import 'data/custom_substances.dart';
 import 'data/database.dart';
 import 'data/reference_repository.dart';
+import 'data/auto_sync.dart';
 import 'data/lan_sync.dart';
 import 'data/sync.dart';
 
@@ -202,6 +203,20 @@ final lanServerProvider = Provider<LanSyncServer?>((ref) {
   server.start();
   return server;
 });
+
+/// Syncs with paired devices on its own while the app is open. Not started in tests.
+final autoSyncProvider = Provider<AutoSync?>((ref) {
+  if (Platform.environment.containsKey('FLUTTER_TEST')) return null;
+  final sync = ref.watch(syncServiceProvider);
+  final auto = AutoSync(ref.watch(databaseProvider), sync, ref.watch(lanClientProvider));
+  ref.onDispose(auto.stop);
+  auto.start();
+  return auto;
+});
+
+final autoSyncEnabledProvider = StreamProvider<bool>(
+  (ref) => ref.watch(databaseProvider).watchSetting('autoSync').map((v) => v != 'false'),
+);
 
 final lanClientProvider = Provider<LanSyncClient>(
   (ref) => LanSyncClient(ref.watch(syncServiceProvider), ref.watch(databaseProvider).deviceId),

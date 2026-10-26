@@ -59,6 +59,7 @@ class _AppShellState extends ConsumerState<AppShell> {
     // Answers Wi-Fi sync requests from paired devices while the app is open. It must be watched:
     // a provider nobody listens to is disposed when its inputs change and never restarts.
     ref.watch(lanServerProvider);
+    ref.watch(autoSyncProvider);
     final person = ref.watch(currentPersonProvider);
     if (person == null) return const Scaffold(body: Center(child: CircularProgressIndicator()));
 
