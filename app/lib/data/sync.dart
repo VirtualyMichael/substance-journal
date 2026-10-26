@@ -210,39 +210,10 @@ class SyncService {
         await (db.update(db.peers)..where((t) => t.deviceId.equals(sender))).write(PeersCompanion(name: Value(peerName)));
       }
 
-      var applied = 0;
-      var skipped = 0;
-      var maxHlc = '';
-      final tables = {...?(body['tables'] as Map<String, dynamic>?)};
-      final aliases = await _personAliases((tables['people'] as List?)?.cast<Map<String, dynamic>>() ?? const []);
-      if (aliases.isNotEmpty) _applyAliases(tables, aliases);
-      for (final t in _tables) {
-        final rows = (tables[t.name] as List?)?.cast<Map<String, dynamic>>() ?? const [];
-        final result = await t.apply(db, rows);
-        applied += result.applied;
-        skipped += result.skipped;
-        if (result.maxHlc.compareTo(maxHlc) > 0) maxHlc = result.maxHlc;
-      }
-      final settingRows = (tables['settings'] as List?)?.cast<Map<String, dynamic>>() ?? const [];
-      for (final json in settingRows) {
-        final row = Setting.fromJson(json);
-        if (!row.shared) continue;
-        if (row.hlc.compareTo(maxHlc) > 0) maxHlc = row.hlc;
-        final local = await (db.select(db.settings)..where((s) => s.key.equals(row.key))).getSingleOrNull();
-        if (local == null || _newer(row.hlc, local.hlc)) {
-          await db.into(db.settings).insertOnConflictUpdate(row);
-          applied++;
-        } else {
-          skipped++;
-        }
-      }
-      if (maxHlc.isNotEmpty) {
-        try {
-          db.observeHlc(maxHlc);
-        } on StateError {
-          // A clock far in the future is ignored rather than dragging this device's clock forward.
-        }
-      }
+      final merged = await _mergeTables({...?(body['tables'] as Map<String, dynamic>?)});
+      final applied = merged.applied;
+      final skipped = merged.skipped;
+      final maxHlc = merged.maxHlc;
 
       // Remember how far we have seen this device, and how far it says it has seen us.
       final peer = await (db.select(db.peers)..where((t) => t.deviceId.equals(sender))).getSingle();
@@ -254,6 +225,49 @@ class SyncService {
       await db.setSetting('syncLast:$sender', _now().toIso8601String());
       return ApplyResult(applied: applied, skipped: skipped, peerName: peerName, peerId: sender);
     });
+  }
+
+  /// Merges the rows of a restored backup. Same rules as sync, with no peer involved.
+  Future<ApplyResult> mergeBackup(Map<String, dynamic> body) async {
+    final merged = await db.transaction(() => _mergeTables({...?(body['tables'] as Map<String, dynamic>?)}));
+    return ApplyResult(applied: merged.applied, skipped: merged.skipped, peerName: 'the backup', peerId: '');
+  }
+
+  /// Folds a set of incoming rows into this database. Run inside a transaction.
+  Future<_TableResult> _mergeTables(Map<String, dynamic> tables) async {
+    var applied = 0;
+    var skipped = 0;
+    var maxHlc = '';
+    final aliases = await _personAliases((tables['people'] as List?)?.cast<Map<String, dynamic>>() ?? const []);
+    if (aliases.isNotEmpty) _applyAliases(tables, aliases);
+    for (final t in _tables) {
+      final rows = (tables[t.name] as List?)?.cast<Map<String, dynamic>>() ?? const [];
+      final result = await t.apply(db, rows);
+      applied += result.applied;
+      skipped += result.skipped;
+      if (result.maxHlc.compareTo(maxHlc) > 0) maxHlc = result.maxHlc;
+    }
+    final settingRows = (tables['settings'] as List?)?.cast<Map<String, dynamic>>() ?? const [];
+    for (final json in settingRows) {
+      final row = Setting.fromJson(json);
+      if (!row.shared) continue;
+      if (row.hlc.compareTo(maxHlc) > 0) maxHlc = row.hlc;
+      final local = await (db.select(db.settings)..where((s) => s.key.equals(row.key))).getSingleOrNull();
+      if (local == null || _newer(row.hlc, local.hlc)) {
+        await db.into(db.settings).insertOnConflictUpdate(row);
+        applied++;
+      } else {
+        skipped++;
+      }
+    }
+    if (maxHlc.isNotEmpty) {
+      try {
+        db.observeHlc(maxHlc);
+      } on StateError {
+        // A clock far in the future is ignored rather than dragging this device's clock forward.
+      }
+    }
+    return _TableResult(applied, skipped, maxHlc);
   }
 
   /// Incoming people who are already here under another id. Each device creates its own "Me" on

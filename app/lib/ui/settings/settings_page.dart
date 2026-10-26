@@ -7,6 +7,7 @@ import '../design.dart';
 import '../alcohol/alcohol_settings.dart';
 import '../units/custom_units_page.dart';
 import '../sync/sync_page.dart';
+import 'backup_section.dart';
 import 'pw_import_flow.dart';
 
 class SettingsPage extends ConsumerWidget {
@@ -169,6 +170,8 @@ class SettingsPage extends ConsumerWidget {
               label: const Text('Sync devices'),
               onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const SyncPage())),
             ),
+            const SizedBox(height: Gap.lg),
+            const BackupSection(),
             const SizedBox(height: Gap.lg),
             Text('Import from PsychonautWiki Journal', style: text.titleMedium),
             const SizedBox(height: 4),

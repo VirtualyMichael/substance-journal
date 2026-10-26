@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sj_core/sj_core.dart';
 
 import 'app.dart';
+import 'data/backup.dart';
 import 'data/database.dart';
 import 'data/reference_repository.dart';
 import 'providers.dart';
@@ -15,6 +16,9 @@ Future<void> main() async {
   await file.parent.create(recursive: true);
 
   // The device id goes into every sync clock stamp; keep it stable across launches.
+  // Keep a copy before anything touches the file: daily, and before a version upgrade.
+  await BackupService.autoBackup(file, targetVersion: currentSchemaVersion);
+
   final bootstrap = AppDatabase(NativeDatabase.createInBackground(file), deviceId: 'pending');
   var deviceId = await bootstrap.getSetting('deviceId');
   await bootstrap.close();

@@ -11,6 +11,9 @@ import 'tables.dart';
 
 part 'database.g.dart';
 
+/// Bumped when a table changes; backups copy the file before an upgrade past an older number.
+const int currentSchemaVersion = 3;
+
 @DriftDatabase(tables: [
   People,
   Experiences,
@@ -39,7 +42,7 @@ class AppDatabase extends _$AppDatabase {
   Hlc _clock;
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => currentSchemaVersion;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
