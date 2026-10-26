@@ -49,8 +49,23 @@ const Map<String, List<String>> interactionAliases = {
   'ketamine': ['Ketamine', 'Dissociatives'],
 };
 
-Set<String> interactionNames(Substance s) =>
-    {...(interactionAliases[s.key] ?? [s.name]), s.name}.map((n) => n.toLowerCase()).toSet();
+/// Every name another substance's PsychonautWiki list might use for [s]. The audited nine use
+/// the explicit map; catalog substances use their name, common names and classes
+/// ("Benzodiazepines", "Depressant"), in singular and plural form since the lists mix both.
+Set<String> interactionNames(Substance s) {
+  final explicit = interactionAliases[s.key];
+  final names = <String>{s.name, ...(explicit ?? const [])};
+  if (explicit == null) {
+    names.addAll(s.commonNames);
+    for (final cls in [...s.category.split(','), ...s.chemicalClass.split(',')]) {
+      final c = cls.trim();
+      if (c.isEmpty) continue;
+      names.add(c);
+      names.add(c.endsWith('s') ? c.substring(0, c.length - 1) : '${c}s');
+    }
+  }
+  return names.map((n) => n.toLowerCase()).toSet();
+}
 
 class InteractionWarning {
   const InteractionWarning({

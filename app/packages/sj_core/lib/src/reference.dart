@@ -98,6 +98,10 @@ class Substance {
     this.dangerous = const [],
     this.unsafe = const [],
     this.uncertain = const [],
+    this.audited = true,
+    this.chemicalClass = '',
+    this.license,
+    this.wikiUrl,
   });
 
   final String key;
@@ -116,6 +120,13 @@ class Substance {
   final List<String> unsafe;
   final List<String> uncertain;
 
+  /// False for the broad PsychonautWiki catalog, which is copied as published and has not been
+  /// cross-checked the way the nine audited substances were.
+  final bool audited;
+  final String chemicalClass;
+  final String? license;
+  final String? wikiUrl;
+
   RouteOfAdministration? route(String route) {
     for (final r in roas) {
       if (r.route == route) return r;
@@ -124,7 +135,7 @@ class Substance {
   }
 }
 
-const _unitMinutes = {'seconds': 1 / 60, 'minutes': 1.0, 'hours': 60.0};
+const _unitMinutes = {'seconds': 1 / 60, 'minutes': 1.0, 'hours': 60.0, 'days': 1440.0};
 
 List<String> _strings(Object? json) => (json as List?)?.map((e) => e as String).toList() ?? const [];
 
@@ -137,7 +148,7 @@ Substance _parseSubstance(Map<String, dynamic> j) {
     for (final phase in const ['onset', 'comeup', 'peak', 'offset', 'total', 'afterglow']) {
       final span = dur[phase];
       if (span is! Map<String, dynamic>) continue;
-      final factor = _unitMinutes[span['units']] ?? 1.0;
+      final factor = _unitMinutes[(span['units'] as String?)?.toLowerCase()] ?? 1.0;
       final lo = (span['min'] as num?)?.toDouble();
       final hi = (span['max'] as num?)?.toDouble();
       if (lo == null && hi == null) continue;
@@ -172,9 +183,13 @@ Substance _parseSubstance(Map<String, dynamic> j) {
     dangerous: _strings(j['dangerous_interactions']),
     unsafe: _strings(j['unsafe_interactions']),
     uncertain: _strings(j['uncertain_interactions']),
+    audited: j['audited'] as bool? ?? true,
+    chemicalClass: j['chemical_class'] as String? ?? '',
+    license: j['license'] as String?,
+    wikiUrl: j['wiki_url'] as String?,
   );
 }
 
-/// Parses the text of `substances.json`.
+/// Parses the text of `substances.json` or `substances_extra.json`.
 List<Substance> parseSubstances(String jsonText) =>
     (jsonDecode(jsonText) as List).cast<Map<String, dynamic>>().map(_parseSubstance).toList();

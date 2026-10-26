@@ -112,7 +112,8 @@
     "tolerance_half_days": 5.0,
     "overrides": [
       "Replaced placeholder or off-topic summary."
-    ]
+    ],
+    "audited": true
   },
   {
     "key": "nicotine",
@@ -299,7 +300,8 @@
       "Replaced placeholder or off-topic summary.",
       "Set category.",
       "Smoked: active effect 10-30 min (total) with offset 5-20 min; the 1-3 h figure is the after-effect window."
-    ]
+    ],
+    "audited": true
   },
   {
     "key": "cannabis",
@@ -500,7 +502,8 @@
       "Set category.",
       "Oral onset widened to 20-120 min and peak to 1-3 h (Erowid, Grotenhermen).",
       "Sublingual route present (PsychonautWiki durations; it publishes no dose table)."
-    ]
+    ],
+    "audited": true
   },
   {
     "key": "psilocybin_mushrooms",
@@ -599,7 +602,8 @@
     "overrides": [
       "Replaced placeholder or off-topic summary.",
       "Lithium moved to dangerous, matching LSD/DMT/2C-B (PsychonautWiki: strictly avoid)."
-    ]
+    ],
+    "audited": true
   },
   {
     "key": "lsd",
@@ -707,7 +711,8 @@
     "overrides": [
       "Replaced placeholder or off-topic summary.",
       "Added SSRIs and MDMA as uncertain."
-    ]
+    ],
+    "audited": true
   },
   {
     "key": "dmt",
@@ -807,7 +812,8 @@
       "Replaced placeholder or off-topic summary.",
       "Added MAOIs as unsafe: an unplanned MAOI drastically changes dose and duration.",
       "Onset widened to 15-60 s (Erowid)."
-    ]
+    ],
+    "audited": true
   },
   {
     "key": "mdma",
@@ -929,7 +935,8 @@
       "Replaced placeholder or off-topic summary.",
       "Protease inhibitors, GHB and GBL raised to unsafe (slowed clearance; unconsciousness risk).",
       "Onset widened to 20-70 min (Erowid)."
-    ]
+    ],
+    "audited": true
   },
   {
     "key": "2c-b",
@@ -1074,7 +1081,8 @@
     "overrides": [
       "Replaced placeholder or off-topic summary.",
       "Own tolerance track: PsychonautWiki reports no cross-tolerance with other serotonergic psychedelics."
-    ]
+    ],
+    "audited": true
   },
   {
     "key": "ketamine",
@@ -1240,6 +1248,7 @@
       "Benzodiazepines raised to unsafe (potentiated sedation, unexpected unconsciousness).",
       "Insufflated onset widened to 1-15 min and total to 45-120 min (Erowid: 5-15 min, 45-60 min).",
       "Oral active effects shortened: offset 1-2 h (was 3-6 h), total 1.5-3 h; Erowid gives ~90 min."
-    ]
+    ],
+    "audited": true
   }
 ]

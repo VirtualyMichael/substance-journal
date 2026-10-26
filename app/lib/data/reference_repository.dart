@@ -15,7 +15,11 @@ class ReferenceRepository {
   final List<TripSitPair> interactionPairs;
 
   static Future<ReferenceRepository> load() async {
-    final substances = parseSubstances(await rootBundle.loadString('assets/data/substances.json'));
+    final audited = parseSubstances(await rootBundle.loadString('assets/data/substances.json'));
+    // The broad PsychonautWiki catalog. The audited nine win if a key ever collides.
+    final extra = parseSubstances(await rootBundle.loadString('assets/data/substances_extra.json'));
+    final taken = {for (final s in audited) s.key};
+    final substances = [...audited, ...extra.where((s) => !taken.contains(s.key))];
     final pairs = parseInteractions(await rootBundle.loadString('assets/data/interactions.json'));
     return ReferenceRepository(substances, interactionPairs: pairs);
   }

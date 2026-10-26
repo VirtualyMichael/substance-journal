@@ -25,6 +25,7 @@ class _CompoundPickerState extends ConsumerState<CompoundPicker> {
   String _query = '';
   CompoundSort _sort = CompoundSort.mostUsed;
   bool _showHidden = false;
+  String? _category;
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +43,9 @@ class _CompoundPickerState extends ConsumerState<CompoundPicker> {
       hidden: prefs.hidden,
       favorites: prefs.favorites,
       includeHidden: _showHidden,
+      category: _category,
     );
+    final categories = compoundCategories(reference.substances);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -83,7 +86,28 @@ class _CompoundPickerState extends ConsumerState<CompoundPicker> {
             ],
           ),
         ),
-        const SizedBox(height: Gap.sm),
+        if (categories.length > 1)
+          SizedBox(
+            height: 48,
+            child: ListView(
+              key: const ValueKey('category-filter'),
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: Gap.md),
+              children: [
+                for (final c in categories)
+                  Padding(
+                    padding: const EdgeInsets.only(right: Gap.sm),
+                    child: FilterChip(
+                      key: ValueKey('category-$c'),
+                      label: Text(c),
+                      selected: _category == c,
+                      onSelected: (v) => setState(() => _category = v ? c : null),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        const SizedBox(height: Gap.xs),
         Expanded(
           child: compounds.isEmpty
               ? const Center(child: Text('No compounds match'))

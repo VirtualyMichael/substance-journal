@@ -16,6 +16,23 @@ enum CompoundSort { mostUsed, recent, alphabetical }
 /// - Favourites float to the top, then the chosen [sort]; compounds never used come last
 ///   (alphabetically) for the usage-based sorts.
 /// - Compounds in [hidden] are left out unless [includeHidden] is true.
+/// A substance's categories ("Depressant, Stimulant" gives both), for the picker's filter.
+List<String> substanceCategories(Substance s) =>
+    [for (final c in s.category.split(',')) if (c.trim().isNotEmpty) c.trim()];
+
+/// Every category in [all], most common first, for the picker's filter chips.
+List<String> compoundCategories(List<Substance> all) {
+  final counts = <String, int>{};
+  for (final s in all) {
+    for (final c in substanceCategories(s)) {
+      counts[c] = (counts[c] ?? 0) + 1;
+    }
+  }
+  final names = counts.keys.toList()
+    ..sort((a, b) => counts[b]! != counts[a]! ? counts[b]!.compareTo(counts[a]!) : a.compareTo(b));
+  return names;
+}
+
 List<Substance> orderCompounds({
   required List<Substance> all,
   Map<String, UsageStat> usage = const {},
@@ -24,6 +41,7 @@ List<Substance> orderCompounds({
   Set<String> favorites = const {},
   CompoundSort sort = CompoundSort.mostUsed,
   bool includeHidden = false,
+  String? category,
 }) {
   final q = query.trim().toLowerCase();
 
@@ -38,7 +56,10 @@ List<Substance> orderCompounds({
 
   final candidates = [
     for (final s in all)
-      if ((includeHidden || !hidden.contains(s.key)) && matchScore(s) > 0) s,
+      if ((includeHidden || !hidden.contains(s.key)) &&
+          (category == null || substanceCategories(s).contains(category)) &&
+          matchScore(s) > 0)
+        s,
   ];
 
   int byName(Substance a, Substance b) => a.name.toLowerCase().compareTo(b.name.toLowerCase());

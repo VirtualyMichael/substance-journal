@@ -11,9 +11,11 @@ from __future__ import annotations
 import copy
 import re
 
-_DAYS_PER_UNIT = {"day": 1.0, "days": 1.0, "week": 7.0, "weeks": 7.0, "month": 30.0, "months": 30.0}
+_DAYS_PER_UNIT = {
+    "hour": 1 / 24, "hours": 1 / 24, "day": 1.0, "days": 1.0, "week": 7.0, "weeks": 7.0, "month": 30.0, "months": 30.0,
+}
 _TOLERANCE_DAYS_RE = re.compile(
-    r"(?P<lo>\d+(?:\.\d+)?)\s*(?:-\s*(?P<hi>\d+(?:\.\d+)?)\s*)?(?P<unit>day|days|week|weeks|month|months)"
+    r"(?P<lo>\d+(?:\.\d+)?)\s*(?:-\s*(?P<hi>\d+(?:\.\d+)?)\s*)?(?P<unit>hours|hour|days|day|weeks|week|months|month)"
 )
 
 
@@ -203,6 +205,7 @@ def apply_overrides(substances: list[dict]) -> list[dict]:
         if key in CATEGORY_OVERRIDES:
             substance["category"] = CATEGORY_OVERRIDES[key]
             note(key, "Set category.")
+        substance["audited"] = True
         substance["sources"] = SOURCES.get(key, [])
         substance["safety_notes"] = SAFETY_NOTES.get(key, [])
 

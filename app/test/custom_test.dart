@@ -254,7 +254,7 @@ void main() {
       await tester.enterText(find.byKey(const ValueKey('custom-name')), 'Magnesium');
       await tapKey(tester, 'custom-save');
       expect(find.text('Magnesium'), findsOneWidget);
-      expect(find.text('Custom'), findsOneWidget);
+      expect(find.text('Custom'), findsNWidgets(2)); // the list subtitle and the category filter chip
 
       await tester.tap(find.text('Magnesium'));
       await settle(tester);

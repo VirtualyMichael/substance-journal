@@ -217,6 +217,7 @@ class CompoundDetailPage extends ConsumerWidget {
                 const SizedBox(height: Gap.md),
                 Text('Sources', style: text.titleMedium),
                 for (final s in substance.sources) SelectableText(s, style: text.bodySmall),
+                if (substance.license != null) Text('Content: ${substance.license}', style: text.bodySmall),
               ],
             ],
           ),

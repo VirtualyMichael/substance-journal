@@ -17,7 +17,7 @@ TARGET = ROOT / "app" / "assets" / "data"
 
 def main() -> None:
     TARGET.mkdir(parents=True, exist_ok=True)
-    for name in ("substances.json", "effects.json", "interactions.json"):
+    for name in ("substances.json", "substances_extra.json", "effects.json", "interactions.json"):
         shutil.copyfile(SOURCE / name, TARGET / name)
         print(f"copied {name}")
 

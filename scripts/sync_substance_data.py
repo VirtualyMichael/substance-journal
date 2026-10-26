@@ -16,6 +16,7 @@ import argparse
 import json
 import re
 import sys
+import urllib.request
 from pathlib import Path
 
 try:
@@ -24,6 +25,7 @@ except ImportError:  # only needed for the network fetch, not --overrides-only
     requests = None
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from substance_journal.core.catalog_import import build_extra_catalog  # noqa: E402
 from substance_journal.core.reference_overrides import apply_overrides, parse_tolerance_days  # noqa: E402
 
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
@@ -305,6 +307,44 @@ def fetch_interactions() -> list[dict]:
     return interactions
 
 
+
+ALL_SUBSTANCES_QUERY = """
+{
+  substances(limit: 2000) {
+    name url commonNames summary
+    class { chemical psychoactive }
+    roas {
+      name
+      dose { units threshold light { min max } common { min max } strong { min max } heavy }
+      duration {
+        onset { min max units } comeup { min max units } peak { min max units }
+        offset { min max units } total { min max units } afterglow { min max units }
+      }
+    }
+    tolerance { full half zero }
+    crossTolerances
+    addictionPotential
+    dangerousInteractions { name } unsafeInteractions { name } uncertainInteractions { name }
+  }
+}
+"""
+
+
+def fetch_extra_catalog() -> list[dict]:
+    """Every PsychonautWiki substance with dosing or duration data, except the audited nine.
+    Content is CC BY-SA 4.0; see substance_journal/core/catalog_import.py."""
+    # urllib rather than requests, so this works without the app's dependencies installed.
+    request = urllib.request.Request(
+        PW_GRAPHQL_URL,
+        data=json.dumps({"query": ALL_SUBSTANCES_QUERY}).encode("utf-8"),
+        headers={"Content-Type": "application/json"},
+    )
+    with urllib.request.urlopen(request, timeout=120) as response:
+        raw = json.loads(response.read().decode("utf-8"))["data"]["substances"]
+    print(f"  PsychonautWiki returned {len(raw)} records")
+    return build_extra_catalog(raw)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -312,9 +352,20 @@ def main() -> None:
         action="store_true",
         help="re-apply the audited overrides to the existing data/substances.json without fetching anything",
     )
+    parser.add_argument(
+        "--extra",
+        action="store_true",
+        help="fetch the broad PsychonautWiki catalog into data/substances_extra.json (the audited nine are untouched)",
+    )
     args = parser.parse_args()
 
     DATA_DIR.mkdir(parents=True, exist_ok=True)
+
+    if args.extra:
+        extra = fetch_extra_catalog()
+        (DATA_DIR / "substances_extra.json").write_text(json.dumps(extra, ensure_ascii=False, indent=2), encoding="utf-8")
+        print(f"Wrote data/substances_extra.json ({len(extra)} substances)")
+        return
 
     if args.overrides_only:
         path = DATA_DIR / "substances.json"
