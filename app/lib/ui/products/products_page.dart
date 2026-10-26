@@ -5,6 +5,7 @@ import '../../data/cannabis_products.dart';
 import '../../data/database.dart';
 import '../../providers.dart';
 import '../design.dart';
+import '../journal/dialogs.dart' show scoreFields;
 
 const _months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
@@ -19,6 +20,8 @@ class ProductsPage extends ConsumerWidget {
     final products = ref.watch(cannabisProductsProvider).value ?? const <Product>[];
     final person = ref.watch(currentPersonProvider);
     final ingestions = person == null ? const <Ingestion>[] : (ref.watch(personIngestionsProvider(person.id)).value ?? const <Ingestion>[]);
+    final ratings = person == null ? const <Rating>[] : (ref.watch(personRatingsProvider(person.id)).value ?? const <Rating>[]);
+    final outcomes = {for (final p in products) p: ProductOutcomes.of(p, ingestions, ratings)};
     final text = Theme.of(context).textTheme;
 
     return Scaffold(
@@ -48,7 +51,8 @@ class ProductsPage extends ConsumerWidget {
               : ListView(
                   padding: const EdgeInsets.fromLTRB(Gap.md, Gap.md, Gap.md, 96),
                   children: [
-                    for (final p in products) _ProductCard(product: p, usage: ProductUsage.of(p, ingestions)),
+                    _BestCard(outcomes: outcomes),
+                    for (final p in products) _ProductCard(product: p, usage: ProductUsage.of(p, ingestions), outcomes: outcomes[p]!),
                   ],
                 ),
         ),
@@ -58,9 +62,10 @@ class ProductsPage extends ConsumerWidget {
 }
 
 class _ProductCard extends ConsumerWidget {
-  const _ProductCard({required this.product, required this.usage});
+  const _ProductCard({required this.product, required this.usage, required this.outcomes});
   final Product product;
   final ProductUsage usage;
+  final ProductOutcomes outcomes;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -83,8 +88,7 @@ class _ProductCard extends ConsumerWidget {
       key: ValueKey('product-${product.id}'),
       child: ListTile(
         title: Text(product.name),
-        subtitle: Text([facts.join(' · '), if (d.source.isNotEmpty) 'From ${d.source}', if (d.terpenes.isNotEmpty) d.terpenes, used].join('\n')),
-        isThreeLine: true,
+        subtitle: Text([facts.join(' · '), if (d.source.isNotEmpty) 'From ${d.source}', if (d.terpenes.isNotEmpty) d.terpenes, used, if (_rated(outcomes) != null) _rated(outcomes)!].join('\n')),
         onTap: () => showProductEditor(context, ref, existing: product),
         trailing: IconButton(
           tooltip: 'Remove',
@@ -99,6 +103,51 @@ class _ProductCard extends ConsumerWidget {
               ));
             }
           },
+        ),
+      ),
+    );
+  }
+}
+
+String? _rated(ProductOutcomes o) {
+  if (o.rated == 0) return null;
+  final scores = [
+    for (final (key, label) in scoreFields)
+      if (o.averages[key] != null) '${label.toLowerCase()} ${_n(double.parse(o.averages[key]!.toStringAsFixed(1)))}',
+  ];
+  return 'Rated in ${o.rated} of ${o.experiences} sessions${scores.isEmpty ? '' : ': ${scores.join(', ')}'}';
+}
+
+/// The best product so far for each feeling, once there are enough ratings to say anything.
+class _BestCard extends StatelessWidget {
+  const _BestCard({required this.outcomes});
+  final Map<Product, ProductOutcomes> outcomes;
+
+  @override
+  Widget build(BuildContext context) {
+    final lines = [
+      for (final (key, label) in scoreFields)
+        if (bestFor(key, outcomes) case final best?)
+          '${lowerIsBetter.contains(key) ? 'Lowest ${label.toLowerCase()}' : 'Best ${label.toLowerCase()}'}: ${best.product.name} '
+              '(${_n(double.parse(best.average.toStringAsFixed(1)))} over ${best.count} ratings)',
+    ];
+    if (lines.isEmpty) return const SizedBox.shrink();
+    return Card(
+      key: const ValueKey('best-products'),
+      child: Padding(
+        padding: const EdgeInsets.all(Gap.md),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('What seems to work for you', style: Theme.of(context).textTheme.titleSmall),
+            const SizedBox(height: 4),
+            for (final l in lines) Text(l),
+            const SizedBox(height: 4),
+            Text(
+              'Based on your own ratings of whole sessions, so other substances and your mood that day also play a part. A hint, not proof.',
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+          ],
         ),
       ),
     );

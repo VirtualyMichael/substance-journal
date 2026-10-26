@@ -73,6 +73,10 @@ final personIngestionsProvider = StreamProvider.autoDispose.family<List<Ingestio
   (ref, personId) => ref.watch(databaseProvider).watchIngestionsForPerson(personId),
 );
 
+final personRatingsProvider = StreamProvider.autoDispose.family<List<Rating>, String>(
+  (ref, personId) => ref.watch(databaseProvider).watchRatingsForPerson(personId),
+);
+
 final usageProvider = StreamProvider.autoDispose.family<Map<String, UsageStat>, String>(
   (ref, personId) => ref.watch(databaseProvider).watchUsageForPerson(personId),
 );

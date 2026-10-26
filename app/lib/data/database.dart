@@ -483,6 +483,13 @@ class AppDatabase extends _$AppDatabase {
         ..orderBy([(t) => OrderingTerm.asc(t.time)]))
       .watch();
 
+  /// Every live rating on one person's live experiences (for outcome summaries).
+  Stream<List<Rating>> watchRatingsForPerson(String personId) {
+    final query = select(ratings).join([innerJoin(experiences, experiences.id.equalsExp(ratings.experienceId))])
+      ..where(experiences.personId.equals(personId) & experiences.deleted.equals(false) & ratings.deleted.equals(false));
+    return query.map((row) => row.readTable(ratings)).watch();
+  }
+
   Future<void> deleteRating(String id) async {
     await (update(ratings)..where((t) => t.id.equals(id)))
         .write(RatingsCompanion(deleted: const Value(true), hlc: Value(nextHlc())));
