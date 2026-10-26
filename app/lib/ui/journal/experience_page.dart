@@ -12,6 +12,8 @@ import '../add/dose_widgets.dart';
 import '../design.dart';
 import '../timeline/timeline_chart.dart';
 import '../timeline/timeline_data.dart';
+import '../../data/alcohol_data.dart';
+import '../alcohol/alcohol_day_view.dart' show alcoholReadout;
 import '../dose_text.dart';
 import 'dialogs.dart';
 import 'edit_ingestion_dialog.dart';
@@ -169,6 +171,18 @@ class _ExperiencePageState extends ConsumerState<ExperiencePage> {
     final ratings = ref.watch(ratingsProvider(widget.experienceId)).value ?? const <Rating>[];
 
     final series = buildTimelineSeries(ingestions: ingestions, reference: reference, now: now);
+
+    // Alcohol in a mixed journal still gets a blood-alcohol estimate when hovering the chart.
+    final drinks = [for (final i in ingestions) if (i.substanceKey == 'alcohol') i];
+    final settings = ref.watch(estimateSettingsProvider(experience.personId)).value ?? const EstimateSettings();
+    final bac = drinks.isEmpty
+        ? const <(DateTime, double)>[]
+        : bacSeries(
+            drinks,
+            settings,
+            from: drinks.map((d) => d.time).reduce((a, b) => a.isBefore(b) ? a : b).subtract(const Duration(minutes: 30)),
+            to: drinks.map((d) => d.time).reduce((a, b) => a.isAfter(b) ? a : b).add(const Duration(hours: 14)),
+          );
     final markers = [
       for (final n in timedNotes)
         if (n.showOnTimeline) TimelineMarker(time: n.time, color: Color(n.colorValue), label: n.note),
@@ -235,7 +249,12 @@ class _ExperiencePageState extends ConsumerState<ExperiencePage> {
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                       const SizedBox(height: Gap.md),
-                      TimelineChart(series: series, markers: markers, now: now),
+                      TimelineChart(
+                        series: series,
+                        markers: markers,
+                        now: now,
+                        extraInfo: drinks.isEmpty ? null : (t) => alcoholReadout(t, drinks, settings, bac),
+                      ),
                       const SizedBox(height: Gap.sm),
                       Wrap(
                         spacing: Gap.md,

@@ -355,7 +355,7 @@ class TimelinePainter extends CustomPainter {
       for (final d in s.doses) {
         if (d.difference(t).abs() <= near) lines.add(('  dose at ${formatClock(d)}: ${_doseText(s.label)}', null));
       }
-      if (extraInfo == null && s.doses.isNotEmpty) {
+      if (yLabel == null && s.doses.isNotEmpty) {
         // Where this substance's curve tops out and when it has faded.
         var peak = s.points.first;
         for (final p in s.points) {

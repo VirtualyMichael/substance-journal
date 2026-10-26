@@ -15,10 +15,16 @@ const _alcoholColor = Color(0xFFE0A100);
 
 String _bac(double v) => '${v.toStringAsFixed(3)}%';
 
-/// Extra hover lines for the BAC chart at [t]: drinks so far, and when it should clear.
-List<String> _readout(DateTime t, List<Ingestion> drinks, EstimateSettings settings, List<(DateTime, double)> bac) {
+/// Extra hover lines at [t] for alcohol: the estimated BAC, drinks so far, and when it should clear.
+/// [bac] is the person's estimated BAC curve; used by the Alcohol mode chart and the journal's.
+List<String> alcoholReadout(DateTime t, List<Ingestion> drinks, EstimateSettings settings, List<(DateTime, double)> bac) {
   final soFar = [for (final d in drinks) if (!d.time.isAfter(t) && t.difference(d.time) < const Duration(hours: 36)) d];
   final lines = <String>[];
+  var current = 0.0;
+  for (final (time, v) in bac) {
+    if (!time.isAfter(t)) current = v;
+  }
+  if (bac.isNotEmpty && !t.isBefore(bac.first.$1) && !t.isAfter(bac.last.$1)) lines.add('Est. BAC ${_bac(current)}');
   if (soFar.isNotEmpty) {
     final std = soFar.fold<double>(0, (s, d) => s + standardDrinksOf(d, settings));
     lines.add('${soFar.length} drinks so far, ${std.toStringAsFixed(1)} standard');
@@ -94,7 +100,7 @@ class AlcoholDayView extends ConsumerWidget {
                       reference: null,
                       yMinimum: 0.08,
                       yLabel: _bac,
-                      extraInfo: (t) => _readout(t, drinks, settings, summary.bacSeries),
+                      extraInfo: (t) => alcoholReadout(t, drinks, settings, summary.bacSeries),
                       emptyText: isToday ? 'No drinks in the last 36 hours' : 'No drinks on this day',
                       height: 240,
                     ),
