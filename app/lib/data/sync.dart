@@ -137,6 +137,12 @@ class SyncService {
       if (rows.isNotEmpty) tables[t.name] = rows;
       count += rows.length;
     }
+    // People are tiny and every other row points at one, so they always travel. Without them a
+    // receiver that first saw a "Me" long ago cannot tell whose later entries these are.
+    if (!tables.containsKey('people')) {
+      final people = await db.select(db.people).get();
+      if (people.isNotEmpty) tables['people'] = [for (final p in people) p.toJson()];
+    }
     final sharedSettings = await (db.select(db.settings)
           ..where((s) => s.shared.equals(true) & (since == null ? const Constant(true) : s.hlc.isBiggerThanValue(since))))
         .get();
@@ -254,6 +260,7 @@ class SyncService {
       skipped += result.skipped;
       if (result.maxHlc.compareTo(maxHlc) > 0) maxHlc = result.maxHlc;
     }
+    await _adoptOrphans();
     final settingRows = (tables['settings'] as List?)?.cast<Map<String, dynamic>>() ?? const [];
     for (final json in settingRows) {
       final row = Setting.fromJson(json);
@@ -496,6 +503,26 @@ class SyncService {
 
     for (final e in fresh.entries) {
       await db.into(db.settings).insertOnConflictUpdate(SettingsCompanion.insert(key: e.key, value: e.value, hlc: db.nextHlc()));
+    }
+  }
+
+  /// Entries that point at a person this journal has no record of (their person row never arrived,
+  /// for example a "Me" a reinstalled phone made) go to the default person, and the fix syncs back
+  /// out, so they reappear instead of staying hidden.
+  Future<void> _adoptOrphans() async {
+    final me = await (db.select(db.people)..where((t) => t.isDefault.equals(true) & t.deleted.equals(false))).getSingleOrNull();
+    if (me == null) return;
+    for (final table in const ['experiences', 'ingestions']) {
+      final strays = await db
+          .customSelect('SELECT DISTINCT person_id AS id FROM $table WHERE person_id NOT IN (SELECT id FROM people)')
+          .get();
+      for (final row in strays) {
+        await db.customUpdate(
+          'UPDATE $table SET person_id = ?, hlc = ? WHERE person_id = ?',
+          variables: [Variable<String>(me.id), Variable<String>(db.nextHlc()), Variable<String>(row.data['id'] as String)],
+          updates: {if (table == 'experiences') db.experiences else db.ingestions},
+        );
+      }
     }
   }
 

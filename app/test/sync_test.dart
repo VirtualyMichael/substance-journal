@@ -271,4 +271,54 @@ void main() {
   test('a package for an unpaired peer cannot be created', () async {
     await expectLater(pc.createPackage('nobody'), throwsA(isA<SyncException>()));
   });
+
+  group('a freshly installed phone, with its own "Me", syncing later changes', () {
+    Future<Set<String>> orphanPersons(AppDatabase db) async {
+      final known = {for (final p in await db.select(db.people).get()) p.id};
+      final used = {
+        for (final e in await db.select(db.experiences).get()) e.personId,
+        for (final i in await db.select(db.ingestions).get()) i.personId,
+      };
+      return used.difference(known);
+    }
+
+    test('what it logs after the first sync lands on the PC person, never on an unknown one', () async {
+      final pcMe = await addMe(pcDb);
+      await drink(pcDb, pcMe, 'lsd', 100, DateTime(2026, 6, 1, 20));
+      await pair();
+      final phoneMe = await addMe(phoneDb); // the new install makes its own Me
+      await phoneToPc();
+      await pcToPhone();
+      tick();
+      await phoneToPc();
+      tick();
+
+      await drink(phoneDb, phoneMe, 'cannabis', 5, DateTime(2026, 7, 1, 11)); // logged on the phone afterwards
+      tick();
+      await phoneToPc(); // a plain delta: the phone's person is not in it
+      tick();
+      await pcToPhone();
+
+      expect(await orphanPersons(pcDb), isEmpty);
+      final onPc = await pcDb.ingestionsForPerson(pcMe.id);
+      expect(onPc.map((i) => i.substanceKey).toSet(), {'lsd', 'cannabis'});
+      expect(await orphanPersons(phoneDb), isEmpty);
+      expect((await phoneDb.ingestionsForPerson(phoneMe.id)), hasLength(2));
+    });
+
+    test('entries already stranded on an unknown person are brought back by the next sync', () async {
+      final pcMe = await addMe(pcDb);
+      await pair();
+      final stray = await pcDb.addPerson('temp');
+      final e = await pcDb.addExperience(personId: stray.id, sortDate: DateTime(2026, 7, 1, 10));
+      await pcDb.addIngestion(experience: e, substanceKey: 'lsd', route: 'oral', time: DateTime(2026, 7, 1, 10), dose: 1, unit: 'mg');
+      await (pcDb.delete(pcDb.people)..where((t) => t.id.equals(stray.id))).go(); // its person row is gone
+      expect(await orphanPersons(pcDb), isNotEmpty);
+
+      await addMe(phoneDb);
+      await phoneToPc();
+      expect(await orphanPersons(pcDb), isEmpty);
+      expect(await pcDb.ingestionsForPerson(pcMe.id), hasLength(1));
+    });
+  });
 }
