@@ -18,6 +18,8 @@ jobs:
           channel: stable
           cache: true
       - run: flutter pub get
+      - run: dart pub get
+        working-directory: app/packages/sj_core
       - run: flutter analyze
       - run: flutter test
       - run: dart test
