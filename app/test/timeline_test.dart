@@ -71,13 +71,46 @@ void main() {
       expect(peakMinute('oral', 10), greaterThan(90));
     });
 
-    test('unknown substances or routes are skipped instead of crashing', () {
+    test('unknown substances are skipped instead of crashing', () {
       final series = buildTimelineSeries(
-        ingestions: [ingestion('nope', 'oral', 1, start), ingestion('lsd', 'smoked', 1, start)],
+        ingestions: [ingestion('nope', 'oral', 1, start)],
         reference: reference,
         now: start,
       );
       expect(series, isEmpty);
+    });
+
+    test('a route the reference lacks borrows the nearest route instead of drawing nothing', () {
+      final series = buildTimelineSeries(
+        ingestions: [ingestion('lsd', 'oral', 100, start)], // only "sublingual" is published
+        reference: reference,
+        now: start,
+      );
+      expect(series, hasLength(1));
+      expect(series.single.points.length, greaterThan(2));
+    });
+
+    test('several doses of one substance combine into one curve and each dose is marked', () {
+      final times = [for (final m in [0, 30, 75]) start.add(Duration(minutes: m))];
+      final series = buildTimelineSeries(
+        ingestions: [
+          for (var i = 0; i < times.length; i++) ingestion('alcohol', 'oral', 10, times[i], id: 'd$i'),
+          ingestion('mdma', 'oral', 100, start, id: 'm'),
+        ],
+        reference: reference,
+        now: start,
+      );
+      expect(series, hasLength(2)); // one per substance, not one per dose
+      final alcohol = series.firstWhere((s) => s.label.startsWith('Alcohol'));
+      expect(alcohol.doses, times);
+      expect(alcohol.label, contains('3 doses'));
+      expect(alcohol.label, contains('30'));
+      final single = buildTimelineSeries(
+        ingestions: [ingestion('alcohol', 'oral', 10, start)],
+        reference: reference,
+        now: start,
+      ).single;
+      expect(alcohol.peak, greaterThan(single.peak)); // the doses add up
     });
   });
 
@@ -153,7 +186,7 @@ void main() {
         ),
       ));
       expect(tester.takeException(), isNull);
-      expect(find.bySemanticsLabel(RegExp('Timeline of 2 ingestions')), findsOneWidget);
+      expect(find.bySemanticsLabel(RegExp('Timeline of 2 substances')), findsOneWidget);
     });
 
     testWidgets('an empty timeline renders a placeholder', (tester) async {

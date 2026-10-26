@@ -48,7 +48,7 @@ class TimelineChart extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
     final description = series.isEmpty
         ? 'Timeline with no ingestions'
-        : 'Timeline of ${series.length} ingestions: ${series.map((s) => s.label).join(', ')}';
+        : 'Timeline of ${series.length} substances: ${series.map((s) => s.label).join(', ')}';
     return Semantics(
       label: description,
       child: SizedBox(
@@ -250,6 +250,22 @@ class TimelinePainter extends CustomPainter {
       );
     }
 
+    // Where each dose was taken: a dotted line up to the curve, and a dot on it.
+    for (final s in series) {
+      for (final t in s.doses) {
+        if (t.isBefore(start) || t.isAfter(end)) continue;
+        final dx = x(t);
+        final dy = y(_valueAt(s, t));
+        final line = Paint()
+          ..color = s.color.withValues(alpha: 0.7)
+          ..strokeWidth = 1.2;
+        for (var yy = plot.bottom; yy > dy; yy -= 5) {
+          canvas.drawLine(Offset(dx, yy), Offset(dx, max(yy - 2.5, dy)), line);
+        }
+        canvas.drawCircle(Offset(dx, dy), 4.5, Paint()..color = s.color);
+      }
+    }
+
     // Markers
     for (final m in markers) {
       final mx = x(m.time);
@@ -273,6 +289,22 @@ class TimelinePainter extends CustomPainter {
       }
       _text(canvas, 'Now', Offset(nx, plot.top - 12), center: true, color: nowColor);
     }
+  }
+
+  /// The curve's value at [t], interpolated between its two nearest points.
+  static double _valueAt(TimelineSeries s, DateTime t) {
+    final pts = s.points;
+    if (t.isBefore(pts.first.$1)) return pts.first.$2;
+    for (var i = 1; i < pts.length; i++) {
+      if (!pts[i].$1.isBefore(t)) {
+        final (t0, v0) = pts[i - 1];
+        final (t1, v1) = pts[i];
+        final span = t1.difference(t0).inMicroseconds;
+        if (span == 0) return v1;
+        return v0 + (v1 - v0) * (t.difference(t0).inMicroseconds / span);
+      }
+    }
+    return pts.last.$2;
   }
 
   void _text(Canvas canvas, String text, Offset at, {bool center = false, bool right = false, Color? color}) {

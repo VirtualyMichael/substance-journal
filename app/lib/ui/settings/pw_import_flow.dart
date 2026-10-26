@@ -1,9 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/pw_journal_import.dart';
 import '../../providers.dart';
 import '../design.dart';
+import 'pw_review_page.dart';
 
 /// Pick a PsychonautWiki Journal export, show what is in it, and import it on confirmation.
 Future<void> runPwImport(BuildContext context, WidgetRef ref, {String? path}) async {
@@ -32,7 +35,11 @@ Future<void> runPwImport(BuildContext context, WidgetRef ref, {String? path}) as
     return;
   }
 
-  final confirmed = await showDialog<bool>(context: context, builder: (_) => _ConfirmDialog(export: export));
+  final db = ref.read(databaseProvider);
+  final saved = jsonDecode(await db.getSetting('pwMappings') ?? '{}');
+  if (!context.mounted) return;
+  final plan = PwImportPlan(export, ref.read(catalogProvider), saved: saved is Map<String, dynamic> ? saved : const {});
+  final confirmed = await Navigator.of(context).push<bool>(MaterialPageRoute(builder: (_) => PwReviewPage(plan: plan)));
   if (confirmed != true || !context.mounted) return;
 
   showDialog<void>(
@@ -45,7 +52,8 @@ Future<void> runPwImport(BuildContext context, WidgetRef ref, {String? path}) as
   PwImportResult? result;
   Object? failure;
   try {
-    result = await importPwJournal(ref.read(databaseProvider), export, ref.read(catalogProvider));
+    result = await importPwJournal(db, export, ref.read(catalogProvider), plan: plan);
+    await db.setSetting('pwMappings', jsonEncode(plan.toSaved()));
   } catch (e) {
     failure = e;
   }
@@ -68,44 +76,6 @@ Future<void> _message(BuildContext context, String title, String body) => showDi
       ),
     );
 
-class _ConfirmDialog extends StatelessWidget {
-  const _ConfirmDialog({required this.export});
-
-  final PwExport export;
-
-  @override
-  Widget build(BuildContext context) {
-    final first = export.first;
-    final last = export.last;
-    final others = export.consumers.toList()..sort();
-    final lines = <String>[
-      '${export.experiences.length} experiences (${export.ingestionCount} ingestions, ${export.noteCount} timed notes, '
-          '${export.ratingCount} ratings)'
-          '${first == null ? '' : ' from ${formatDate(first)} to ${formatDate(last!)}'}.',
-      if (export.customSubstances.isNotEmpty) '${export.customSubstances.length} custom substances become custom compounds.',
-      if (export.customUnits.isNotEmpty) '${export.customUnits.length} custom units.',
-      'Ingestions with no consumer go to your own journal.',
-      if (others.isNotEmpty) 'People: ${others.join(', ')} (added if they do not exist yet).',
-      'Experiences already in the journal are skipped, so importing the same file again adds nothing.',
-      if (export.problems.isNotEmpty) '${export.problems.length} entries could not be read and will be skipped.',
-    ];
-    return AlertDialog(
-      title: const Text('Import from PsychonautWiki Journal'),
-      content: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [for (final l in lines) Padding(padding: const EdgeInsets.only(bottom: Gap.sm), child: Text(l))],
-        ),
-      ),
-      actions: [
-        TextButton(key: const ValueKey('import-cancel'), onPressed: () => Navigator.of(context).pop(false), child: const Text('Cancel')),
-        FilledButton(key: const ValueKey('import-confirm'), onPressed: () => Navigator.of(context).pop(true), child: const Text('Import')),
-      ],
-    );
-  }
-}
-
 class _ResultDialog extends StatelessWidget {
   const _ResultDialog({required this.result});
 
@@ -115,6 +85,7 @@ class _ResultDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     final lines = <String>[
       '${result.experiencesImported} experiences imported (${result.ingestions} ingestions, ${result.notes} notes, ${result.ratings} ratings).',
+      if (result.experiencesCreated != result.experiencesImported) 'Doses close together were combined into ${result.experiencesCreated} experiences.',
       if (result.experiencesSkipped > 0) '${result.experiencesSkipped} already in the journal, skipped.',
       if (result.customCompoundsCreated.isNotEmpty) 'Custom compounds added: ${result.customCompoundsCreated.join(', ')}.',
       if (result.customUnitsCreated > 0) '${result.customUnitsCreated} custom units added.',

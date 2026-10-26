@@ -133,7 +133,36 @@ class Substance {
     }
     return null;
   }
+
+  /// The route whose timing best stands in for [route] when the reference data does not list
+  /// it (for example an imported LSD dose taken "oral" when only "sublingual" is published).
+  /// Null only if the compound has no routes at all.
+  RouteOfAdministration? nearestRoute(String route) {
+    final exact = this.route(route);
+    if (exact != null) return exact;
+    for (final candidate in _routeFamily[route] ?? const <String>[]) {
+      final r = this.route(candidate);
+      if (r != null) return r;
+    }
+    return roas.firstOrNull;
+  }
 }
+
+/// Routes that behave alike, most similar first, for borrowing timing when one is missing.
+const Map<String, List<String>> _routeFamily = {
+  'oral': ['sublingual', 'buccal', 'rectal'],
+  'sublingual': ['buccal', 'oral'],
+  'buccal': ['sublingual', 'oral'],
+  'rectal': ['oral', 'sublingual'],
+  'smoked': ['inhaled', 'vaporized', 'insufflated'],
+  'inhaled': ['smoked', 'vaporized', 'insufflated'],
+  'vaporized': ['smoked', 'inhaled', 'insufflated'],
+  'insufflated': ['inhaled', 'smoked', 'sublingual', 'intravenous'],
+  'intravenous': ['intramuscular', 'subcutaneous', 'insufflated', 'smoked', 'inhaled'],
+  'intramuscular': ['intravenous', 'subcutaneous', 'insufflated'],
+  'subcutaneous': ['intramuscular', 'intravenous', 'insufflated'],
+  'transdermal': ['oral', 'sublingual'],
+};
 
 const _unitMinutes = {'seconds': 1 / 60, 'minutes': 1.0, 'hours': 60.0, 'days': 1440.0};
 

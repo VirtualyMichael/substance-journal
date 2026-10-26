@@ -236,6 +236,100 @@ void main() {
     });
   });
 
+  group('other export layouts and choices', () {
+    String layoutJson() => jsonEncode({
+          'experiences': [
+            {
+              'title': 'Morning',
+              'sortDate': ms(_t0),
+              'ingestions': [
+                {'ingestion': {'substanceName': 'LSD', 'time': ms(_t0), 'administrationRoute': 'ORAL', 'dose': 50.0, 'units': 'µg'}},
+              ],
+            },
+            {
+              'title': 'Afternoon',
+              'sortDate': ms(_t0.add(const Duration(hours: 4))),
+              'ingestions': [
+                {'customSubstanceId': 1, 'time': ms(_t0.add(const Duration(hours: 4))), 'administrationRoute': 'SMOKED', 'dose': 1.0, 'units': 'mg'},
+                {'dose': 1.0, 'time': ms(_t0), 'someOtherField': true},
+              ],
+            },
+          ],
+          'customSubstances': [
+            {'id': 1, 'name': 'Home blend', 'units': 'mg'},
+          ],
+        });
+
+    test('wrapped doses and custom-substance ids are read; unreadable ones name their fields, not values', () {
+      final export = parsePwJournalJson(layoutJson());
+      expect(export.ingestionCount, 2);
+      expect(export.experiences.last.ingestions.single.substanceName, 'Home blend');
+      expect(export.problems.single, contains('no substance name'));
+      expect(export.problems.single, contains('someOtherField'));
+      expect(export.ingestionKeys, contains('customSubstanceId'));
+    });
+
+    test('doses close together become one experience, and can be kept apart', () async {
+      final me = await db.ensureDefaultPerson();
+      final export = parsePwJournalJson(layoutJson());
+      final reference = fullReference();
+      final plan = PwImportPlan(export, reference); // combine is on by default
+      final result = await importPwJournal(db, export, reference, plan: plan);
+      expect(result.experiencesImported, 2);
+      expect(result.experiencesCreated, 1);
+      final experiences = await db.watchExperiences(me.id).first;
+      expect(experiences, hasLength(1));
+      expect(await db.watchIngestionsForExperience(experiences.single.id).first, hasLength(2));
+
+      final apart = AppDatabase.memory();
+      addTearDown(apart.close);
+      await apart.ensureDefaultPerson();
+      final plan2 = PwImportPlan(export, reference)..combine = false;
+      final result2 = await importPwJournal(apart, export, reference, plan: plan2);
+      expect(result2.experiencesCreated, 2);
+    });
+
+    test('choices: skip experiences, remap a compound, change a route for one dose', () async {
+      final me = await db.ensureDefaultPerson();
+      final export = parsePwJournalJson(exportJson());
+      final reference = fullReference();
+      final plan = PwImportPlan(export, reference)
+        ..selected.remove(1) // leave out "Quiet one"
+        ..compoundByName['mystery powder'] = const PwCompound.reference('ketamine')
+        ..routeByGroup[PwImportPlan.groupKey('LSD', 'oral')] = 'sublingual';
+      final dose = export.experiences.first.ingestions.firstWhere((i) => i.substanceName == 'Diazepam');
+      plan.overrides[dose.id] = const PwOverride(route: 'rectal');
+      final result = await importPwJournal(db, export, reference, plan: plan);
+
+      expect(result.experiencesImported, 1);
+      expect(result.customCompoundsCreated, isEmpty);
+      final mine = await db.ingestionsForPerson(me.id);
+      expect(mine.any((i) => i.substanceKey == 'cannabis'), isFalse);
+      expect(mine.firstWhere((i) => i.substanceKey == 'lsd').route, 'sublingual');
+      expect(mine.firstWhere((i) => i.substanceKey == 'diazepam').route, 'rectal');
+      expect(mine.where((i) => i.substanceKey == 'ketamine' && i.dose == 20), hasLength(1)); // the remapped powder
+    });
+
+    test('choices are saved and reloaded for the next import', () {
+      final export = parsePwJournalJson(exportJson());
+      final reference = fullReference();
+      final plan = PwImportPlan(export, reference)
+        ..compoundByName['mystery powder'] = const PwCompound.reference('ketamine')
+        ..routeByGroup['lsd|oral'] = 'sublingual';
+      final next = PwImportPlan(export, reference, saved: jsonDecode(jsonEncode(plan.toSaved())) as Map<String, dynamic>);
+      expect(next.compoundByName['mystery powder'], const PwCompound.reference('ketamine'));
+      expect(next.routeByGroup['lsd|oral'], 'sublingual');
+    });
+
+    test('a route the reference lacks borrows the nearest one', () {
+      final dmt = fullReference().byKey['dmt']!; // only "smoked" is published
+      expect(dmt.nearestRoute('insufflated')?.route, 'smoked');
+      expect(dmt.nearestRoute('vaporized')?.route, 'smoked');
+      final lsd = fullReference().byKey['lsd']!; // only "sublingual"
+      expect(lsd.nearestRoute('oral')?.route, 'sublingual');
+    });
+  });
+
   group('screen', () {
     testWidgets('choosing a file shows a summary and imports it on confirmation', (tester) async {
       final dir = Directory.systemTemp.createTempSync('pw_export');

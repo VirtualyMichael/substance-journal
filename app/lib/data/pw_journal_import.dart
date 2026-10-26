@@ -19,6 +19,7 @@ class PwImportException implements Exception {
 
 class PwIngestion {
   const PwIngestion({
+    this.id = '',
     required this.substanceName,
     required this.route,
     required this.time,
@@ -33,6 +34,8 @@ class PwIngestion {
     this.customUnitId,
   });
 
+  /// Position in the file (`experience-ingestion`), so one dose can be mapped on its own.
+  final String id;
   final String substanceName;
   final String route;
   final DateTime time;
@@ -47,6 +50,22 @@ class PwIngestion {
   /// The person who took it; null or blank means the owner of the journal.
   final String? consumer;
   final String? customUnitId;
+
+  PwIngestion withRoute(String route) => PwIngestion(
+        id: id,
+        substanceName: substanceName,
+        route: route,
+        time: time,
+        endTime: endTime,
+        dose: dose,
+        unit: unit,
+        isEstimate: isEstimate,
+        stdDev: stdDev,
+        notes: notes,
+        stomach: stomach,
+        consumer: consumer,
+        customUnitId: customUnitId,
+      );
 }
 
 class PwNote {
@@ -135,7 +154,13 @@ class PwExport {
     this.customSubstances = const [],
     this.customUnits = const [],
     this.problems = const [],
+    this.experienceKeys = const [],
+    this.ingestionKeys = const [],
   });
+
+  /// Field names found in the file (never values), to diagnose a file that reads wrongly.
+  final List<String> experienceKeys;
+  final List<String> ingestionKeys;
 
   final List<PwExperience> experiences;
   final List<PwCustomSubstance> customSubstances;
@@ -240,13 +265,38 @@ const _noteColors = {
 
 int? noteColorFor(String? name) => name == null ? null : _noteColors[name.toUpperCase()];
 
-PwIngestion _ingestionFrom(Map<String, dynamic> m) {
-  final name = _string(m, const ['substanceName', 'substance']);
-  if (name == null) throw const FormatException('substanceName is missing');
-  final time = _time(_first(m, const ['time']));
-  if (time == null) throw const FormatException('time is missing or not a date');
+/// Field names of a record, for explaining a problem without showing any values.
+String _keys(Map<String, dynamic> m) => (m.keys.toList()..sort()).join(', ');
+
+/// The substance's name, wherever this export version keeps it: a plain field, a nested
+/// object, or a reference to one of the file's custom substances.
+String? _substanceName(Map<String, dynamic> m, Map<String, String> customNames) {
+  final direct = _string(m, const ['substanceName', 'substance_name', 'customSubstanceName']);
+  if (direct != null) return direct;
+  for (final key in const ['substance', 'substanceCompanion']) {
+    final v = m[key];
+    if (v is String && v.trim().isNotEmpty) return v.trim();
+    if (v is Map<String, dynamic>) {
+      final n = _string(v, const ['name', 'substanceName']);
+      if (n != null) return n;
+    }
+  }
+  final custom = _string(m, const ['customSubstanceId', 'customSubstance']);
+  if (custom != null && customNames[custom] != null) return customNames[custom];
+  return _string(m, const ['name']);
+}
+
+PwIngestion _ingestionFrom(Map<String, dynamic> m, String id, Map<String, String> customNames) {
+  // Some versions wrap each dose as {"ingestion": {...}, ...companions}.
+  final inner = m['ingestion'];
+  if (inner is Map<String, dynamic>) m = {...m, ...inner};
+  final name = _substanceName(m, customNames);
+  if (name == null) throw FormatException('no substance name (fields: ${_keys(m)})');
+  final time = _time(_first(m, const ['time', 'ingestionTime', 'date']));
+  if (time == null) throw FormatException('time is missing or not a date (fields: ${_keys(m)})');
   final route = _string(m, const ['administrationRoute', 'route']);
   return PwIngestion(
+    id: id,
     substanceName: name,
     route: (route ?? 'oral').toLowerCase(),
     time: time,
@@ -262,18 +312,18 @@ PwIngestion _ingestionFrom(Map<String, dynamic> m) {
   );
 }
 
-PwExperience _experienceFrom(Map<String, dynamic> m, List<String> problems, int index) {
+PwExperience _experienceFrom(Map<String, dynamic> m, List<String> problems, int index, Map<String, String> customNames) {
   final ingestions = <PwIngestion>[];
-  final rows = _maps(m['ingestions']);
+  final rows = _maps(_first(m, const ['ingestions', 'ingestionsWithCompanions']));
   for (var i = 0; i < rows.length; i++) {
     try {
-      ingestions.add(_ingestionFrom(rows[i]));
+      ingestions.add(_ingestionFrom(rows[i], '$index-$i', customNames));
     } on FormatException catch (e) {
       problems.add('Experience ${index + 1}, ingestion ${i + 1}: ${e.message}');
     }
   }
   final notes = <PwNote>[];
-  for (final n in _maps(m['timedNotes'])) {
+  for (final n in _maps(_first(m, const ['timedNotes', 'timedNote', 'notesTimed']))) {
     final time = _time(n['time']);
     final text = _string(n, const ['note', 'text']);
     if (time == null || text == null) continue;
@@ -285,7 +335,7 @@ PwExperience _experienceFrom(Map<String, dynamic> m, List<String> problems, int 
     ));
   }
   final ratings = <PwRating>[];
-  for (final r in _maps(_first(m, const ['ratings', 'shulginRatings']))) {
+  for (final r in _maps(_first(m, const ['ratings', 'shulginRatings', 'shulginRating']))) {
     final shulgin = _shulginFrom(_string(r, const ['option', 'rating']));
     if (shulgin != null) ratings.add(PwRating(time: _time(r['time']), shulgin: shulgin));
   }
@@ -323,10 +373,19 @@ PwExport parsePwJournalJson(String text) {
   }
   final problems = <String>[];
   final experiences = <PwExperience>[];
+  final customNames = {
+    for (final c in _maps(decoded['customSubstances']))
+      if (_string(c, const ['id']) != null && _string(c, const ['name']) != null) _string(c, const ['id'])!: _string(c, const ['name'])!,
+  };
   final rows = _maps(decoded['experiences']);
+  final experienceKeys = <String>{for (final r in rows) ...r.keys};
+  final ingestionKeys = <String>{
+    for (final r in rows)
+      for (final i in _maps(_first(r, const ['ingestions', 'ingestionsWithCompanions']))) ...i.keys,
+  };
   for (var i = 0; i < rows.length; i++) {
     try {
-      experiences.add(_experienceFrom(rows[i], problems, i));
+      experiences.add(_experienceFrom(rows[i], problems, i, customNames));
     } on FormatException catch (e) {
       problems.add('Experience ${i + 1}: ${e.message}');
     }
@@ -358,7 +417,14 @@ PwExport parsePwJournalJson(String text) {
           note: _string(u, const ['note']) ?? '',
         ),
   ];
-  return PwExport(experiences: experiences, customSubstances: customSubstances, customUnits: customUnits, problems: problems);
+  return PwExport(
+    experiences: experiences,
+    customSubstances: customSubstances,
+    customUnits: customUnits,
+    problems: problems,
+    experienceKeys: (experienceKeys.toList()..sort()),
+    ingestionKeys: (ingestionKeys.toList()..sort()),
+  );
 }
 
 PwExport parsePwJournalFile(String path) {
@@ -367,12 +433,106 @@ PwExport parsePwJournalFile(String path) {
   return parsePwJournalJson(file.readAsStringSync());
 }
 
+// ---- choosing what to import and how ----
+
+/// What a PsychonautWiki substance should become: a reference compound, or a custom one.
+class PwCompound {
+  const PwCompound.reference(String this.key) : customName = null;
+  const PwCompound.custom(String this.customName) : key = null;
+  final String? key;
+  final String? customName;
+
+  Map<String, Object?> toJson() => {if (key != null) 'key': key, if (customName != null) 'custom': customName};
+  static PwCompound? fromJson(Object? j) {
+    if (j is! Map<String, dynamic>) return null;
+    if (j['key'] is String) return PwCompound.reference(j['key'] as String);
+    if (j['custom'] is String) return PwCompound.custom(j['custom'] as String);
+    return null;
+  }
+
+  @override
+  bool operator ==(Object other) => other is PwCompound && other.key == key && other.customName == customName;
+  @override
+  int get hashCode => Object.hash(key, customName);
+}
+
+/// A choice for a single dose that differs from its group.
+class PwOverride {
+  const PwOverride({this.compound, this.route});
+  final PwCompound? compound;
+  final String? route;
+}
+
+/// Routes a dose can be mapped to.
+const List<String> pwRoutes = [
+  'oral', 'sublingual', 'buccal', 'insufflated', 'smoked', 'inhaled', 'vaporized',
+  'rectal', 'transdermal', 'subcutaneous', 'intramuscular', 'intravenous',
+];
+
+/// The user's decisions about an import: which experiences to bring over, which compound each
+/// PsychonautWiki name becomes, which route each (name, route) pair becomes, and per-dose
+/// exceptions. Starts from automatic matching; [saved] (from an earlier import) refines it.
+class PwImportPlan {
+  PwImportPlan(this.export, this.reference, {Map<String, Object?> saved = const {}}) {
+    selected.addAll(List.generate(export.experiences.length, (i) => i));
+    final names = saved['compounds'];
+    if (names is Map<String, dynamic>) {
+      for (final e in names.entries) {
+        final c = PwCompound.fromJson(e.value);
+        // A remembered reference compound must still exist.
+        if (c != null && (c.key == null || reference.byKey.containsKey(c.key))) compoundByName[e.key] = c;
+      }
+    }
+    final routes = saved['routes'];
+    if (routes is Map<String, dynamic>) {
+      for (final e in routes.entries) {
+        if (e.value is String) routeByGroup[e.key] = e.value as String;
+      }
+    }
+  }
+
+  final PwExport export;
+  final ReferenceRepository reference;
+  final Set<int> selected = {};
+  final Map<String, PwCompound> compoundByName = {};
+  final Map<String, String> routeByGroup = {};
+  final Map<String, PwOverride> overrides = {};
+
+  /// Join one person's doses taken within [combineGap] of each other into a single experience.
+  bool combine = true;
+  Duration combineGap = const Duration(hours: 12);
+
+  static String nameKey(String name) => name.trim().toLowerCase();
+  static String groupKey(String name, String route) => '${nameKey(name)}|$route';
+
+  PwCompound defaultCompound(String name) {
+    final key = catalogKeyFor(name, reference);
+    return key != null ? PwCompound.reference(key) : PwCompound.custom(name.trim());
+  }
+
+  PwCompound compoundFor(PwIngestion i) =>
+      overrides[i.id]?.compound ?? compoundByName[nameKey(i.substanceName)] ?? defaultCompound(i.substanceName);
+
+  String routeFor(PwIngestion i) => overrides[i.id]?.route ?? routeByGroup[groupKey(i.substanceName, i.route)] ?? i.route;
+
+  /// Every ingestion in the experiences that are selected.
+  Iterable<PwIngestion> get chosenIngestions => [
+        for (final idx in selected) ...export.experiences[idx].ingestions,
+      ];
+
+  Map<String, Object?> toSaved() => {
+        'compounds': {for (final e in compoundByName.entries) e.key: e.value.toJson()},
+        'routes': routeByGroup,
+      };
+}
+
 // ---- importing ----
 
 class PwImportResult {
   const PwImportResult({
     required this.experiencesImported,
     required this.experiencesSkipped,
+    required this.experiencesCreated,
     required this.ingestions,
     required this.notes,
     required this.ratings,
@@ -384,6 +544,9 @@ class PwImportResult {
 
   final int experiencesImported;
   final int experiencesSkipped;
+
+  /// Experiences actually created (fewer than imported when nearby ones were combined).
+  final int experiencesCreated;
   final int ingestions;
   final int notes;
   final int ratings;
@@ -420,7 +583,8 @@ const _personColors = [0xFFE07A5F, 0xFF3D9970, 0xFFD1495B, 0xFF2EB5C4, 0xFFE0A10
 /// - Custom units are added unless one with the same compound, route and name already exists.
 /// - An experience whose ingestions are all already in the journal is skipped whole, so importing
 ///   the same file twice adds nothing.
-Future<PwImportResult> importPwJournal(AppDatabase db, PwExport export, ReferenceRepository reference) {
+Future<PwImportResult> importPwJournal(AppDatabase db, PwExport export, ReferenceRepository reference, {PwImportPlan? plan}) {
+  final choices = plan ?? PwImportPlan(export, reference);
   return db.transaction(() async {
     final people = await db.activePeople();
     if (people.isEmpty) throw StateError('No people');
@@ -448,11 +612,12 @@ Future<PwImportResult> importPwJournal(AppDatabase db, PwExport export, Referenc
     final unitFor = {for (final c in export.customSubstances) c.name.toLowerCase(): c};
     final keyForName = <String, String>{};
 
-    Future<String> keyFor(String name, String? unit) async {
+    Future<String> keyFor(PwCompound compound, String? unit) async {
+      final reference = compound.key;
+      if (reference != null) return reference;
+      final name = compound.customName!;
       final cached = keyForName[name.toLowerCase()];
       if (cached != null) return cached;
-      final catalog = catalogKeyFor(name, reference);
-      if (catalog != null) return keyForName[name.toLowerCase()] = catalog;
       var row = existingCustom[name.toLowerCase()];
       if (row == null) {
         final declared = unitFor[name.toLowerCase()];
@@ -475,7 +640,7 @@ Future<PwImportResult> importPwJournal(AppDatabase db, PwExport export, Referenc
     var unitsCreated = 0;
     for (final u in export.customUnits) {
       if (u.dose == null) continue;
-      final key = await keyFor(u.substanceName, u.originalUnit);
+      final key = await keyFor(choices.compoundByName[PwImportPlan.nameKey(u.substanceName)] ?? choices.defaultCompound(u.substanceName), u.originalUnit);
       final lookup = '$key|${u.route}|${u.name.toLowerCase()}';
       final existing = haveUnits[lookup];
       if (existing != null) {
@@ -521,14 +686,17 @@ Future<PwImportResult> importPwJournal(AppDatabase db, PwExport export, Referenc
     var ingestionTotal = 0;
     var noteTotal = 0;
     var ratingTotal = 0;
-    final sorted = [...export.experiences]..sort((a, b) => a.sortDate.compareTo(b.sortDate));
+    final pending = <_PendingExperience>[];
+    final sorted = [
+      for (final idx in choices.selected.toList()..sort()) export.experiences[idx],
+    ]..sort((a, b) => a.sortDate.compareTo(b.sortDate));
 
     for (final e in sorted) {
       // Resolve each ingestion first so duplicates can be told apart from new ones.
       final resolved = <(PwIngestion, Person, String)>[];
       for (final i in e.ingestions) {
         final person = await personFor(i.consumer);
-        resolved.add((i, person, await keyFor(i.substanceName, i.unit)));
+        resolved.add((i.withRoute(choices.routeFor(i)), person, await keyFor(choices.compoundFor(i), i.unit)));
       }
       final fresh = <(PwIngestion, Person, String)>[];
       for (final r in resolved) {
@@ -558,28 +726,47 @@ Future<PwImportResult> importPwJournal(AppDatabase db, PwExport export, Referenc
           ..remove(owner.id)
           ..insert(0, owner.id);
       }
-      Experience? primary;
-      for (final personId in people) {
-        final experience = await db.addExperience(
+      for (var n = 0; n < people.length; n++) {
+        final personId = people[n];
+        pending.add(_PendingExperience(
           personId: personId,
           sortDate: e.sortDate,
           title: e.title,
-          notes: e.text,
+          text: e.text,
           isFavorite: e.isFavorite,
           locationName: e.locationName,
           latitude: e.latitude,
           longitude: e.longitude,
           createdAt: e.createdAt,
-        );
-        primary ??= experience;
-        for (final r in groups[personId] ?? const []) {
-          await _addIngestion(db, experience, r, unitIds);
-          ingestionTotal++;
-        }
+          doses: [...?groups[personId]],
+          notes: n == 0 ? [...e.notes] : [],
+          ratings: n == 0 ? [...e.ratings] : [],
+        ));
       }
-      for (final n in e.notes) {
+      imported++;
+    }
+
+    // Doses taken close together by the same person belong on one timeline.
+    final toCreate = choices.combine ? _combine(pending, choices.combineGap) : pending;
+    for (final p in toCreate) {
+      final experience = await db.addExperience(
+        personId: p.personId,
+        sortDate: p.sortDate,
+        title: p.title,
+        notes: p.text,
+        isFavorite: p.isFavorite,
+        locationName: p.locationName,
+        latitude: p.latitude,
+        longitude: p.longitude,
+        createdAt: p.createdAt,
+      );
+      for (final r in p.doses) {
+        await _addIngestion(db, experience, r, unitIds);
+        ingestionTotal++;
+      }
+      for (final n in p.notes) {
         await db.addTimedNote(
-          experienceId: primary!.id,
+          experienceId: experience.id,
           time: n.time,
           note: n.text,
           colorValue: noteColorFor(n.colorName),
@@ -587,16 +774,16 @@ Future<PwImportResult> importPwJournal(AppDatabase db, PwExport export, Referenc
         );
         noteTotal++;
       }
-      for (final r in e.ratings) {
-        await db.addRating(experienceId: primary!.id, time: r.time, shulgin: r.shulgin);
+      for (final r in p.ratings) {
+        await db.addRating(experienceId: experience.id, time: r.time, shulgin: r.shulgin);
         ratingTotal++;
       }
-      imported++;
     }
 
     return PwImportResult(
       experiencesImported: imported,
       experiencesSkipped: skipped,
+      experiencesCreated: toCreate.length,
       ingestions: ingestionTotal,
       notes: noteTotal,
       ratings: ratingTotal,
@@ -606,6 +793,77 @@ Future<PwImportResult> importPwJournal(AppDatabase db, PwExport export, Referenc
       problems: export.problems,
     );
   });
+}
+
+class _PendingExperience {
+  _PendingExperience({
+    required this.personId,
+    required this.sortDate,
+    required this.title,
+    required this.text,
+    required this.isFavorite,
+    this.locationName,
+    this.latitude,
+    this.longitude,
+    this.createdAt,
+    required this.doses,
+    required this.notes,
+    required this.ratings,
+  });
+
+  final String personId;
+  DateTime sortDate;
+  String title;
+  String text;
+  bool isFavorite;
+  String? locationName;
+  double? latitude;
+  double? longitude;
+  DateTime? createdAt;
+  final List<(PwIngestion, Person, String)> doses;
+  final List<PwNote> notes;
+  final List<PwRating> ratings;
+
+  DateTime get first => doses.isEmpty ? sortDate : doses.map((d) => d.$1.time).reduce((a, b) => a.isBefore(b) ? a : b);
+  DateTime get last => doses.isEmpty ? sortDate : doses.map((d) => d.$1.time).reduce((a, b) => a.isAfter(b) ? a : b);
+}
+
+/// Chains each person's experiences whose doses are at most [gap] apart into one.
+/// Experiences with no doses stay as they are.
+List<_PendingExperience> _combine(List<_PendingExperience> all, Duration gap) {
+  final result = <_PendingExperience>[];
+  final byPerson = <String, List<_PendingExperience>>{};
+  for (final p in all) {
+    if (p.doses.isEmpty) {
+      result.add(p);
+    } else {
+      byPerson.putIfAbsent(p.personId, () => []).add(p);
+    }
+  }
+  for (final list in byPerson.values) {
+    list.sort((a, b) => a.first.compareTo(b.first));
+    _PendingExperience? current;
+    for (final p in list) {
+      if (current != null && p.first.difference(current.last) <= gap) {
+        current.doses.addAll(p.doses);
+        current.notes.addAll(p.notes);
+        current.ratings.addAll(p.ratings);
+        if (current.title.isEmpty) current.title = p.title;
+        if (p.text.isNotEmpty && !current.text.contains(p.text)) {
+          current.text = current.text.isEmpty ? p.text : '${current.text}\n\n${p.text}';
+        }
+        current.isFavorite = current.isFavorite || p.isFavorite;
+        current.locationName ??= p.locationName;
+        current.latitude ??= p.latitude;
+        current.longitude ??= p.longitude;
+        if (p.sortDate.isBefore(current.sortDate)) current.sortDate = p.sortDate;
+      } else {
+        current = p;
+        result.add(p);
+      }
+    }
+  }
+  return result;
 }
 
 Future<void> _addIngestion(AppDatabase db, Experience experience, (PwIngestion, Person, String) r, Map<String, String> unitIds) async {

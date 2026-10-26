@@ -7,11 +7,20 @@ import '../design.dart';
 
 /// One curve on the timeline, for one ingestion.
 class TimelineSeries {
-  const TimelineSeries({required this.label, required this.color, required this.points, required this.ingestionId});
+  const TimelineSeries({
+    required this.label,
+    required this.color,
+    required this.points,
+    required this.ingestionId,
+    this.doses = const [],
+  });
   final String label;
   final Color color;
   final List<(DateTime, double)> points;
   final String ingestionId;
+
+  /// When each dose of this substance was taken, so the chart can mark them on the curve.
+  final List<DateTime> doses;
 
   DateTime get start => points.first.$1;
   DateTime get end => points.last.$1;
@@ -27,42 +36,59 @@ class TimelineMarker {
   final bool isRating;
 }
 
-/// Builds one curve per ingestion. Pass the ingestions of ONE person (an experience
+/// Builds one combined curve per substance, so several doses over a day add up on one line,
+/// and records when each dose was taken. Pass the ingestions of ONE person (an experience
 /// belongs to exactly one person), so curves can never mix people.
 List<TimelineSeries> buildTimelineSeries({
   required List<Ingestion> ingestions,
   required ReferenceRepository reference,
   required DateTime now,
 }) {
-  final result = <TimelineSeries>[];
+  final bySubstance = <String, List<Ingestion>>{};
   for (final ingestion in ingestions) {
-    final substance = reference.byKey[ingestion.substanceKey];
-    final roa = substance?.route(ingestion.route);
-    if (substance == null || roa == null) continue;
-
-    // Unknown dose: assume the route's common dose so the curve still shows its timing.
-    final amount = ingestion.dose ?? roa.doseCommon?.min ?? 1.0;
-    final points = sessionEffectSeries(
-      [
-        CurveIngestion(
-          substanceKey: substance.key,
-          roaId: roa.id,
-          amount: amount,
-          occurredAt: ingestion.time,
-        ),
-      ],
-      reference.byKey,
-      now: now,
-    );
+    bySubstance.putIfAbsent(ingestion.substanceKey, () => []).add(ingestion);
+  }
+  final result = <TimelineSeries>[];
+  for (final entry in bySubstance.entries) {
+    final substance = reference.byKey[entry.key];
+    if (substance == null) continue;
+    final curveIngestions = <CurveIngestion>[];
+    final used = <Ingestion>[];
+    for (final ingestion in entry.value) {
+      // A route the reference data lacks borrows the nearest route's timing rather than drawing nothing.
+      final roa = substance.nearestRoute(ingestion.route);
+      if (roa == null) continue;
+      // Unknown dose: assume the route's common dose so the curve still shows its timing.
+      curveIngestions.add(CurveIngestion(
+        substanceKey: substance.key,
+        roaId: roa.id,
+        amount: ingestion.dose ?? roa.doseCommon?.min ?? 1.0,
+        occurredAt: ingestion.time,
+      ));
+      used.add(ingestion);
+    }
+    if (curveIngestions.isEmpty) continue;
+    final points = sessionEffectSeries(curveIngestions, reference.byKey, now: now);
     if (points.isEmpty) continue;
+    used.sort((a, b) => a.time.compareTo(b.time));
     result.add(TimelineSeries(
-      label: '${substance.name} ${formatDose(ingestion.dose, ingestion.unit)}',
+      label: _seriesLabel(substance.name, used),
       color: substanceColor(substance.key),
       points: points,
-      ingestionId: ingestion.id,
+      ingestionId: used.first.id,
+      doses: [for (final i in used) i.time],
     ));
   }
   return result;
+}
+
+/// "LSD 100 µg" for one dose; "Alcohol 12 g (3 doses)" when several add up on one curve.
+String _seriesLabel(String name, List<Ingestion> used) {
+  if (used.length == 1) return '$name ${formatDose(used.first.dose, used.first.unit)}';
+  final units = {for (final i in used) i.unit};
+  final known = used.every((i) => i.dose != null) && units.length == 1;
+  final total = known ? '${formatDose(used.fold<double>(0, (sum, i) => sum + i.dose!), units.single)} ' : '';
+  return '$name $total(${used.length} doses)';
 }
 
 /// Progress through an experience as a whole-number percent, 0 to 100.

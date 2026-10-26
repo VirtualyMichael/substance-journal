@@ -312,6 +312,7 @@ class _IngestionTile extends ConsumerWidget {
     final reference = ref.watch(catalogProvider);
     final substance = reference.byKey[ingestion.substanceKey];
     final roa = substance?.route(ingestion.route);
+    final borrowed = roa == null ? substance?.nearestRoute(ingestion.route) : null;
     final scheme = Theme.of(context).colorScheme;
 
     final cls = (ingestion.dose != null && roa != null) ? classifyDose(roa, ingestion.dose!) : null;
@@ -320,6 +321,7 @@ class _IngestionTile extends ConsumerWidget {
       if (ingestion.endTime != null) 'until ${formatClock(ingestion.endTime!)}',
       describeIngestionDose(ingestion),
       ingestion.route,
+      if (borrowed != null) 'curve uses ${borrowed.route} timing',
     ];
     String? cannabisNote;
     if (ingestion.substanceKey == 'cannabis' && ingestion.absorbedMg != null) {
