@@ -4,6 +4,9 @@ import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:sj_core/sj_core.dart';
+
+import '../../data/alcohol_data.dart';
 import '../../data/database.dart';
 import '../../providers.dart';
 import '../design.dart';
@@ -33,7 +36,19 @@ class _EditIngestionDialogState extends ConsumerState<EditIngestionDialog> {
   late final TextEditingController _unitCount = TextEditingController(
     text: _details['unitCount'] == null ? '' : formatDose((_details['unitCount'] as num).toDouble(), null),
   );
+  late final DrinkDetails _drink = DrinkDetails.of(widget.ingestion);
+  late final TextEditingController _volume = TextEditingController(
+    text: _drink.hasVolume ? formatDose(_drink.volume, null) : formatDose(_ozFromGrams(widget.ingestion.dose), null),
+  );
+  late final TextEditingController _abv = TextEditingController(text: _drink.hasVolume ? formatDose(_drink.abv, null) : '40');
+  late String _volumeUnit = _drink.hasVolume ? _drink.volumeUnit! : 'oz';
   String? _error;
+
+  /// A drink with no recorded volume is shown as fl oz of 40% spirit, which is the same grams.
+  static double? _ozFromGrams(double? grams) => grams == null ? null : grams / (0.4 * alcoholDensityGramsPerFlOz);
+
+  /// An alcohol drink is edited as volume and strength, not grams of ethanol.
+  bool get _isDrink => widget.ingestion.substanceKey == 'alcohol' && !_changedWhat;
 
   bool get _isCannabis => widget.ingestion.substanceKey == 'cannabis';
   bool get _changedWhat => _substanceKey != widget.ingestion.substanceKey || _route != widget.ingestion.route;
@@ -44,6 +59,8 @@ class _EditIngestionDialogState extends ConsumerState<EditIngestionDialog> {
   @override
   void dispose() {
     _dose.dispose();
+    _volume.dispose();
+    _abv.dispose();
     _notes.dispose();
     _unitCount.dispose();
     super.dispose();
@@ -62,7 +79,14 @@ class _EditIngestionDialogState extends ConsumerState<EditIngestionDialog> {
     var detailsJson = widget.ingestion.detailsJson;
     Value<String?> customUnitId = const Value.absent();
 
-    if (_usesUnit) {
+    if (_isDrink) {
+      final volume = _num(_volume.text);
+      final abv = _num(_abv.text);
+      if (volume == null || volume <= 0) return setState(() => _error = 'Enter the volume.');
+      if (abv == null || abv <= 0 || abv > 100) return setState(() => _error = 'Enter a strength between 0 and 100%.');
+      dose = drinkGrams(volume, _volumeUnit, abv);
+      detailsJson = jsonEncode({..._details, 'volume': volume, 'volumeUnit': _volumeUnit, 'abv': abv});
+    } else if (_usesUnit) {
       final count = _num(_unitCount.text);
       if (count == null || count <= 0) return setState(() => _error = 'Enter how many.');
       dose = count * (_details['dosePerUnit'] as num).toDouble();
@@ -150,7 +174,41 @@ class _EditIngestionDialogState extends ConsumerState<EditIngestionDialog> {
                 ),
                 const SizedBox(height: Gap.sm),
               ],
-              if (_usesUnit)
+              if (_isDrink)
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        key: const ValueKey('edit-volume'),
+                        controller: _volume,
+                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                        decoration: const InputDecoration(labelText: 'Volume'),
+                      ),
+                    ),
+                    const SizedBox(width: Gap.sm),
+                    DropdownButton<String>(
+                      key: const ValueKey('edit-volume-unit'),
+                      value: _volumeUnit,
+                      items: const [
+                        DropdownMenuItem(value: 'oz', child: Text('fl oz')),
+                        DropdownMenuItem(value: 'shots', child: Text('shots')),
+                        DropdownMenuItem(value: 'ml', child: Text('ml')),
+                      ],
+                      onChanged: (v) => setState(() => _volumeUnit = v ?? _volumeUnit),
+                    ),
+                    const SizedBox(width: Gap.sm),
+                    SizedBox(
+                      width: 84,
+                      child: TextField(
+                        key: const ValueKey('edit-abv'),
+                        controller: _abv,
+                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                        decoration: const InputDecoration(labelText: 'ABV', suffixText: '%'),
+                      ),
+                    ),
+                  ],
+                )
+              else if (_usesUnit)
                 TextField(
                   key: const ValueKey('edit-unit-count'),
                   controller: _unitCount,

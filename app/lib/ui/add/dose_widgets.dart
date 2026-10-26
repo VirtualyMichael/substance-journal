@@ -259,6 +259,9 @@ class DoseInput {
         },
       );
     }
+    final volume = _num(volumeText);
+    final abv = _num(abvText);
+    final drink = roa.substanceKey == 'alcohol' && !unknown && volume != null && abv != null && volume > 0 && abv > 0;
     return DoseStorage(
       dose: unknown ? null : dose,
       unit: roa.unit,
@@ -266,7 +269,8 @@ class DoseInput {
       stdDev: !unknown && isEstimate ? stdDev : null,
       absorbedMg: null,
       method: null,
-      details: const {},
+      // Keep what was actually poured, so it reads "12 fl oz at 5%" rather than grams of ethanol.
+      details: drink ? {'drink': '', 'volume': volume, 'volumeUnit': volumeUnit, 'abv': abv} : const {},
     );
   }
 }
@@ -529,7 +533,8 @@ class _AlcoholCalculator extends StatelessWidget {
                 const SizedBox(width: Gap.sm),
                 SegmentedButton<String>(
                   segments: const [
-                    ButtonSegment(value: 'oz', label: Text('oz')),
+                    ButtonSegment(value: 'oz', label: Text('fl oz')),
+                    ButtonSegment(value: 'shots', label: Text('shots')),
                     ButtonSegment(value: 'ml', label: Text('ml')),
                   ],
                   selected: {value.volumeUnit},

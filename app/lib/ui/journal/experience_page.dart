@@ -315,7 +315,7 @@ class _IngestionTile extends ConsumerWidget {
     final borrowed = roa == null ? substance?.nearestRoute(ingestion.route) : null;
     final scheme = Theme.of(context).colorScheme;
 
-    final cls = (ingestion.dose != null && roa != null) ? classifyDose(roa, ingestion.dose!) : null;
+    final cls = (ingestion.dose != null && roa != null && ingestion.substanceKey != 'alcohol') ? classifyDose(roa, ingestion.dose!) : null;
     final parts = [
       formatClock(ingestion.time),
       if (ingestion.endTime != null) 'until ${formatClock(ingestion.endTime!)}',

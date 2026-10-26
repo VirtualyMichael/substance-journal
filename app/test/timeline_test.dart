@@ -1,6 +1,8 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:substance_journal_app/data/database.dart';
+import 'package:substance_journal_app/ui/dose_text.dart';
 import 'package:substance_journal_app/ui/timeline/timeline_chart.dart';
 import 'package:substance_journal_app/ui/timeline/timeline_data.dart';
 
@@ -30,6 +32,14 @@ Ingestion ingestion(String substance, String route, double? dose, DateTime time,
     );
 
 void main() {
+  test('alcohol reads in fl oz, shots and standard drinks, never grams of ethanol', () {
+    Ingestion drink(String details, double grams) => ingestion('alcohol', 'oral', grams, DateTime(2026, 7, 3, 20)).copyWith(detailsJson: details);
+    expect(describeIngestionDose(drink('{"volume":12,"volumeUnit":"oz","abv":5}', 14.02)), '12 fl oz at 5%');
+    expect(describeIngestionDose(drink('{"volume":1,"volumeUnit":"shots","abv":40}', 14.02)), '1 shot at 40%');
+    expect(describeIngestionDose(drink('{"volume":330,"volumeUnit":"ml","abv":5}', 12.9)), '330 ml at 5%');
+    expect(describeIngestionDose(drink('{}', 28)), '2 standard drinks'); // e.g. imported with grams only
+  });
+
   final reference = loadReference();
   final start = DateTime(2026, 7, 3, 20);
 
@@ -104,7 +114,7 @@ void main() {
       final alcohol = series.firstWhere((s) => s.label.startsWith('Alcohol'));
       expect(alcohol.doses, times);
       expect(alcohol.label, contains('3 doses'));
-      expect(alcohol.label, contains('30'));
+      expect(alcohol.label, contains('2.1 standard drinks')); // 30 g, not "30 g"
       final single = buildTimelineSeries(
         ingestions: [ingestion('alcohol', 'oral', 10, start)],
         reference: reference,
@@ -162,6 +172,39 @@ void main() {
         final span = Duration(hours: h);
         expect(span.inMinutes / TimelinePainter.tickStep(span).inMinutes, lessThanOrEqualTo(8.5), reason: '$h h');
       }
+    });
+
+    testWidgets('hovering or tapping the chart shows a read-out without errors', (tester) async {
+      final series = buildTimelineSeries(
+        ingestions: [
+          ingestion('alcohol', 'oral', 14, start, id: 'a'),
+          ingestion('alcohol', 'oral', 14, start.add(const Duration(minutes: 40)), id: 'b'),
+          ingestion('mdma', 'oral', 100, start, id: 'c'),
+        ],
+        reference: reference,
+        now: start.add(const Duration(hours: 1)),
+      );
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: TimelineChart(
+            series: series,
+            now: start.add(const Duration(hours: 1)),
+            extraInfo: (t) => ['extra line'],
+          ),
+        ),
+      ));
+      final mouse = await tester.createGesture(kind: PointerDeviceKind.mouse);
+      await mouse.addPointer(location: Offset.zero);
+      final box = tester.getRect(find.byType(TimelineChart));
+      for (final f in [0.1, 0.4, 0.9, 1.5]) {
+        await mouse.moveTo(Offset(box.left + box.width * f, box.center.dy)); // 1.5 is off the chart
+        await tester.pump();
+        expect(tester.takeException(), isNull);
+      }
+      await mouse.moveTo(const Offset(-50, -50));
+      await tester.tap(find.byType(TimelineChart));
+      await tester.pump();
+      expect(tester.takeException(), isNull);
     });
 
     testWidgets('renders curves, markers and the Now line without errors', (tester) async {

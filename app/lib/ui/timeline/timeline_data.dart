@@ -4,6 +4,7 @@ import 'package:sj_core/sj_core.dart';
 import '../../data/database.dart';
 import '../../data/reference_repository.dart';
 import '../design.dart';
+import '../dose_text.dart';
 
 /// One curve on the timeline, for one ingestion.
 class TimelineSeries {
@@ -84,6 +85,12 @@ List<TimelineSeries> buildTimelineSeries({
 
 /// "LSD 100 µg" for one dose; "Alcohol 12 g (3 doses)" when several add up on one curve.
 String _seriesLabel(String name, List<Ingestion> used) {
+  if (used.first.substanceKey == 'alcohol') {
+    if (used.length == 1) return '$name ${describeAlcoholDose(used.first)}';
+    final grams = used.fold<double>(0, (sum, i) => sum + (i.dose ?? 0));
+    final std = grams / 14.0;
+    return '$name ${std == std.roundToDouble() ? std.toStringAsFixed(0) : std.toStringAsFixed(1)} standard drinks (${used.length} doses)';
+  }
   if (used.length == 1) return '$name ${formatDose(used.first.dose, used.first.unit)}';
   final units = {for (final i in used) i.unit};
   final known = used.every((i) => i.dose != null) && units.length == 1;

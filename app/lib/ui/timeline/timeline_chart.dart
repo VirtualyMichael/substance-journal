@@ -17,7 +17,7 @@ class ReferenceLine {
 /// By default the vertical scale is relative intensity (1.0 is a common dose). Give
 /// [yLabel] to show a real axis (the Alcohol mode BAC chart), and [reference] / [yMinimum] to
 /// change the guide line and the smallest top of the scale.
-class TimelineChart extends StatelessWidget {
+class TimelineChart extends StatefulWidget {
   const TimelineChart({
     super.key,
     required this.series,
@@ -29,12 +29,16 @@ class TimelineChart extends StatelessWidget {
     this.yBase = 0.0,
     this.yLabel,
     this.emptyText = 'No ingestions yet',
+    this.extraInfo,
   });
 
   final List<TimelineSeries> series;
   final List<TimelineMarker> markers;
   final DateTime now;
   final double height;
+
+  /// More lines for the hover read-out at a moment (drinks so far, time to clear, ...).
+  final List<String> Function(DateTime t)? extraInfo;
 
   /// The value at the bottom of the chart (0 unless a series only varies a little above a baseline).
   final double yBase;
@@ -44,7 +48,17 @@ class TimelineChart extends StatelessWidget {
   final String emptyText;
 
   @override
+  State<TimelineChart> createState() => _TimelineChartState();
+}
+
+class _TimelineChartState extends State<TimelineChart> {
+  /// Where the pointer is over the chart (mouse hover, or the last touch), if anywhere.
+  Offset? _hover;
+
+  @override
   Widget build(BuildContext context) {
+    final w = widget;
+    final series = w.series;
     final scheme = Theme.of(context).colorScheme;
     final description = series.isEmpty
         ? 'Timeline with no ingestions'
@@ -52,22 +66,36 @@ class TimelineChart extends StatelessWidget {
     return Semantics(
       label: description,
       child: SizedBox(
-        height: height,
+        height: w.height,
         width: double.infinity,
-        child: CustomPaint(
-          painter: TimelinePainter(
-            series: series,
-            markers: markers,
-            now: now,
-            axisColor: scheme.outline,
-            gridColor: scheme.outlineVariant,
-            textColor: scheme.onSurfaceVariant,
-            nowColor: scheme.error,
-            reference: reference,
-            yMinimum: yMinimum,
-            yBase: yBase,
-            yLabel: yLabel,
-            emptyText: emptyText,
+        child: MouseRegion(
+          onHover: (e) => setState(() => _hover = e.localPosition),
+          onExit: (_) => setState(() => _hover = null),
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTapDown: (d) => setState(() => _hover = d.localPosition),
+            onHorizontalDragStart: (d) => setState(() => _hover = d.localPosition),
+            onHorizontalDragUpdate: (d) => setState(() => _hover = d.localPosition),
+            child: CustomPaint(
+              painter: TimelinePainter(
+                series: series,
+                markers: w.markers,
+                now: w.now,
+                axisColor: scheme.outline,
+                gridColor: scheme.outlineVariant,
+                textColor: scheme.onSurfaceVariant,
+                nowColor: scheme.error,
+                reference: w.reference,
+                yMinimum: w.yMinimum,
+                yBase: w.yBase,
+                yLabel: w.yLabel,
+                emptyText: w.emptyText,
+                hover: _hover,
+                extraInfo: w.extraInfo,
+                tipBackground: scheme.inverseSurface,
+                tipText: scheme.onInverseSurface,
+              ),
+            ),
           ),
         ),
       ),
@@ -89,7 +117,17 @@ class TimelinePainter extends CustomPainter {
     this.yBase = 0.0,
     this.yLabel,
     this.emptyText = 'No ingestions yet',
+    this.hover,
+    this.extraInfo,
+    this.tipBackground = const Color(0xFF303030),
+    this.tipText = Colors.white,
   });
+
+  /// Pointer position to show a read-out for (null for none).
+  final Offset? hover;
+  final List<String> Function(DateTime t)? extraInfo;
+  final Color tipBackground;
+  final Color tipText;
 
   final List<TimelineSeries> series;
   final List<TimelineMarker> markers;
@@ -278,6 +316,11 @@ class TimelinePainter extends CustomPainter {
       }
     }
 
+    final pointer = hover;
+    if (pointer != null && pointer.dx >= plot.left && pointer.dx <= plot.right) {
+      _paintReadout(canvas, size, plot, start, end, pointer.dx, x, y);
+    }
+
     // Now
     if (!now.isBefore(start) && !now.isAfter(end)) {
       final nx = x(now);
@@ -290,6 +333,82 @@ class TimelinePainter extends CustomPainter {
       _text(canvas, 'Now', Offset(nx, plot.top - 12), center: true, color: nowColor);
     }
   }
+
+  /// Crosshair at [px] with a box giving the time, each curve's level there, any doses taken
+  /// close to that moment, and notes or ratings pinned near it.
+  void _paintReadout(Canvas canvas, Size size, Rect plot, DateTime start, DateTime end, double px, double Function(DateTime) x, double Function(double) y) {
+    final spanMicros = end.difference(start).inMicroseconds;
+    final t = start.add(Duration(microseconds: (spanMicros * (px - plot.left) / plot.width).round()));
+    final multiDay = end.difference(start) > const Duration(hours: 20);
+    final lines = <(String, Color?)>[
+      (multiDay ? '${formatDate(t)} ${formatClock(t)}' : formatClock(t), null),
+    ];
+    final near = const Duration(minutes: 1) * (spanMicros / Duration.microsecondsPerMinute * 0.02).clamp(2, 90).round();
+
+    canvas.drawLine(Offset(px, plot.top), Offset(px, plot.bottom), Paint()..color = textColor.withValues(alpha: 0.6)..strokeWidth = 1);
+    for (final s in series) {
+      if (t.isBefore(s.start) || t.isAfter(s.end)) continue;
+      final v = _valueAt(s, t);
+      canvas.drawCircle(Offset(px, y(v)), 4, Paint()..color = s.color);
+      final level = yLabel != null ? yLabel!(v) : '${(v * 100).round()}% of a common dose';
+      lines.add(('${_shortName(s.label)}: $level', s.color));
+      for (final d in s.doses) {
+        if (d.difference(t).abs() <= near) lines.add(('  dose at ${formatClock(d)}: ${_doseText(s.label)}', null));
+      }
+      if (extraInfo == null && s.doses.isNotEmpty) {
+        // Where this substance's curve tops out and when it has faded.
+        var peak = s.points.first;
+        for (final p in s.points) {
+          if (p.$2 > peak.$2) peak = p;
+        }
+        lines.add(('  peaks ${formatClock(peak.$1)}, fades by ${formatClock(s.end)}', null));
+      }
+    }
+    for (final extra in extraInfo?.call(t) ?? const <String>[]) {
+      lines.add((extra, null));
+    }
+    for (final m in markers) {
+      if (m.time.difference(t).abs() <= near) {
+        lines.add(('${m.isRating ? 'Rating' : 'Note'} ${formatClock(m.time)}: ${m.label}', m.color));
+      }
+    }
+    if (!now.isBefore(start) && now.difference(t).abs() <= near) lines.add(('Now', nowColor));
+    if (lines.length == 1) lines.add(('Nothing active', null));
+
+    final painters = [
+      for (final (text, color) in lines)
+        TextPainter(
+          text: TextSpan(text: text, style: TextStyle(fontSize: 12, color: tipText, fontWeight: color == null ? null : FontWeight.w500)),
+          textDirection: TextDirection.ltr,
+          maxLines: 2,
+          ellipsis: '...',
+        )..layout(maxWidth: min(260, size.width - 16)),
+    ];
+    final boxW = painters.map((p) => p.width).reduce(max) + 20;
+    final boxH = painters.fold<double>(0, (h, p) => h + p.height + 2) + 12;
+    var left = px + 12;
+    if (left + boxW > size.width - 4) left = px - 12 - boxW;
+    left = left.clamp(4, max(4, size.width - boxW - 4));
+    final top = plot.top + 4;
+    final box = RRect.fromRectAndRadius(Rect.fromLTWH(left, top, boxW, boxH), const Radius.circular(8));
+    canvas.drawRRect(box, Paint()..color = tipBackground.withValues(alpha: 0.94));
+    var dy = top + 6;
+    for (var i = 0; i < painters.length; i++) {
+      final color = lines[i].$2;
+      if (color != null) canvas.drawCircle(Offset(left + 8, dy + painters[i].height / 2), 3, Paint()..color = color);
+      painters[i].paint(canvas, Offset(left + (color != null ? 15 : 10), dy));
+      dy += painters[i].height + 2;
+    }
+  }
+
+  /// "Alcohol 7.40 g" gives "Alcohol"; "Alcohol 12 g (3 doses)" gives "Alcohol (3 doses)".
+  static String _shortName(String label) {
+    final doses = RegExp(r'\(\d+ doses\)$').firstMatch(label);
+    final name = label.split(RegExp(r'\s\d')).first;
+    return doses == null ? name : '$name (${doses.group(0)!.replaceAll(RegExp(r'[()]'), '')})';
+  }
+
+  static String _doseText(String label) => label.replaceFirst(label.split(RegExp(r'\s\d')).first, '').trim();
 
   /// The curve's value at [t], interpolated between its two nearest points.
   static double _valueAt(TimelineSeries s, DateTime t) {
@@ -318,6 +437,7 @@ class TimelinePainter extends CustomPainter {
 
   @override
   bool shouldRepaint(TimelinePainter old) =>
+      old.hover != hover ||
       old.series != series ||
       old.markers != markers ||
       old.now != now ||
