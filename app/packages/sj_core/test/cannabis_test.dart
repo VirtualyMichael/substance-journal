@@ -32,17 +32,20 @@ void main() {
     test('a whole 1 g joint at 20% is 200 mg in the flower but not 200 mg absorbed', () {
       final e = estimateCannabisDose(method: CannabisMethod.joint, grams: 1, thcPercent: 20);
       expect(e.productThcMg, closeTo(200, 1e-9));
-      expect(e.absorbedCentralMg, closeTo(50, 1e-9));
-      expect(e.absorbedLowMg, closeTo(20, 1e-9));
-      expect(e.absorbedHighMg, closeTo(70, 1e-9));
+      expect(e.absorbedCentralMg, closeTo(36, 1e-9));
+      expect(e.absorbedLowMg, closeTo(16, 1e-9));
+      expect(e.absorbedHighMg, closeTo(60, 1e-9));
       expect(e.classRange(smoked), (DoseClass.heavy, DoseClass.heavy));
     });
 
     test('a small bowl spans light to strong, because absorption is uncertain', () {
       final e = estimateCannabisDose(method: CannabisMethod.pipe, grams: 0.1, thcPercent: 15);
       expect(e.productThcMg, closeTo(15, 1e-9));
-      expect(e.bandAmountCentralMg, closeTo(3.75, 1e-9));
+      expect(e.bandAmountLowMg, closeTo(1.2, 1e-9));
+      expect(e.bandAmountCentralMg, closeTo(2.7, 1e-9));
+      expect(e.bandAmountHighMg, closeTo(4.5, 1e-9));
       expect(e.classRange(smoked), (DoseClass.light, DoseClass.strong));
+      expect(classifyDose(smoked, e.bandAmountCentralMg!), DoseClass.common);
     });
 
     test('share of the joint smoked scales the dose linearly', () {
@@ -65,7 +68,29 @@ void main() {
       final e = estimateCannabisDose(method: CannabisMethod.tincture, labelThcMg: 10);
       expect(e.bandAmountCentralMg, isNull);
       expect(e.classRange(sublingual), (null, null));
-      expect(e.absorbedCentralMg, closeTo(2.5, 1e-9));
+      expect(e.absorbedCentralMg, closeTo(1.2, 1e-9));
+    });
+
+    test('a 10 mg-THC cigarette is light-to-common and a 25 mg one strong, like the Spindle 2018 arms', () {
+      // 10 mg of THC in the product, 18% absorbed = 1.8 mg (light, reaching common at the
+      // high estimate); 25 mg = 4.5 mg is "strong". Volunteers rated 10 mg as moderate.
+      final ten = estimateCannabisDose(method: CannabisMethod.joint, labelThcMg: 10);
+      final twentyFive = estimateCannabisDose(method: CannabisMethod.joint, labelThcMg: 25);
+      expect(ten.absorbedCentralMg, closeTo(1.8, 1e-9));
+      expect(classifyDose(smoked, ten.bandAmountCentralMg!), DoseClass.light);
+      expect(ten.bandAmountHighMg! >= smoked.doseCommon!.min!, isTrue); // common is within reach at the high end
+      expect(classifyDose(smoked, twentyFive.bandAmountCentralMg!), DoseClass.strong);
+    });
+
+    test('inhaled centre sits inside the published 8-24% systemic availability band', () {
+      expect(inhaledBioavailability.central, inInclusiveRange(0.08, 0.24));
+      expect(inhaledBioavailability.low, 0.08);
+      expect(inhaledBioavailability.high, 0.30);
+    });
+
+    test('sublingual absorbs about as little as swallowing, not like smoking', () {
+      expect(sublingualBioavailability.central, lessThan(inhaledBioavailability.central));
+      expect(sublingualBioavailability.central, closeTo(oralBioavailability.central, 0.05));
     });
 
     test('vaping and dabbing absorb more than smoking, edibles less', () {
@@ -129,11 +154,20 @@ void main() {
       return best;
     }
 
-    test('inhaled peaks at 15-30 minutes and is mostly gone within 4 hours', () {
+    test('inhaled peaks at 25-30 minutes and is mostly gone within 4 hours', () {
       final c = curveFor(smoked, 3);
-      expect(peakMinute(c), inInclusiveRange(15, 30));
+      expect(peakMinute(c), inInclusiveRange(25, 30));
       final peak = c.intensity(start.add(Duration(minutes: peakMinute(c))));
-      expect(c.intensity(start.add(const Duration(hours: 4))), lessThan(0.1 * peak));
+      expect(c.intensity(start.add(const Duration(hours: 1))), closeTo(0.78 * peak, 0.02 * peak));
+      expect(c.intensity(start.add(const Duration(hours: 2))), closeTo(0.39 * peak, 0.02 * peak));
+      expect(c.intensity(start.add(const Duration(hours: 4))), lessThan(0.12 * peak));
+    });
+
+    test('sublingual peaks after about 75-95 minutes, between inhaled and oral', () {
+      final sub = curveFor(sublingual, 3);
+      expect(peakMinute(sub), inInclusiveRange(75, 95));
+      expect(peakMinute(sub), greaterThan(peakMinute(curveFor(smoked, 3))));
+      expect(peakMinute(sub), lessThan(peakMinute(curveFor(oral, 10))));
     });
 
     test('edibles peak at 2-3 hours and last far longer than smoking', () {

@@ -50,6 +50,8 @@ Ours lists Lithium as dangerous and 12 others as uncertain. PW lists the same 13
 - Add `core/cannabis.py` constants for bioavailability with citations.
 
 ## Implementation (app/packages/sj_core/lib/src/cannabis.dart)
+> **Superseded in part:** the bioavailability figures and curve parameters below were revised after review. Current values: inhaled 8 / 18 / 30%, vaporised 10 / 22 / 40%, oral 4 / 10 / 20%, sublingual 5 / 12 / 25%; inhaled curve peak about 27 min, sublingual about 85 min. See `cannabis-model-review.md`.
+
 - **Units used against PsychonautWiki's bands:** smoked, vaped and dabbed doses are compared as mg of THC *absorbed* (product mg x bioavailability). Oral doses are compared as the swallowed label mg, which is how edibles are sold. Sublingual has no published bands, so it is not classified.
 - **Bioavailability (low / central / high):** inhaled 10 / 25 / 35% (moderate confidence); vaporised or dabbed 30 / 45 / 60% (low confidence, one weak source); oral 4 / 10 / 20% (moderate); sublingual 10 / 25 / 35% (low). Each carries its source string in the code.
 - **Dose class is a range.** Because absorption varies several-fold the app reports the class at the low and high estimate ("light to strong") instead of one false-precise label. A whole 1 g joint at 20% is "heavy" at both ends; a 0.1 g bowl at 15% is "light" to "strong".

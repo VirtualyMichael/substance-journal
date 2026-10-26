@@ -42,19 +42,19 @@ class Bioavailability {
 }
 
 const Bioavailability inhaledBioavailability = Bioavailability(
-  0.10,
-  0.25,
-  0.35,
+  0.08,
+  0.18,
+  0.30,
   confidence: 'moderate',
-  source: 'McGilveray 2005 (about 30%), Vanderbilt poison centre (10-35%), review range 2-56%',
+  source: 'Huestis 2007 (systemic availability ca. 8-24%, reported 2-56%), McGilveray 2005 (about 30%)',
 );
 
 const Bioavailability vaporisedBioavailability = Bioavailability(
-  0.30,
-  0.45,
-  0.60,
+  0.10,
+  0.22,
+  0.40,
   confidence: 'low',
-  source: 'Single clinic summary (30-60%); no primary study found',
+  source: 'Spindle 2018 / Newmeyer 2016: blood THC similar to smoking, somewhat higher later; no firm percentage',
 );
 
 const Bioavailability oralBioavailability = Bioavailability(
@@ -66,11 +66,11 @@ const Bioavailability oralBioavailability = Bioavailability(
 );
 
 const Bioavailability sublingualBioavailability = Bioavailability(
-  0.10,
+  0.05,
+  0.12,
   0.25,
-  0.35,
   confidence: 'low',
-  source: 'Secondary summaries only; tinctures vary widely by formulation',
+  source: 'Inferred from Karschner 2011 (oromucosal spray gave about the same exposure as swallowed THC); tinctures vary',
 );
 
 Bioavailability bioavailabilityFor(CannabisMethod method) => switch (method) {
@@ -231,7 +231,7 @@ class CannabisCurveShape {
 
 const CannabisCurveShape inhaledShape = CannabisCurveShape(
   lagMinutes: 0,
-  absorptionHalfLifeMinutes: 6,
+  absorptionHalfLifeMinutes: 8,
   effectHalfLifeMinutes: 60,
 );
 
@@ -243,8 +243,8 @@ const CannabisCurveShape oralShape = CannabisCurveShape(
 
 const CannabisCurveShape sublingualShape = CannabisCurveShape(
   lagMinutes: 5,
-  absorptionHalfLifeMinutes: 15,
-  effectHalfLifeMinutes: 100,
+  absorptionHalfLifeMinutes: 30,
+  effectHalfLifeMinutes: 120,
 );
 
 CannabisCurveShape cannabisShapeForRoute(String route) => switch (route) {
