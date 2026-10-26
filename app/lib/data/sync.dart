@@ -81,6 +81,8 @@ class SyncService {
       await db.into(db.peers).insert(PeersCompanion.insert(
             deviceId: '$_pendingPrefix${_b64(key.sublist(0, 6))}',
             name: 'Waiting for a device',
+            // Databases created before v3 have this column as NOT NULL with no default.
+            publicKey: const Value(''),
             pairedAt: _now(),
             sharedKey: Value(_b64(key)),
           ));
@@ -96,6 +98,7 @@ class SyncService {
     await db.into(db.peers).insertOnConflictUpdate(PeersCompanion.insert(
           deviceId: code.deviceId,
           name: code.deviceName,
+          publicKey: const Value(''),
           pairedAt: _now(),
           sharedKey: Value(_b64(code.key)),
         ));
@@ -204,6 +207,7 @@ class SyncService {
         await db.into(db.peers).insertOnConflictUpdate(PeersCompanion.insert(
               deviceId: sender,
               name: peerName,
+              publicKey: const Value(''),
               pairedAt: _now(),
               sharedKey: Value(usedKey),
             ));

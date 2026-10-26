@@ -1,4 +1,5 @@
 import 'package:drift/drift.dart' show Value, driftRuntimeOptions;
+import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:substance_journal_app/data/database.dart';
 import 'package:substance_journal_app/data/sync.dart';
@@ -235,6 +236,30 @@ void main() {
     final package = await pc.createPackage((await pc.peers()).single.deviceId, everything: true);
     await phone.forgetPeer('pc');
     await expectLater(phone.receivePackage(package), throwsA(isA<SyncException>()));
+  });
+
+  test('pairing works on a database upgraded from the old peers table (public_key NOT NULL, no default)', () async {
+    final legacy = AppDatabase(
+      NativeDatabase.memory(setup: (raw) {
+        raw.execute('''
+          CREATE TABLE peers (
+            device_id TEXT NOT NULL PRIMARY KEY, name TEXT NOT NULL, public_key TEXT NOT NULL,
+            last_known_address TEXT, last_synced_hlc TEXT NOT NULL DEFAULT '', paired_at INTEGER NOT NULL
+          )''');
+        raw.execute("CREATE TABLE settings (key TEXT NOT NULL PRIMARY KEY, value TEXT NOT NULL, hlc TEXT NOT NULL, shared INTEGER NOT NULL DEFAULT 0)");
+        raw.execute('PRAGMA user_version = 2');
+      }),
+      deviceId: 'old-pc',
+      nowMillis: clock,
+    );
+    addTearDown(legacy.close);
+    final service = SyncService(legacy, deviceName: 'Old PC');
+    final code = await service.offerPairing(); // used to fail with a NOT NULL constraint
+    expect(code.encode(), startsWith('SJPAIR1:'));
+    expect((await service.peers()).single.pending, isTrue);
+
+    final other = SyncService(phoneDb, deviceName: 'Phone');
+    expect(await other.acceptPairing(code.encode()), 'Old PC');
   });
 
   test('this device cannot pair with its own code', () async {

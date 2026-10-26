@@ -49,7 +49,13 @@ class _SyncPageState extends ConsumerState<SyncPage> {
   }
 
   Future<void> _showMyCode() async {
-    final code = await _sync.offerPairing();
+    final PairingCode code;
+    try {
+      code = await _sync.offerPairing();
+    } catch (e) {
+      _message('Could not create a pairing code: $e');
+      return;
+    }
     if (!mounted) return;
     await showDialog<void>(context: context, builder: (_) => _PairingCodeDialog(code: code.encode()));
     await _refresh();
@@ -77,6 +83,8 @@ class _SyncPageState extends ConsumerState<SyncPage> {
       }
     } on SyncException catch (e) {
       _message(e.message);
+    } catch (e) {
+      _message('Could not pair: $e');
     }
   }
 
