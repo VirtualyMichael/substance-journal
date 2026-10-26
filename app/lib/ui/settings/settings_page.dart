@@ -10,6 +10,17 @@ import '../sync/sync_page.dart';
 import 'backup_section.dart';
 import 'pw_import_flow.dart';
 
+const List<Color> _accentChoices = [
+  Color(0xFF4F7CAC),
+  Color(0xFF6750A4),
+  Color(0xFFD1495B),
+  Color(0xFFE07A5F),
+  Color(0xFFE0A100),
+  Color(0xFF3D9970),
+  Color(0xFF2EB5C4),
+  Color(0xFF7A6FF0),
+];
+
 class SettingsPage extends ConsumerWidget {
   const SettingsPage({super.key, required this.person});
 
@@ -145,6 +156,44 @@ class SettingsPage extends ConsumerWidget {
               ],
               selected: {themeMode},
               onSelectionChanged: (s) => db.setSetting('themeMode', s.first.name),
+            ),
+            const SizedBox(height: Gap.md),
+            Text('Accent colour', style: text.titleSmall),
+            const SizedBox(height: Gap.sm),
+            Wrap(
+              spacing: Gap.sm,
+              runSpacing: Gap.sm,
+              children: [
+                for (final c in _accentChoices)
+                  Semantics(
+                    button: true,
+                    selected: ref.watch(accentColorProvider).value?.toARGB32() == c.toARGB32(),
+                    label: 'Accent colour',
+                    child: InkWell(
+                      key: ValueKey('accent-${c.toARGB32().toRadixString(16)}'),
+                      customBorder: const CircleBorder(),
+                      onTap: () async {
+                        await db.setSetting('accentColor', '${c.toARGB32()}');
+                        await db.setSetting('rainbowAccent', 'false');
+                      },
+                      child: CircleAvatar(
+                        radius: 16,
+                        backgroundColor: c,
+                        child: (ref.watch(accentColorProvider).value?.toARGB32() ?? 0xFF4F7CAC) == c.toARGB32() && !(ref.watch(rainbowAccentProvider).value ?? false)
+                            ? const Icon(Icons.check, size: 18, color: Colors.white)
+                            : null,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+            SwitchListTile(
+              key: const ValueKey('rainbow-accent'),
+              contentPadding: EdgeInsets.zero,
+              title: const Text('Rainbow accent'),
+              subtitle: const Text('Slowly drifts through colours. Uses a little more battery.'),
+              value: ref.watch(rainbowAccentProvider).value ?? false,
+              onChanged: (v) => db.setSetting('rainbowAccent', v ? 'true' : 'false'),
             ),
             const SizedBox(height: Gap.lg),
             AlcoholSettingsSection(person: person),

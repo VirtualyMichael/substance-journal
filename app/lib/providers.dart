@@ -157,6 +157,15 @@ final ratingsProvider = StreamProvider.autoDispose.family<List<Rating>, String>(
 
 // ---- appearance ----
 
+/// The accent colour chosen on this device (null for the default blue).
+final accentColorProvider = StreamProvider<Color?>((ref) {
+  return ref.watch(databaseProvider).watchSetting('accentColor').map((v) => v == null ? null : Color(int.parse(v)));
+});
+
+final rainbowAccentProvider = StreamProvider<bool>((ref) {
+  return ref.watch(databaseProvider).watchSetting('rainbowAccent').map((v) => v == 'true');
+});
+
 final themeModeProvider = StreamProvider<ThemeMode>((ref) {
   return ref.watch(databaseProvider).watchSetting('themeMode').map(
         (v) => switch (v) {

@@ -9,7 +9,12 @@ const _barColor = Color(0xFFE0A100);
 
 /// One bar per day. Wider than the screen? It scrolls, starting at the most recent day.
 class DailyBarsChart extends StatelessWidget {
-  const DailyBarsChart({super.key, required this.days, required this.today, this.height = 200});
+  const DailyBarsChart({super.key, required this.days, required this.today, this.height = 200, this.color = _barColor, this.noun = 'Standard drinks'});
+
+  final Color color;
+
+  /// What the bars count, for the screen-reader label.
+  final String noun;
 
   /// Oldest first, one entry per calendar day (gaps already filled with zero).
   final List<(DateTime, double)> days;
@@ -24,7 +29,7 @@ class DailyBarsChart extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
     final total = days.fold<double>(0, (s, d) => s + d.$2);
     return Semantics(
-      label: 'Standard drinks per day, ${days.length} days, ${total.toStringAsFixed(1)} in total',
+      label: '$noun per day, ${days.length} days, ${total.toStringAsFixed(1)} in total',
       child: LayoutBuilder(
         builder: (context, constraints) {
           final needed = days.length * slot + leftAxis + 8;
@@ -36,7 +41,7 @@ class DailyBarsChart extends StatelessWidget {
               painter: _BarsPainter(
                 days: days,
                 today: today,
-                barColor: _barColor,
+                barColor: color,
                 axisColor: scheme.outline,
                 gridColor: scheme.outlineVariant,
                 textColor: scheme.onSurfaceVariant,

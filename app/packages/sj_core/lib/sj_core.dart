@@ -18,3 +18,4 @@ export 'src/reference.dart';
 export 'src/sync_package.dart';
 export 'src/tolerance.dart';
 export 'src/tolerance_report.dart';
+export 'src/usage_summary.dart';
