@@ -1,27 +1,42 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sj_core/sj_core.dart';
 
+import '../../data/custom_substances.dart';
+import '../../data/database.dart';
+import '../../providers.dart';
 import '../add/add_ingestion_page.dart';
 import '../design.dart';
 import '../journal/journal_page.dart';
 import 'compound_picker.dart';
+import 'custom_substance_dialog.dart';
 
 /// Browse compounds; tap one for its reference page.
-class CompoundsPage extends StatelessWidget {
+class CompoundsPage extends ConsumerWidget {
   const CompoundsPage({super.key, required this.personId});
 
   final String personId;
 
   @override
-  Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.topCenter,
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: contentMaxWidth),
-        child: CompoundPicker(
-          personId: personId,
-          onSelected: (s) => Navigator.of(context).push(
-            MaterialPageRoute(builder: (_) => CompoundDetailPage(substance: s, personId: personId)),
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      floatingActionButton: FloatingActionButton.extended(
+        key: const ValueKey('add-custom-compound'),
+        heroTag: null,
+        icon: const Icon(Icons.add),
+        label: const Text('Custom compound'),
+        onPressed: () => showCustomSubstanceDialog(context, db: ref.read(databaseProvider)),
+      ),
+      body: Align(
+        alignment: Alignment.topCenter,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: contentMaxWidth),
+          child: CompoundPicker(
+            personId: personId,
+            onSelected: (s) => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => CompoundDetailPage(substanceKey: s.key, personId: personId)),
+            ),
           ),
         ),
       ),
@@ -29,10 +44,10 @@ class CompoundsPage extends StatelessWidget {
   }
 }
 
-class CompoundDetailPage extends StatelessWidget {
-  const CompoundDetailPage({super.key, required this.substance, required this.personId});
+class CompoundDetailPage extends ConsumerWidget {
+  const CompoundDetailPage({super.key, required this.substanceKey, required this.personId});
 
-  final Substance substance;
+  final String substanceKey;
   final String personId;
 
   String _duration(RouteOfAdministration roa, String phase) {
@@ -49,17 +64,59 @@ class CompoundDetailPage extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final catalog = ref.watch(catalogProvider);
+    final substance = catalog.byKey[substanceKey];
+    if (substance == null) return Scaffold(appBar: AppBar(), body: const Center(child: Text('This compound no longer exists.')));
+
+    final isCustom = isCustomKey(substanceKey);
+    final customRow = isCustom
+        ? (ref.watch(customSubstancesProvider).value ?? const <CustomSubstance>[])
+            .where((r) => '$customKeyPrefix${r.id}' == substanceKey)
+            .firstOrNull
+        : null;
+
     final text = Theme.of(context).textTheme;
     final interactions = [
       ('Dangerous', substance.dangerous),
       ('Unsafe', substance.unsafe),
       ('Uncertain', substance.uncertain),
     ];
+    // A custom compound repeats the same timing on every route; show it once.
+    final roas = isCustom ? substance.roas.take(1).toList() : substance.roas;
+
     return Scaffold(
-      appBar: AppBar(title: Text(substance.name)),
+      appBar: AppBar(
+        title: Text(substance.name),
+        actions: [
+          if (customRow != null)
+            PopupMenuButton<String>(
+              key: const ValueKey('custom-menu'),
+              onSelected: (v) async {
+                final db = ref.read(databaseProvider);
+                if (v == 'edit') {
+                  await showCustomSubstanceDialog(context, db: db, existing: customRow);
+                } else if (v == 'delete') {
+                  final navigator = Navigator.of(context);
+                  final messenger = ScaffoldMessenger.of(context);
+                  await db.setCustomSubstanceDeleted(customRow.id, true);
+                  navigator.pop();
+                  messenger.showSnackBar(SnackBar(
+                    content: Text('${customRow.name} removed'),
+                    action: SnackBarAction(label: 'Undo', onPressed: () => db.setCustomSubstanceDeleted(customRow.id, false)),
+                  ));
+                }
+              },
+              itemBuilder: (_) => const [
+                PopupMenuItem(value: 'edit', child: Text('Edit')),
+                PopupMenuItem(value: 'delete', child: Text('Remove')),
+              ],
+            ),
+        ],
+      ),
       floatingActionButton: FloatingActionButton.extended(
         key: const ValueKey('log-this'),
+        heroTag: null,
         icon: const Icon(Icons.add),
         label: const Text('Log this'),
         onPressed: () => startAddIngestion(context, personId, substanceKey: substance.key),
@@ -93,32 +150,50 @@ class CompoundDetailPage extends StatelessWidget {
                 ),
               ],
               const SizedBox(height: Gap.md),
-              for (final roa in substance.roas)
+              if (isCustom && roas.isNotEmpty)
                 Card(
-                  key: ValueKey('roa-${roa.route}'),
+                  key: const ValueKey('custom-timing'),
                   margin: const EdgeInsets.only(bottom: Gap.sm),
                   child: Padding(
                     padding: const EdgeInsets.all(Gap.md),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(titleCase(roa.route), style: text.titleMedium),
+                        Text('Your timing', style: text.titleMedium),
                         const SizedBox(height: Gap.sm),
-                        Text(describeRoute(roa)),
-                        const SizedBox(height: Gap.sm),
-                        Wrap(
-                          spacing: Gap.md,
-                          runSpacing: 4,
-                          children: [
-                            for (final phase in const ['onset', 'comeup', 'peak', 'offset', 'total', 'afterglow'])
-                              if (roa.duration(phase) != null)
-                                Text('${titleCase(phase)}: ${_duration(roa, phase)}', style: text.bodySmall),
-                          ],
-                        ),
+                        Text('Dose unit: ${roas.first.unit}'),
+                        Text('Onset ${_duration(roas.first, 'onset')}, lasts about ${_duration(roas.first, 'total')}'),
                       ],
                     ),
                   ),
-                ),
+                )
+              else
+                for (final roa in roas)
+                  Card(
+                    key: ValueKey('roa-${roa.route}'),
+                    margin: const EdgeInsets.only(bottom: Gap.sm),
+                    child: Padding(
+                      padding: const EdgeInsets.all(Gap.md),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(titleCase(roa.route), style: text.titleMedium),
+                          const SizedBox(height: Gap.sm),
+                          Text(describeRoute(roa)),
+                          const SizedBox(height: Gap.sm),
+                          Wrap(
+                            spacing: Gap.md,
+                            runSpacing: 4,
+                            children: [
+                              for (final phase in const ['onset', 'comeup', 'peak', 'offset', 'total', 'afterglow'])
+                                if (roa.duration(phase) != null)
+                                  Text('${titleCase(phase)}: ${_duration(roa, phase)}', style: text.bodySmall),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
               if (substance.hasTolerance) ...[
                 Text('Tolerance', style: text.titleMedium),
                 Text(
@@ -129,13 +204,15 @@ class CompoundDetailPage extends StatelessWidget {
                 ),
                 const SizedBox(height: Gap.md),
               ],
-              Text('Combinations', style: text.titleMedium),
-              for (final (label, names) in interactions)
-                if (names.isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 6),
-                    child: Text('$label: ${names.join(', ')}'),
-                  ),
+              if (!isCustom) ...[
+                Text('Combinations', style: text.titleMedium),
+                for (final (label, names) in interactions)
+                  if (names.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 6),
+                      child: Text('$label: ${names.join(', ')}'),
+                    ),
+              ],
               if (substance.sources.isNotEmpty) ...[
                 const SizedBox(height: Gap.md),
                 Text('Sources', style: text.titleMedium),

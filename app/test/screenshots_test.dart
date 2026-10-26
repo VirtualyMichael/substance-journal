@@ -142,4 +142,72 @@ void main() {
 
     await disposeApp(tester, app);
   });
+
+  testWidgets('render custom units and editing', skip: skip != null, (tester) async {
+    await _loadFonts();
+    final key = GlobalKey();
+    final app = await buildTestApp(tester);
+    final me = await dbRun(tester, app.db.ensureDefaultPerson);
+    final unit = await dbRun(
+      tester,
+      () => app.db.addCustomUnit(
+        substanceKey: 'mdma',
+        route: 'oral',
+        name: 'Blue Superman',
+        unitSingular: 'pill',
+        unitPlural: 'pills',
+        doseOfOneUnit: 120,
+        doseStdDev: 15,
+        originalUnit: 'mg',
+        isEstimate: true,
+      ),
+    );
+    final exp = await dbRun(tester, () => app.db.addExperience(personId: me.id, sortDate: testNow, title: 'Festival'));
+    final ing = await dbRun(
+      tester,
+      () => app.db.addIngestion(
+        experience: exp,
+        substanceKey: 'mdma',
+        route: 'oral',
+        time: testNow.subtract(const Duration(hours: 1)),
+        dose: 240,
+        unit: 'mg',
+        doseIsEstimate: true,
+        customUnitId: unit.id,
+        details: {'unitCount': 2.0, 'unitSingular': 'pill', 'unitPlural': 'pills', 'dosePerUnit': 120.0, 'unitName': 'Blue Superman'},
+      ),
+    );
+    tester.view.physicalSize = const Size(412, 892);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(RepaintBoundary(key: key, child: app.widget));
+    await settle(tester, rounds: 6);
+
+    await tapKey(tester, 'journal-add');
+    await tapKey(tester, 'compound-mdma');
+    await tapKey(tester, 'custom-unit-${unit.id}');
+    await tester.enterText(find.byKey(const ValueKey('unit-count')), '2');
+    await settle(tester, rounds: 3);
+    await _capture(tester, key, '09_custom_unit_dose_phone');
+    await tester.pageBack();
+    await settle(tester);
+    await tester.pageBack();
+    await settle(tester);
+
+    await tester.tap(find.text('Festival'));
+    await settle(tester, rounds: 6);
+    await tapKey(tester, 'ingestion-${ing.id}');
+    await _capture(tester, key, '10_edit_ingestion_phone');
+    await tester.tap(find.text('Cancel'));
+    await settle(tester);
+    await tester.pageBack();
+    await settle(tester);
+
+    await tester.tap(find.text('Compounds'));
+    await settle(tester);
+    await tapKey(tester, 'add-custom-compound');
+    await _capture(tester, key, '11_custom_compound_dialog_phone');
+
+    await disposeApp(tester, app);
+  });
 }

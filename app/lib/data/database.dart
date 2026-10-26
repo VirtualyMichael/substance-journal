@@ -39,7 +39,18 @@ class AppDatabase extends _$AppDatabase {
   Hlc _clock;
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
+
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+        onCreate: (m) => m.createAll(),
+        onUpgrade: (m, from, to) async {
+          if (from < 2) {
+            await m.addColumn(customSubstances, customSubstances.onsetMinutes);
+            await m.addColumn(customSubstances, customSubstances.durationHours);
+          }
+        },
+      );
 
   /// Stamps a local edit: advances the clock and returns its text form.
   String nextHlc() {
@@ -105,6 +116,7 @@ class AppDatabase extends _$AppDatabase {
     String? method,
     String? notes,
     Map<String, Object?>? details,
+    String? customUnitId,
   }) async {
     final id = newId();
     await into(ingestions).insert(IngestionsCompanion.insert(
@@ -123,6 +135,7 @@ class AppDatabase extends _$AppDatabase {
       stomachFullness: Value(stomachFullness),
       absorbedMg: Value(absorbedMg),
       method: Value(method),
+      customUnitId: Value(customUnitId),
       notes: Value(notes ?? ''),
       detailsJson: Value(jsonEncode(details ?? const {})),
     ));
@@ -151,6 +164,13 @@ class AppDatabase extends _$AppDatabase {
     Value<double?> dose = const Value.absent(),
     Value<bool> doseIsEstimate = const Value.absent(),
     String? notes,
+    String? substanceKey,
+    String? route,
+    String? unit,
+    Value<String?> customUnitId = const Value.absent(),
+    Value<double?> absorbedMg = const Value.absent(),
+    Value<String?> method = const Value.absent(),
+    String? detailsJson,
   }) async {
     await (update(ingestions)..where((t) => t.id.equals(id))).write(IngestionsCompanion(
       time: time == null ? const Value.absent() : Value(time),
@@ -158,9 +178,132 @@ class AppDatabase extends _$AppDatabase {
       dose: dose,
       doseIsEstimate: doseIsEstimate,
       notes: notes == null ? const Value.absent() : Value(notes),
+      substanceKey: substanceKey == null ? const Value.absent() : Value(substanceKey),
+      route: route == null ? const Value.absent() : Value(route),
+      unit: unit == null ? const Value.absent() : Value(unit),
+      customUnitId: customUnitId,
+      absorbedMg: absorbedMg,
+      method: method,
+      detailsJson: detailsJson == null ? const Value.absent() : Value(detailsJson),
       hlc: Value(nextHlc()),
     ));
   }
+
+  // ---- custom compounds ----
+
+  Future<CustomSubstance> addCustomSubstance({
+    required String name,
+    required String units,
+    String description = '',
+    int onsetMinutes = 30,
+    double durationHours = 4.0,
+  }) async {
+    final id = newId();
+    await into(customSubstances).insert(CustomSubstancesCompanion.insert(
+      id: id,
+      hlc: nextHlc(),
+      name: name,
+      units: units,
+      description: Value(description),
+      onsetMinutes: Value(onsetMinutes),
+      durationHours: Value(durationHours),
+    ));
+    return (select(customSubstances)..where((t) => t.id.equals(id))).getSingle();
+  }
+
+  Future<void> updateCustomSubstance(
+    String id, {
+    String? name,
+    String? units,
+    String? description,
+    int? onsetMinutes,
+    double? durationHours,
+  }) async {
+    await (update(customSubstances)..where((t) => t.id.equals(id))).write(CustomSubstancesCompanion(
+      name: name == null ? const Value.absent() : Value(name),
+      units: units == null ? const Value.absent() : Value(units),
+      description: description == null ? const Value.absent() : Value(description),
+      onsetMinutes: onsetMinutes == null ? const Value.absent() : Value(onsetMinutes),
+      durationHours: durationHours == null ? const Value.absent() : Value(durationHours),
+      hlc: Value(nextHlc()),
+    ));
+  }
+
+  /// Soft delete. Past ingestions keep resolving to the compound's name.
+  Future<void> setCustomSubstanceDeleted(String id, bool value) async {
+    await (update(customSubstances)..where((t) => t.id.equals(id)))
+        .write(CustomSubstancesCompanion(deleted: Value(value), hlc: Value(nextHlc())));
+  }
+
+  /// Every custom compound including deleted ones (so old ingestions can still show a name).
+  Stream<List<CustomSubstance>> watchCustomSubstances() =>
+      (select(customSubstances)..orderBy([(t) => OrderingTerm.asc(t.name)])).watch();
+
+  // ---- custom units ("1 pill = 120 mg") ----
+
+  Future<CustomUnit> addCustomUnit({
+    required String substanceKey,
+    required String route,
+    required String name,
+    required String unitSingular,
+    String? unitPlural,
+    required double doseOfOneUnit,
+    double? doseStdDev,
+    required String originalUnit,
+    bool isEstimate = false,
+    String note = '',
+  }) async {
+    final id = newId();
+    await into(customUnits).insert(CustomUnitsCompanion.insert(
+      id: id,
+      hlc: nextHlc(),
+      substanceKey: substanceKey,
+      route: route,
+      name: name,
+      unitSingular: unitSingular,
+      unitPlural: Value(unitPlural),
+      doseOfOneUnit: Value(doseOfOneUnit),
+      doseStdDev: Value(doseStdDev),
+      originalUnit: originalUnit,
+      isEstimate: Value(isEstimate),
+      note: Value(note),
+    ));
+    return (select(customUnits)..where((t) => t.id.equals(id))).getSingle();
+  }
+
+  Future<void> updateCustomUnit(
+    String id, {
+    String? name,
+    String? unitSingular,
+    Value<String?> unitPlural = const Value.absent(),
+    double? doseOfOneUnit,
+    Value<double?> doseStdDev = const Value.absent(),
+    bool? isEstimate,
+    bool? isArchived,
+    String? note,
+  }) async {
+    await (update(customUnits)..where((t) => t.id.equals(id))).write(CustomUnitsCompanion(
+      name: name == null ? const Value.absent() : Value(name),
+      unitSingular: unitSingular == null ? const Value.absent() : Value(unitSingular),
+      unitPlural: unitPlural,
+      doseOfOneUnit: doseOfOneUnit == null ? const Value.absent() : Value(doseOfOneUnit),
+      doseStdDev: doseStdDev,
+      isEstimate: isEstimate == null ? const Value.absent() : Value(isEstimate),
+      isArchived: isArchived == null ? const Value.absent() : Value(isArchived),
+      note: note == null ? const Value.absent() : Value(note),
+      hlc: Value(nextHlc()),
+    ));
+  }
+
+  Future<void> setCustomUnitDeleted(String id, bool value) async {
+    await (update(customUnits)..where((t) => t.id.equals(id)))
+        .write(CustomUnitsCompanion(deleted: Value(value), hlc: Value(nextHlc())));
+  }
+
+  Stream<List<CustomUnit>> watchCustomUnits() => (select(customUnits)
+        ..where((t) => t.deleted.equals(false))
+        ..orderBy([(t) => OrderingTerm.asc(t.name)]))
+      .watch();
 
   // ---- people (extra) ----
 

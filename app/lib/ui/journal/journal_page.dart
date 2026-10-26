@@ -26,7 +26,7 @@ class JournalPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final experiences = ref.watch(experiencesProvider(person.id)).value;
     final ingestions = ref.watch(personIngestionsProvider(person.id)).value ?? const <Ingestion>[];
-    final reference = ref.watch(referenceProvider);
+    final reference = ref.watch(catalogProvider);
 
     if (experiences == null) return const Center(child: CircularProgressIndicator());
 

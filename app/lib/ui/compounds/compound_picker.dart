@@ -28,7 +28,7 @@ class _CompoundPickerState extends ConsumerState<CompoundPicker> {
 
   @override
   Widget build(BuildContext context) {
-    final reference = ref.watch(referenceProvider);
+    final reference = ref.watch(catalogProvider);
     final usage = ref.watch(usageProvider(widget.personId)).value ?? const <String, UsageStat>{};
     final prefs = ref.watch(compoundPrefsProvider(widget.personId)).value ?? const CompoundPrefs();
     final now = ref.watch(clockProvider)();

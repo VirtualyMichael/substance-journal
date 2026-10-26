@@ -1,11 +1,51 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sj_core/sj_core.dart';
 
+import '../../data/database.dart';
+import '../../providers.dart';
 import '../design.dart';
+import '../units/custom_unit_picker.dart';
 
 enum CannabisEntryMode { product, label }
+
+/// A custom unit ("1 pill = 120 mg") picked for the dose.
+class CustomUnitChoice {
+  const CustomUnitChoice({
+    required this.id,
+    required this.name,
+    required this.singular,
+    required this.plural,
+    required this.dosePerUnit,
+    this.stdDevPerUnit,
+    this.isEstimate = false,
+  });
+
+  factory CustomUnitChoice.fromRow(CustomUnit row) => CustomUnitChoice(
+        id: row.id,
+        name: row.name,
+        singular: row.unitSingular,
+        plural: row.unitPlural ?? pluralize(row.unitSingular),
+        dosePerUnit: row.doseOfOneUnit ?? 0,
+        stdDevPerUnit: row.doseStdDev,
+        isEstimate: row.isEstimate,
+      );
+
+  final String id;
+  final String name;
+  final String singular;
+  final String plural;
+  final double dosePerUnit;
+  final double? stdDevPerUnit;
+  final bool isEstimate;
+
+  String label(double count) => count == 1 ? singular : plural;
+}
+
+/// "pill" becomes "pills"; units already plural-looking are left alone.
+String pluralize(String unit) => unit.endsWith('s') ? unit : '${unit}s';
 
 /// What the user has typed for the dose, kept as text until validated.
 class DoseInput {
@@ -24,6 +64,8 @@ class DoseInput {
     this.volumeText = '',
     this.volumeUnit = 'oz',
     this.abvText = '',
+    this.unit,
+    this.unitCountText = '',
   });
 
   const DoseInput.empty() : this();
@@ -47,6 +89,10 @@ class DoseInput {
   final String volumeUnit;
   final String abvText;
 
+  // A custom unit ("2 pills") instead of a plain dose
+  final CustomUnitChoice? unit;
+  final String unitCountText;
+
   DoseInput copyWith({
     String? text,
     bool? unknown,
@@ -63,6 +109,9 @@ class DoseInput {
     String? volumeUnit,
     String? abvText,
     bool clearMode = false,
+    CustomUnitChoice? unit,
+    bool clearUnit = false,
+    String? unitCountText,
   }) =>
       DoseInput(
         text: text ?? this.text,
@@ -79,11 +128,24 @@ class DoseInput {
         volumeText: volumeText ?? this.volumeText,
         volumeUnit: volumeUnit ?? this.volumeUnit,
         abvText: abvText ?? this.abvText,
+        unit: clearUnit ? null : (unit ?? this.unit),
+        unitCountText: unitCountText ?? this.unitCountText,
       );
 
   static double? _num(String s) => double.tryParse(s.trim().replaceAll(',', '.'));
 
-  double? get dose => _num(text);
+  double? get unitCount => _num(unitCountText);
+
+  /// The dose in the route's unit: a custom unit's count times its dose, else the typed number.
+  double? get dose {
+    final u = unit;
+    if (u != null) {
+      final n = unitCount;
+      return n == null ? null : n * u.dosePerUnit;
+    }
+    return _num(text);
+  }
+
   double? get stdDev => _num(stdDevText);
 
   CannabisMethod methodFor(RouteOfAdministration roa) =>
@@ -131,6 +193,12 @@ class DoseInput {
       if (cannabisEstimate(roa) == null) return 'Enter the amount and THC (percent, or label mg).';
       return null;
     }
+    final chosen = unit;
+    if (chosen != null) {
+      final n = unitCount;
+      if (n == null || n <= 0) return 'Enter how many ${chosen.plural}.';
+      return null;
+    }
     if (unknown) return null;
     final d = dose;
     if (d == null) return 'Enter a dose, or mark it as unknown.';
@@ -170,6 +238,27 @@ class DoseInput {
         },
       );
     }
+    final chosen = unit;
+    if (chosen != null) {
+      final n = unitCount!;
+      return DoseStorage(
+        dose: dose,
+        unit: roa.unit,
+        isEstimate: chosen.isEstimate,
+        // Units from one batch are alike, so the uncertainty adds up rather than averaging out.
+        stdDev: chosen.isEstimate && chosen.stdDevPerUnit != null ? n * chosen.stdDevPerUnit! : null,
+        absorbedMg: null,
+        method: null,
+        customUnitId: chosen.id,
+        details: {
+          'unitCount': n,
+          'unitName': chosen.name,
+          'unitSingular': chosen.singular,
+          'unitPlural': chosen.plural,
+          'dosePerUnit': chosen.dosePerUnit,
+        },
+      );
+    }
     return DoseStorage(
       dose: unknown ? null : dose,
       unit: roa.unit,
@@ -191,6 +280,7 @@ class DoseStorage {
     required this.absorbedMg,
     required this.method,
     required this.details,
+    this.customUnitId,
   });
   final double? dose;
   final String unit;
@@ -199,6 +289,7 @@ class DoseStorage {
   final double? absorbedMg;
   final String? method;
   final Map<String, Object?> details;
+  final String? customUnitId;
 
   String get detailsJson => jsonEncode(details);
 }
@@ -245,11 +336,11 @@ class DoseBands extends StatelessWidget {
         lowClass != null && highClass != null && c.index >= lowClass.index && c.index <= highClass.index;
 
     final bands = <(DoseClass, String)>[
-      if (roa.doseThreshold != null) (DoseClass.threshold, '${roa.doseThreshold}+'),
+      if (roa.doseThreshold != null) (DoseClass.threshold, '${formatDose(roa.doseThreshold, null)}+'),
       if (roa.doseLight?.min != null) (DoseClass.light, range(roa.doseLight)),
       if (roa.doseCommon?.min != null) (DoseClass.common, range(roa.doseCommon)),
       if (roa.doseStrong?.min != null) (DoseClass.strong, range(roa.doseStrong)),
-      if (roa.doseHeavy != null) (DoseClass.heavy, '${roa.doseHeavy}+'),
+      if (roa.doseHeavy != null) (DoseClass.heavy, '${formatDose(roa.doseHeavy, null)}+'),
     ];
     if (bands.isEmpty) {
       return Text('No dose bands are published for this route.', style: Theme.of(context).textTheme.bodySmall);
@@ -306,7 +397,7 @@ class DoseEditor extends StatelessWidget {
   }
 }
 
-class _GenericForm extends StatefulWidget {
+class _GenericForm extends ConsumerStatefulWidget {
   const _GenericForm({required this.substance, required this.roa, required this.value, required this.onChanged});
 
   final Substance substance;
@@ -315,10 +406,10 @@ class _GenericForm extends StatefulWidget {
   final ValueChanged<DoseInput> onChanged;
 
   @override
-  State<_GenericForm> createState() => _GenericFormState();
+  ConsumerState<_GenericForm> createState() => _GenericFormState();
 }
 
-class _GenericFormState extends State<_GenericForm> {
+class _GenericFormState extends ConsumerState<_GenericForm> {
   // A controller (rather than initialValue) so "Use" from the drink calculator can fill the field.
   late final TextEditingController _doseController = TextEditingController(text: widget.value.text);
 
@@ -341,10 +432,22 @@ class _GenericFormState extends State<_GenericForm> {
     final value = widget.value;
     final onChanged = widget.onChanged;
     final dose = value.dose;
+    final units = [
+      for (final u in ref.watch(customUnitsProvider).value ?? const <CustomUnit>[])
+        if (u.substanceKey == substance.key && u.route == roa.route && !u.isArchived && u.doseOfOneUnit != null) u,
+    ];
+    final chosen = value.unit;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (!value.unknown)
+        CustomUnitPicker(
+          substance: substance,
+          roa: roa,
+          units: units,
+          value: value,
+          onChanged: onChanged,
+        ),
+        if (!value.unknown && chosen == null)
           TextField(
             key: const ValueKey('dose-field'),
             controller: _doseController,
@@ -352,10 +455,11 @@ class _GenericFormState extends State<_GenericForm> {
             decoration: InputDecoration(labelText: 'Dose', suffixText: roa.unit),
             onChanged: (t) => onChanged(value.copyWith(text: t)),
           ),
-        if (substance.key == 'alcohol' && !value.unknown) ...[
+        if (substance.key == 'alcohol' && !value.unknown && chosen == null) ...[
           const SizedBox(height: Gap.md),
           _AlcoholCalculator(value: value, onChanged: onChanged),
         ],
+        if (chosen == null)
         SwitchListTile(
           key: const ValueKey('unknown-dose'),
           contentPadding: EdgeInsets.zero,
@@ -363,15 +467,15 @@ class _GenericFormState extends State<_GenericForm> {
           value: value.unknown,
           onChanged: (v) => onChanged(value.copyWith(unknown: v)),
         ),
-        if (!value.unknown) ...[
-          SwitchListTile(
+        if (!value.unknown || chosen != null) ...[
+          if (chosen == null) SwitchListTile(
             key: const ValueKey('estimate-dose'),
             contentPadding: EdgeInsets.zero,
             title: const Text('This is an estimate'),
             value: value.isEstimate,
             onChanged: (v) => onChanged(value.copyWith(isEstimate: v)),
           ),
-          if (value.isEstimate)
+          if (value.isEstimate && chosen == null)
             TextFormField(
               key: const ValueKey('std-dev'),
               initialValue: value.stdDevText,

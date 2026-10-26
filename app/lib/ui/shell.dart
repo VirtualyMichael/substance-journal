@@ -51,6 +51,7 @@ class _AppShellState extends ConsumerState<AppShell> {
       floatingActionButton: _destination == _Destination.journal
           ? FloatingActionButton.extended(
               key: const ValueKey('journal-add'),
+              heroTag: null,
               onPressed: () => startAddIngestion(context, person.id),
               icon: const Icon(Icons.add),
               label: const Text('Add ingestion'),

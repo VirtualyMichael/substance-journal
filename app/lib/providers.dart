@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sj_core/sj_core.dart';
 
+import 'data/custom_substances.dart';
 import 'data/database.dart';
 import 'data/reference_repository.dart';
 
@@ -12,6 +13,24 @@ final interactionPairsProvider = Provider<List<TripSitPair>>((ref) => const []);
 
 /// The time "now", overridable in tests.
 final clockProvider = Provider<DateTime Function()>((ref) => DateTime.now);
+
+// ---- compounds: reference data plus the user's own ----
+
+final customSubstancesProvider =
+    StreamProvider<List<CustomSubstance>>((ref) => ref.watch(databaseProvider).watchCustomSubstances());
+
+final customUnitsProvider = StreamProvider<List<CustomUnit>>((ref) => ref.watch(databaseProvider).watchCustomUnits());
+
+/// Everything the UI should look compounds up in: bundled reference data plus custom
+/// compounds. Deleted custom compounds still resolve (for old ingestions) but are not offered.
+final catalogProvider = Provider<ReferenceRepository>((ref) {
+  final base = ref.watch(referenceProvider);
+  final rows = ref.watch(customSubstancesProvider).value ?? const <CustomSubstance>[];
+  return base.withCustom(
+    active: [for (final r in rows) if (!r.deleted) substanceFromCustom(r)],
+    archived: [for (final r in rows) if (r.deleted) substanceFromCustom(r)],
+  );
+});
 
 // ---- people ----
 

@@ -12,7 +12,9 @@ import '../add/dose_widgets.dart';
 import '../design.dart';
 import '../timeline/timeline_chart.dart';
 import '../timeline/timeline_data.dart';
+import '../dose_text.dart';
 import 'dialogs.dart';
+import 'edit_ingestion_dialog.dart';
 
 class ExperiencePage extends ConsumerStatefulWidget {
   const ExperiencePage({super.key, required this.experienceId});
@@ -160,7 +162,7 @@ class _ExperiencePageState extends ConsumerState<ExperiencePage> {
       _notesLoaded = true;
     }
 
-    final reference = ref.watch(referenceProvider);
+    final reference = ref.watch(catalogProvider);
     final now = ref.watch(clockProvider)();
     final ingestions = ref.watch(experienceIngestionsProvider(widget.experienceId)).value ?? const <Ingestion>[];
     final timedNotes = ref.watch(timedNotesProvider(widget.experienceId)).value ?? const <TimedNote>[];
@@ -209,6 +211,7 @@ class _ExperiencePageState extends ConsumerState<ExperiencePage> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         key: const ValueKey('add-fab'),
+        heroTag: null,
         onPressed: () => _showAddMenu(experience),
         icon: const Icon(Icons.add),
         label: const Text('Add'),
@@ -306,7 +309,7 @@ class _IngestionTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final reference = ref.watch(referenceProvider);
+    final reference = ref.watch(catalogProvider);
     final substance = reference.byKey[ingestion.substanceKey];
     final roa = substance?.route(ingestion.route);
     final scheme = Theme.of(context).colorScheme;
@@ -315,7 +318,7 @@ class _IngestionTile extends ConsumerWidget {
     final parts = [
       formatClock(ingestion.time),
       if (ingestion.endTime != null) 'until ${formatClock(ingestion.endTime!)}',
-      formatDose(ingestion.dose, ingestion.unit) + (ingestion.doseIsEstimate ? ' (est.)' : ''),
+      describeIngestionDose(ingestion),
       ingestion.route,
     ];
     String? cannabisNote;
@@ -338,7 +341,7 @@ class _IngestionTile extends ConsumerWidget {
         title: Text(substance?.name ?? ingestion.substanceKey),
         subtitle: Text([parts.join('  |  '), ?cannabisNote, if (ingestion.notes.isNotEmpty) ingestion.notes].join('\n')),
         isThreeLine: cannabisNote != null || ingestion.notes.isNotEmpty,
-        onTap: () => showEditIngestionDialog(context, db: db, ingestion: ingestion, roa: roa),
+        onTap: () => showDialog<void>(context: context, builder: (_) => EditIngestionDialog(ingestion: ingestion)),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [

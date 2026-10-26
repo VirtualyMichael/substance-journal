@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/database.dart';
 import '../../providers.dart';
 import '../design.dart';
+import '../units/custom_units_page.dart';
 
 class SettingsPage extends ConsumerWidget {
   const SettingsPage({super.key, required this.person});
@@ -43,7 +44,7 @@ class SettingsPage extends ConsumerWidget {
     final people = ref.watch(peopleProvider).value ?? const <Person>[];
     final themeMode = ref.watch(themeModeProvider).value ?? ThemeMode.system;
     final prefs = ref.watch(compoundPrefsProvider(person.id)).value ?? const CompoundPrefs();
-    final reference = ref.watch(referenceProvider);
+    final reference = ref.watch(catalogProvider);
     final text = Theme.of(context).textTheme;
 
     return Align(
@@ -140,6 +141,17 @@ class SettingsPage extends ConsumerWidget {
               ],
               selected: {themeMode},
               onSelectionChanged: (s) => db.setSetting('themeMode', s.first.name),
+            ),
+            const SizedBox(height: Gap.lg),
+            Text('Custom units', style: text.titleMedium),
+            const SizedBox(height: 4),
+            Text('Save things like "1 pill = 120 mg" so you can log "2 pills".', style: text.bodySmall),
+            const SizedBox(height: Gap.sm),
+            OutlinedButton.icon(
+              key: const ValueKey('manage-units'),
+              icon: const Icon(Icons.medication_outlined),
+              label: const Text('Manage custom units'),
+              onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const CustomUnitsPage())),
             ),
             const SizedBox(height: Gap.lg),
             Text('Hidden compounds', style: text.titleMedium),

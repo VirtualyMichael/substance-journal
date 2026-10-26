@@ -79,6 +79,6 @@ Each phase ends with passing tests, and a build you can open.
 ## Status (2026-10-25)
 - **Phase 1 done:** Flutter app, core package, sync-ready database, compound ordering.
 - **Phase 2 done:** alcohol model, generic curves and cannabis dosing in Dart, checked against Python goldens.
-- **Phase 3 mostly done:** people with strict per-person scoping, experiences, the add flow (compound, route, interaction check, dose, time), compound picker (search, history, favourites, hidden), timeline chart, timed notes, ratings, settings, adaptive phone/desktop layout, light and dark themes.
-- **Phase 3 not yet built:** custom units ("1 pill = 120 mg"), custom substances, editing an ingestion's compound or route, per-ingestion colour choice, the calendar view and multi-person progress badge (phase 4), Alcohol mode (phase 4).
+- **Phase 3 done:** people with strict per-person scoping, experiences, the add flow (compound, route, interaction check, dose, time), compound picker (search, history, favourites, hidden), timeline chart, timed notes, ratings, settings, adaptive phone/desktop layout, light and dark themes, custom compounds (own unit and rough timing), custom units ("1 pill = 120 mg", pick a count, edit, archive, delete) and editing an ingestion's time, dose, compound and route. The database is at schema v2 with a tested v1 upgrade.
+- **Still to build:** per-ingestion colour choice, the calendar view and multi-person progress badge (phase 4), Alcohol mode (phase 4).
 - **Screenshots without launching the app:** `SJ_SCREENSHOTS_DIR=<dir> flutter test test/screenshots_test.dart` renders the main screens to PNG.

@@ -1,6 +1,4 @@
-import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
-import 'package:sj_core/sj_core.dart';
 
 import '../../data/database.dart';
 import '../design.dart';
@@ -201,106 +199,6 @@ Future<void> showAddRatingDialog(
                     await db.addRating(experienceId: experienceId, time: now, shulgin: shulgin, scores: scores);
                     if (context.mounted) Navigator.pop(context);
                   },
-            child: const Text('Save'),
-          ),
-        ],
-      ),
-    ),
-  );
-}
-
-Future<void> showEditIngestionDialog(
-  BuildContext context, {
-  required AppDatabase db,
-  required Ingestion ingestion,
-  required RouteOfAdministration? roa,
-}) async {
-  final dose = TextEditingController(text: ingestion.dose == null ? '' : formatDose(ingestion.dose, null));
-  final notes = TextEditingController(text: ingestion.notes);
-  var time = ingestion.time;
-  String? error;
-  await showDialog<void>(
-    context: context,
-    builder: (context) => StatefulBuilder(
-      builder: (context, setState) => AlertDialog(
-        title: const Text('Edit ingestion'),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                key: const ValueKey('edit-dose'),
-                controller: dose,
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                decoration: InputDecoration(labelText: 'Dose', suffixText: ingestion.unit),
-              ),
-              const SizedBox(height: Gap.sm),
-              Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton.icon(
-                      icon: const Icon(Icons.calendar_today),
-                      label: Text(formatDate(time)),
-                      onPressed: () async {
-                        final picked = await showDatePicker(
-                          context: context,
-                          initialDate: time,
-                          firstDate: DateTime(2000),
-                          lastDate: DateTime.now().add(const Duration(days: 1)),
-                        );
-                        if (picked != null) {
-                          setState(() => time = DateTime(picked.year, picked.month, picked.day, time.hour, time.minute));
-                        }
-                      },
-                    ),
-                  ),
-                  const SizedBox(width: Gap.sm),
-                  Expanded(
-                    child: OutlinedButton.icon(
-                      icon: const Icon(Icons.schedule),
-                      label: Text(formatClock(time)),
-                      onPressed: () async {
-                        final picked = await showTimePicker(context: context, initialTime: TimeOfDay.fromDateTime(time));
-                        if (picked != null) {
-                          setState(() => time = DateTime(time.year, time.month, time.day, picked.hour, picked.minute));
-                        }
-                      },
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: Gap.sm),
-              TextField(controller: notes, maxLines: 2, decoration: const InputDecoration(labelText: 'Notes')),
-              if (error != null)
-                Padding(
-                  padding: const EdgeInsets.only(top: Gap.sm),
-                  child: Text(error!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
-                ),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
-          FilledButton(
-            key: const ValueKey('edit-save'),
-            onPressed: () async {
-              final text = dose.text.trim();
-              double? parsed;
-              if (text.isNotEmpty) {
-                parsed = double.tryParse(text.replaceAll(',', '.'));
-                if (parsed == null || parsed <= 0) {
-                  setState(() => error = 'Enter a positive number, or leave blank for unknown.');
-                  return;
-                }
-              }
-              await db.updateIngestion(
-                ingestion.id,
-                time: time,
-                dose: Value(parsed),
-                notes: notes.text.trim(),
-              );
-              if (context.mounted) Navigator.pop(context);
-            },
             child: const Text('Save'),
           ),
         ],

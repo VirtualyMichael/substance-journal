@@ -4121,6 +4121,30 @@ class $CustomSubstancesTable extends CustomSubstances
     requiredDuringInsert: false,
     defaultValue: const Constant(''),
   );
+  static const VerificationMeta _onsetMinutesMeta = const VerificationMeta(
+    'onsetMinutes',
+  );
+  @override
+  late final GeneratedColumn<int> onsetMinutes = GeneratedColumn<int>(
+    'onset_minutes',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(30),
+  );
+  static const VerificationMeta _durationHoursMeta = const VerificationMeta(
+    'durationHours',
+  );
+  @override
+  late final GeneratedColumn<double> durationHours = GeneratedColumn<double>(
+    'duration_hours',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(4.0),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -4129,6 +4153,8 @@ class $CustomSubstancesTable extends CustomSubstances
     name,
     units,
     description,
+    onsetMinutes,
+    durationHours,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -4186,6 +4212,24 @@ class $CustomSubstancesTable extends CustomSubstances
         ),
       );
     }
+    if (data.containsKey('onset_minutes')) {
+      context.handle(
+        _onsetMinutesMeta,
+        onsetMinutes.isAcceptableOrUnknown(
+          data['onset_minutes']!,
+          _onsetMinutesMeta,
+        ),
+      );
+    }
+    if (data.containsKey('duration_hours')) {
+      context.handle(
+        _durationHoursMeta,
+        durationHours.isAcceptableOrUnknown(
+          data['duration_hours']!,
+          _durationHoursMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -4219,6 +4263,14 @@ class $CustomSubstancesTable extends CustomSubstances
         DriftSqlType.string,
         data['${effectivePrefix}description'],
       )!,
+      onsetMinutes: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}onset_minutes'],
+      )!,
+      durationHours: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}duration_hours'],
+      )!,
     );
   }
 
@@ -4235,6 +4287,8 @@ class CustomSubstance extends DataClass implements Insertable<CustomSubstance> {
   final String name;
   final String units;
   final String description;
+  final int onsetMinutes;
+  final double durationHours;
   const CustomSubstance({
     required this.id,
     required this.hlc,
@@ -4242,6 +4296,8 @@ class CustomSubstance extends DataClass implements Insertable<CustomSubstance> {
     required this.name,
     required this.units,
     required this.description,
+    required this.onsetMinutes,
+    required this.durationHours,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -4252,6 +4308,8 @@ class CustomSubstance extends DataClass implements Insertable<CustomSubstance> {
     map['name'] = Variable<String>(name);
     map['units'] = Variable<String>(units);
     map['description'] = Variable<String>(description);
+    map['onset_minutes'] = Variable<int>(onsetMinutes);
+    map['duration_hours'] = Variable<double>(durationHours);
     return map;
   }
 
@@ -4263,6 +4321,8 @@ class CustomSubstance extends DataClass implements Insertable<CustomSubstance> {
       name: Value(name),
       units: Value(units),
       description: Value(description),
+      onsetMinutes: Value(onsetMinutes),
+      durationHours: Value(durationHours),
     );
   }
 
@@ -4278,6 +4338,8 @@ class CustomSubstance extends DataClass implements Insertable<CustomSubstance> {
       name: serializer.fromJson<String>(json['name']),
       units: serializer.fromJson<String>(json['units']),
       description: serializer.fromJson<String>(json['description']),
+      onsetMinutes: serializer.fromJson<int>(json['onsetMinutes']),
+      durationHours: serializer.fromJson<double>(json['durationHours']),
     );
   }
   @override
@@ -4290,6 +4352,8 @@ class CustomSubstance extends DataClass implements Insertable<CustomSubstance> {
       'name': serializer.toJson<String>(name),
       'units': serializer.toJson<String>(units),
       'description': serializer.toJson<String>(description),
+      'onsetMinutes': serializer.toJson<int>(onsetMinutes),
+      'durationHours': serializer.toJson<double>(durationHours),
     };
   }
 
@@ -4300,6 +4364,8 @@ class CustomSubstance extends DataClass implements Insertable<CustomSubstance> {
     String? name,
     String? units,
     String? description,
+    int? onsetMinutes,
+    double? durationHours,
   }) => CustomSubstance(
     id: id ?? this.id,
     hlc: hlc ?? this.hlc,
@@ -4307,6 +4373,8 @@ class CustomSubstance extends DataClass implements Insertable<CustomSubstance> {
     name: name ?? this.name,
     units: units ?? this.units,
     description: description ?? this.description,
+    onsetMinutes: onsetMinutes ?? this.onsetMinutes,
+    durationHours: durationHours ?? this.durationHours,
   );
   CustomSubstance copyWithCompanion(CustomSubstancesCompanion data) {
     return CustomSubstance(
@@ -4318,6 +4386,12 @@ class CustomSubstance extends DataClass implements Insertable<CustomSubstance> {
       description: data.description.present
           ? data.description.value
           : this.description,
+      onsetMinutes: data.onsetMinutes.present
+          ? data.onsetMinutes.value
+          : this.onsetMinutes,
+      durationHours: data.durationHours.present
+          ? data.durationHours.value
+          : this.durationHours,
     );
   }
 
@@ -4329,13 +4403,24 @@ class CustomSubstance extends DataClass implements Insertable<CustomSubstance> {
           ..write('deleted: $deleted, ')
           ..write('name: $name, ')
           ..write('units: $units, ')
-          ..write('description: $description')
+          ..write('description: $description, ')
+          ..write('onsetMinutes: $onsetMinutes, ')
+          ..write('durationHours: $durationHours')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, hlc, deleted, name, units, description);
+  int get hashCode => Object.hash(
+    id,
+    hlc,
+    deleted,
+    name,
+    units,
+    description,
+    onsetMinutes,
+    durationHours,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -4345,7 +4430,9 @@ class CustomSubstance extends DataClass implements Insertable<CustomSubstance> {
           other.deleted == this.deleted &&
           other.name == this.name &&
           other.units == this.units &&
-          other.description == this.description);
+          other.description == this.description &&
+          other.onsetMinutes == this.onsetMinutes &&
+          other.durationHours == this.durationHours);
 }
 
 class CustomSubstancesCompanion extends UpdateCompanion<CustomSubstance> {
@@ -4355,6 +4442,8 @@ class CustomSubstancesCompanion extends UpdateCompanion<CustomSubstance> {
   final Value<String> name;
   final Value<String> units;
   final Value<String> description;
+  final Value<int> onsetMinutes;
+  final Value<double> durationHours;
   final Value<int> rowid;
   const CustomSubstancesCompanion({
     this.id = const Value.absent(),
@@ -4363,6 +4452,8 @@ class CustomSubstancesCompanion extends UpdateCompanion<CustomSubstance> {
     this.name = const Value.absent(),
     this.units = const Value.absent(),
     this.description = const Value.absent(),
+    this.onsetMinutes = const Value.absent(),
+    this.durationHours = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   CustomSubstancesCompanion.insert({
@@ -4372,6 +4463,8 @@ class CustomSubstancesCompanion extends UpdateCompanion<CustomSubstance> {
     required String name,
     required String units,
     this.description = const Value.absent(),
+    this.onsetMinutes = const Value.absent(),
+    this.durationHours = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        hlc = Value(hlc),
@@ -4384,6 +4477,8 @@ class CustomSubstancesCompanion extends UpdateCompanion<CustomSubstance> {
     Expression<String>? name,
     Expression<String>? units,
     Expression<String>? description,
+    Expression<int>? onsetMinutes,
+    Expression<double>? durationHours,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -4393,6 +4488,8 @@ class CustomSubstancesCompanion extends UpdateCompanion<CustomSubstance> {
       if (name != null) 'name': name,
       if (units != null) 'units': units,
       if (description != null) 'description': description,
+      if (onsetMinutes != null) 'onset_minutes': onsetMinutes,
+      if (durationHours != null) 'duration_hours': durationHours,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -4404,6 +4501,8 @@ class CustomSubstancesCompanion extends UpdateCompanion<CustomSubstance> {
     Value<String>? name,
     Value<String>? units,
     Value<String>? description,
+    Value<int>? onsetMinutes,
+    Value<double>? durationHours,
     Value<int>? rowid,
   }) {
     return CustomSubstancesCompanion(
@@ -4413,6 +4512,8 @@ class CustomSubstancesCompanion extends UpdateCompanion<CustomSubstance> {
       name: name ?? this.name,
       units: units ?? this.units,
       description: description ?? this.description,
+      onsetMinutes: onsetMinutes ?? this.onsetMinutes,
+      durationHours: durationHours ?? this.durationHours,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -4438,6 +4539,12 @@ class CustomSubstancesCompanion extends UpdateCompanion<CustomSubstance> {
     if (description.present) {
       map['description'] = Variable<String>(description.value);
     }
+    if (onsetMinutes.present) {
+      map['onset_minutes'] = Variable<int>(onsetMinutes.value);
+    }
+    if (durationHours.present) {
+      map['duration_hours'] = Variable<double>(durationHours.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -4453,6 +4560,8 @@ class CustomSubstancesCompanion extends UpdateCompanion<CustomSubstance> {
           ..write('name: $name, ')
           ..write('units: $units, ')
           ..write('description: $description, ')
+          ..write('onsetMinutes: $onsetMinutes, ')
+          ..write('durationHours: $durationHours, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -9284,6 +9393,8 @@ typedef $$CustomSubstancesTableCreateCompanionBuilder =
       required String name,
       required String units,
       Value<String> description,
+      Value<int> onsetMinutes,
+      Value<double> durationHours,
       Value<int> rowid,
     });
 typedef $$CustomSubstancesTableUpdateCompanionBuilder =
@@ -9294,6 +9405,8 @@ typedef $$CustomSubstancesTableUpdateCompanionBuilder =
       Value<String> name,
       Value<String> units,
       Value<String> description,
+      Value<int> onsetMinutes,
+      Value<double> durationHours,
       Value<int> rowid,
     });
 
@@ -9333,6 +9446,16 @@ class $$CustomSubstancesTableFilterComposer
 
   ColumnFilters<String> get description => $composableBuilder(
     column: $table.description,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get onsetMinutes => $composableBuilder(
+    column: $table.onsetMinutes,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get durationHours => $composableBuilder(
+    column: $table.durationHours,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -9375,6 +9498,16 @@ class $$CustomSubstancesTableOrderingComposer
     column: $table.description,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<int> get onsetMinutes => $composableBuilder(
+    column: $table.onsetMinutes,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get durationHours => $composableBuilder(
+    column: $table.durationHours,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$CustomSubstancesTableAnnotationComposer
@@ -9403,6 +9536,16 @@ class $$CustomSubstancesTableAnnotationComposer
 
   GeneratedColumn<String> get description => $composableBuilder(
     column: $table.description,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get onsetMinutes => $composableBuilder(
+    column: $table.onsetMinutes,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<double> get durationHours => $composableBuilder(
+    column: $table.durationHours,
     builder: (column) => column,
   );
 }
@@ -9450,6 +9593,8 @@ class $$CustomSubstancesTableTableManager
                 Value<String> name = const Value.absent(),
                 Value<String> units = const Value.absent(),
                 Value<String> description = const Value.absent(),
+                Value<int> onsetMinutes = const Value.absent(),
+                Value<double> durationHours = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => CustomSubstancesCompanion(
                 id: id,
@@ -9458,6 +9603,8 @@ class $$CustomSubstancesTableTableManager
                 name: name,
                 units: units,
                 description: description,
+                onsetMinutes: onsetMinutes,
+                durationHours: durationHours,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -9468,6 +9615,8 @@ class $$CustomSubstancesTableTableManager
                 required String name,
                 required String units,
                 Value<String> description = const Value.absent(),
+                Value<int> onsetMinutes = const Value.absent(),
+                Value<double> durationHours = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => CustomSubstancesCompanion.insert(
                 id: id,
@@ -9476,6 +9625,8 @@ class $$CustomSubstancesTableTableManager
                 name: name,
                 units: units,
                 description: description,
+                onsetMinutes: onsetMinutes,
+                durationHours: durationHours,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0

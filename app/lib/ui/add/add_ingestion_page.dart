@@ -51,7 +51,7 @@ class _AddIngestionPageState extends ConsumerState<AddIngestionPage> {
     _experienceChosenByUser = widget.experienceId != null;
     final key = widget.initialSubstanceKey;
     if (key != null) {
-      final s = ref.read(referenceProvider).byKey[key];
+      final s = ref.read(catalogProvider).byKey[key];
       if (s != null) WidgetsBinding.instance.addPostFrameCallback((_) => _chooseSubstance(s));
     }
   }
@@ -65,7 +65,7 @@ class _AddIngestionPageState extends ConsumerState<AddIngestionPage> {
   // ---- derived data ----
 
   List<Substance> _activeSubstances() {
-    final reference = ref.read(referenceProvider);
+    final reference = ref.read(catalogProvider);
     final now = ref.read(clockProvider)();
     final rows = ref.read(personIngestionsProvider(widget.personId)).value ?? const <Ingestion>[];
     final keys = <String>{
@@ -179,6 +179,7 @@ class _AddIngestionPageState extends ConsumerState<AddIngestionPage> {
         method: values.method,
         notes: _notes.text.trim(),
         details: values.details,
+        customUnitId: values.customUnitId,
       );
       if (mounted) Navigator.of(context).pop(experience.id);
     } catch (e) {

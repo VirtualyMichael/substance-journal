@@ -92,6 +92,9 @@ class CustomSubstances extends Table with SyncColumns {
   TextColumn get name => text()();
   TextColumn get units => text()();
   TextColumn get description => text().withDefault(const Constant(''))();
+  // Rough timing so the timeline can draw it (added in schema v2).
+  IntColumn get onsetMinutes => integer().withDefault(const Constant(30))();
+  RealColumn get durationHours => real().withDefault(const Constant(4.0))();
 }
 
 /// A specific product, e.g. a cannabis strain/batch with THC and CBD percentages.
