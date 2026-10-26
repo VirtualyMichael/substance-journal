@@ -13,3 +13,6 @@ __pycache__/
 pkgroot/
 graphify-out/
 .claude/
+
+# local code graph (graphify)
+app/.graphify/
