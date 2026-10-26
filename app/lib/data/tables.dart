@@ -51,6 +51,8 @@ class Ingestions extends Table with SyncColumns {
   RealColumn get absorbedMg => real().nullable()();
   TextColumn get method => text().nullable()();
   TextColumn get notes => text().withDefault(const Constant(''))();
+  // Inputs behind the dose (e.g. cannabis grams, THC %, share consumed) as JSON.
+  TextColumn get detailsJson => text().withDefault(const Constant('{}'))();
 }
 
 class TimedNotes extends Table with SyncColumns {

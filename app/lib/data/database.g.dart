@@ -1333,6 +1333,18 @@ class $IngestionsTable extends Ingestions
     requiredDuringInsert: false,
     defaultValue: const Constant(''),
   );
+  static const VerificationMeta _detailsJsonMeta = const VerificationMeta(
+    'detailsJson',
+  );
+  @override
+  late final GeneratedColumn<String> detailsJson = GeneratedColumn<String>(
+    'details_json',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('{}'),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -1354,6 +1366,7 @@ class $IngestionsTable extends Ingestions
     absorbedMg,
     method,
     notes,
+    detailsJson,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -1510,6 +1523,15 @@ class $IngestionsTable extends Ingestions
         notes.isAcceptableOrUnknown(data['notes']!, _notesMeta),
       );
     }
+    if (data.containsKey('details_json')) {
+      context.handle(
+        _detailsJsonMeta,
+        detailsJson.isAcceptableOrUnknown(
+          data['details_json']!,
+          _detailsJsonMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -1595,6 +1617,10 @@ class $IngestionsTable extends Ingestions
         DriftSqlType.string,
         data['${effectivePrefix}notes'],
       )!,
+      detailsJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}details_json'],
+      )!,
     );
   }
 
@@ -1624,6 +1650,7 @@ class Ingestion extends DataClass implements Insertable<Ingestion> {
   final double? absorbedMg;
   final String? method;
   final String notes;
+  final String detailsJson;
   const Ingestion({
     required this.id,
     required this.hlc,
@@ -1644,6 +1671,7 @@ class Ingestion extends DataClass implements Insertable<Ingestion> {
     this.absorbedMg,
     this.method,
     required this.notes,
+    required this.detailsJson,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -1685,6 +1713,7 @@ class Ingestion extends DataClass implements Insertable<Ingestion> {
       map['method'] = Variable<String>(method);
     }
     map['notes'] = Variable<String>(notes);
+    map['details_json'] = Variable<String>(detailsJson);
     return map;
   }
 
@@ -1723,6 +1752,7 @@ class Ingestion extends DataClass implements Insertable<Ingestion> {
           ? const Value.absent()
           : Value(method),
       notes: Value(notes),
+      detailsJson: Value(detailsJson),
     );
   }
 
@@ -1751,6 +1781,7 @@ class Ingestion extends DataClass implements Insertable<Ingestion> {
       absorbedMg: serializer.fromJson<double?>(json['absorbedMg']),
       method: serializer.fromJson<String?>(json['method']),
       notes: serializer.fromJson<String>(json['notes']),
+      detailsJson: serializer.fromJson<String>(json['detailsJson']),
     );
   }
   @override
@@ -1776,6 +1807,7 @@ class Ingestion extends DataClass implements Insertable<Ingestion> {
       'absorbedMg': serializer.toJson<double?>(absorbedMg),
       'method': serializer.toJson<String?>(method),
       'notes': serializer.toJson<String>(notes),
+      'detailsJson': serializer.toJson<String>(detailsJson),
     };
   }
 
@@ -1799,6 +1831,7 @@ class Ingestion extends DataClass implements Insertable<Ingestion> {
     Value<double?> absorbedMg = const Value.absent(),
     Value<String?> method = const Value.absent(),
     String? notes,
+    String? detailsJson,
   }) => Ingestion(
     id: id ?? this.id,
     hlc: hlc ?? this.hlc,
@@ -1821,6 +1854,7 @@ class Ingestion extends DataClass implements Insertable<Ingestion> {
     absorbedMg: absorbedMg.present ? absorbedMg.value : this.absorbedMg,
     method: method.present ? method.value : this.method,
     notes: notes ?? this.notes,
+    detailsJson: detailsJson ?? this.detailsJson,
   );
   Ingestion copyWithCompanion(IngestionsCompanion data) {
     return Ingestion(
@@ -1857,6 +1891,9 @@ class Ingestion extends DataClass implements Insertable<Ingestion> {
           : this.absorbedMg,
       method: data.method.present ? data.method.value : this.method,
       notes: data.notes.present ? data.notes.value : this.notes,
+      detailsJson: data.detailsJson.present
+          ? data.detailsJson.value
+          : this.detailsJson,
     );
   }
 
@@ -1881,7 +1918,8 @@ class Ingestion extends DataClass implements Insertable<Ingestion> {
           ..write('productId: $productId, ')
           ..write('absorbedMg: $absorbedMg, ')
           ..write('method: $method, ')
-          ..write('notes: $notes')
+          ..write('notes: $notes, ')
+          ..write('detailsJson: $detailsJson')
           ..write(')'))
         .toString();
   }
@@ -1907,6 +1945,7 @@ class Ingestion extends DataClass implements Insertable<Ingestion> {
     absorbedMg,
     method,
     notes,
+    detailsJson,
   );
   @override
   bool operator ==(Object other) =>
@@ -1930,7 +1969,8 @@ class Ingestion extends DataClass implements Insertable<Ingestion> {
           other.productId == this.productId &&
           other.absorbedMg == this.absorbedMg &&
           other.method == this.method &&
-          other.notes == this.notes);
+          other.notes == this.notes &&
+          other.detailsJson == this.detailsJson);
 }
 
 class IngestionsCompanion extends UpdateCompanion<Ingestion> {
@@ -1953,6 +1993,7 @@ class IngestionsCompanion extends UpdateCompanion<Ingestion> {
   final Value<double?> absorbedMg;
   final Value<String?> method;
   final Value<String> notes;
+  final Value<String> detailsJson;
   final Value<int> rowid;
   const IngestionsCompanion({
     this.id = const Value.absent(),
@@ -1974,6 +2015,7 @@ class IngestionsCompanion extends UpdateCompanion<Ingestion> {
     this.absorbedMg = const Value.absent(),
     this.method = const Value.absent(),
     this.notes = const Value.absent(),
+    this.detailsJson = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   IngestionsCompanion.insert({
@@ -1996,6 +2038,7 @@ class IngestionsCompanion extends UpdateCompanion<Ingestion> {
     this.absorbedMg = const Value.absent(),
     this.method = const Value.absent(),
     this.notes = const Value.absent(),
+    this.detailsJson = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        hlc = Value(hlc),
@@ -2024,6 +2067,7 @@ class IngestionsCompanion extends UpdateCompanion<Ingestion> {
     Expression<double>? absorbedMg,
     Expression<String>? method,
     Expression<String>? notes,
+    Expression<String>? detailsJson,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -2046,6 +2090,7 @@ class IngestionsCompanion extends UpdateCompanion<Ingestion> {
       if (absorbedMg != null) 'absorbed_mg': absorbedMg,
       if (method != null) 'method': method,
       if (notes != null) 'notes': notes,
+      if (detailsJson != null) 'details_json': detailsJson,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -2070,6 +2115,7 @@ class IngestionsCompanion extends UpdateCompanion<Ingestion> {
     Value<double?>? absorbedMg,
     Value<String?>? method,
     Value<String>? notes,
+    Value<String>? detailsJson,
     Value<int>? rowid,
   }) {
     return IngestionsCompanion(
@@ -2092,6 +2138,7 @@ class IngestionsCompanion extends UpdateCompanion<Ingestion> {
       absorbedMg: absorbedMg ?? this.absorbedMg,
       method: method ?? this.method,
       notes: notes ?? this.notes,
+      detailsJson: detailsJson ?? this.detailsJson,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -2156,6 +2203,9 @@ class IngestionsCompanion extends UpdateCompanion<Ingestion> {
     if (notes.present) {
       map['notes'] = Variable<String>(notes.value);
     }
+    if (detailsJson.present) {
+      map['details_json'] = Variable<String>(detailsJson.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -2184,6 +2234,7 @@ class IngestionsCompanion extends UpdateCompanion<Ingestion> {
           ..write('absorbedMg: $absorbedMg, ')
           ..write('method: $method, ')
           ..write('notes: $notes, ')
+          ..write('detailsJson: $detailsJson, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -7426,6 +7477,7 @@ typedef $$IngestionsTableCreateCompanionBuilder = IngestionsCompanion Function({
   Value<double?> absorbedMg,
   Value<String?> method,
   Value<String> notes,
+  Value<String> detailsJson,
   Value<int> rowid,
 });
 typedef $$IngestionsTableUpdateCompanionBuilder = IngestionsCompanion Function({
@@ -7448,6 +7500,7 @@ typedef $$IngestionsTableUpdateCompanionBuilder = IngestionsCompanion Function({
   Value<double?> absorbedMg,
   Value<String?> method,
   Value<String> notes,
+  Value<String> detailsJson,
   Value<int> rowid,
 });
 
@@ -7581,6 +7634,11 @@ class $$IngestionsTableFilterComposer
 
   ColumnFilters<String> get notes => $composableBuilder(
     column: $table.notes,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get detailsJson => $composableBuilder(
+    column: $table.detailsJson,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -7725,6 +7783,11 @@ class $$IngestionsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get detailsJson => $composableBuilder(
+    column: $table.detailsJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$ExperiencesTableOrderingComposer get experienceId {
     final $$ExperiencesTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -7844,6 +7907,11 @@ class $$IngestionsTableAnnotationComposer
   GeneratedColumn<String> get notes =>
       $composableBuilder(column: $table.notes, builder: (column) => column);
 
+  GeneratedColumn<String> get detailsJson => $composableBuilder(
+    column: $table.detailsJson,
+    builder: (column) => column,
+  );
+
   $$ExperiencesTableAnnotationComposer get experienceId {
     final $$ExperiencesTableAnnotationComposer composer = $composerBuilder(
       composer: this,
@@ -7938,6 +8006,7 @@ class $$IngestionsTableTableManager
                 Value<double?> absorbedMg = const Value.absent(),
                 Value<String?> method = const Value.absent(),
                 Value<String> notes = const Value.absent(),
+                Value<String> detailsJson = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => IngestionsCompanion(
                 id: id,
@@ -7959,6 +8028,7 @@ class $$IngestionsTableTableManager
                 absorbedMg: absorbedMg,
                 method: method,
                 notes: notes,
+                detailsJson: detailsJson,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -7982,6 +8052,7 @@ class $$IngestionsTableTableManager
                 Value<double?> absorbedMg = const Value.absent(),
                 Value<String?> method = const Value.absent(),
                 Value<String> notes = const Value.absent(),
+                Value<String> detailsJson = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => IngestionsCompanion.insert(
                 id: id,
@@ -8003,6 +8074,7 @@ class $$IngestionsTableTableManager
                 absorbedMg: absorbedMg,
                 method: method,
                 notes: notes,
+                detailsJson: detailsJson,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0

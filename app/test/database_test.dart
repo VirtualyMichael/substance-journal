@@ -1,8 +1,10 @@
+import 'package:drift/drift.dart' show Value;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sj_core/sj_core.dart';
 import 'package:substance_journal_app/data/database.dart';
 
 void main() {
+  personAndExperienceTests();
   late AppDatabase db;
   var clock = 1000000;
 
@@ -88,5 +90,119 @@ void main() {
     expect(await db.getSetting('alcoholMode'), 'true');
     final rows = await db.select(db.settings).get();
     expect({for (final r in rows) r.key: r.shared}, {'alcoholMode': false, 'theme': true});
+  });
+}
+
+void personAndExperienceTests() {
+  late AppDatabase db;
+  var clock = 5000000;
+
+  setUp(() {
+    clock = 5000000;
+    db = AppDatabase.memory(nowMillis: () => clock);
+  });
+  tearDown(() => db.close());
+
+  test('a fresh install gets one default person, and asking again does not add more', () async {
+    final first = await db.ensureDefaultPerson();
+    final second = await db.ensureDefaultPerson();
+    expect(first.id, second.id);
+    expect(first.isDefault, isTrue);
+    expect(await db.activePeople(), hasLength(1));
+  });
+
+  test('deleting an experience tombstones its ingestions, notes and ratings, and undo restores them', () async {
+    final me = await db.ensureDefaultPerson();
+    final exp = await db.addExperience(personId: me.id, sortDate: DateTime(2026, 7, 1));
+    await db.addIngestion(experience: exp, substanceKey: 'lsd', route: 'sublingual', time: DateTime(2026, 7, 1, 20), dose: 100);
+    await db.addTimedNote(experienceId: exp.id, time: DateTime(2026, 7, 1, 21), note: 'hello');
+    await db.addRating(experienceId: exp.id, time: DateTime(2026, 7, 1, 22), shulgin: 'plus2');
+
+    await db.deleteExperience(exp.id);
+    expect(await db.ingestionsForPerson(me.id), isEmpty);
+    expect(await db.watchExperiences(me.id).first, isEmpty);
+    expect(await db.watchTimedNotes(exp.id).first, isEmpty);
+    expect(await db.watchRatings(exp.id).first, isEmpty);
+    // The rows are still there as tombstones so the delete can sync.
+    expect(await db.select(db.experiences).get(), hasLength(1));
+
+    await db.setExperienceDeleted(exp.id, false);
+    expect(await db.watchExperiences(me.id).first, hasLength(1));
+    expect(await db.ingestionsForPerson(me.id), hasLength(1));
+    expect(await db.watchTimedNotes(exp.id).first, hasLength(1));
+    expect(await db.watchRatings(exp.id).first, hasLength(1));
+  });
+
+  test('deleting a person removes all of their data and nobody else\'s', () async {
+    final me = await db.ensureDefaultPerson();
+    final bob = await db.addPerson('Bob');
+    final myExp = await db.addExperience(personId: me.id, sortDate: DateTime(2026, 7, 1));
+    final bobExp = await db.addExperience(personId: bob.id, sortDate: DateTime(2026, 7, 1));
+    await db.addIngestion(experience: myExp, substanceKey: 'lsd', route: 'sublingual', time: DateTime(2026, 7, 1, 20));
+    await db.addIngestion(experience: bobExp, substanceKey: 'mdma', route: 'oral', time: DateTime(2026, 7, 1, 20));
+
+    await db.deletePerson(bob.id);
+    expect((await db.activePeople()).map((p) => p.name), ['Me']);
+    expect(await db.ingestionsForPerson(bob.id), isEmpty);
+    expect(await db.ingestionsForPerson(me.id), hasLength(1));
+    await expectLater(db.deletePerson(me.id), throwsStateError);
+  });
+
+  test('editing an ingestion changes only that row and stamps a newer clock', () async {
+    final me = await db.ensureDefaultPerson();
+    final exp = await db.addExperience(personId: me.id, sortDate: DateTime(2026, 7, 1));
+    final a = await db.addIngestion(experience: exp, substanceKey: 'lsd', route: 'sublingual', time: DateTime(2026, 7, 1, 20), dose: 100);
+    final b = await db.addIngestion(experience: exp, substanceKey: 'mdma', route: 'oral', time: DateTime(2026, 7, 1, 21), dose: 80);
+    await db.updateIngestion(a.id, dose: const Value(120.0), notes: 'second tab');
+    final rows = {for (final r in await db.ingestionsForPerson(me.id)) r.id: r};
+    expect(rows[a.id]!.dose, 120);
+    expect(rows[a.id]!.notes, 'second tab');
+    expect(Hlc.parse(rows[a.id]!.hlc) > Hlc.parse(a.hlc), isTrue);
+    expect(rows[b.id]!.dose, 80);
+    expect(rows[b.id]!.hlc, b.hlc);
+  });
+
+  test('compound preferences are stored per person', () async {
+    final me = await db.ensureDefaultPerson();
+    final bob = await db.addPerson('Bob');
+    await db.toggleFavorite(me.id, 'lsd');
+    await db.setHidden(me.id, 'ketamine', true);
+    expect((await db.getCompoundPrefs(me.id)).favorites, {'lsd'});
+    expect((await db.getCompoundPrefs(me.id)).hidden, {'ketamine'});
+    expect((await db.getCompoundPrefs(bob.id)).favorites, isEmpty);
+    expect((await db.getCompoundPrefs(bob.id)).hidden, isEmpty);
+
+    await db.toggleFavorite(me.id, 'lsd');
+    await db.setHidden(me.id, 'ketamine', false);
+    expect((await db.getCompoundPrefs(me.id)).favorites, isEmpty);
+    expect((await db.getCompoundPrefs(me.id)).hidden, isEmpty);
+  });
+
+  test('timed notes, ratings and cannabis details are stored', () async {
+    final me = await db.ensureDefaultPerson();
+    final exp = await db.addExperience(personId: me.id, sortDate: DateTime(2026, 7, 1));
+    final ing = await db.addIngestion(
+      experience: exp,
+      substanceKey: 'cannabis',
+      route: 'smoked',
+      time: DateTime(2026, 7, 1, 20),
+      dose: 2.7,
+      unit: 'mg',
+      absorbedMg: 2.7,
+      method: 'joint',
+      details: {'grams': 0.1, 'thcPercent': 15},
+    );
+    expect(ing.method, 'joint');
+    expect(ing.absorbedMg, 2.7);
+    expect(ing.detailsJson, '{"grams":0.1,"thcPercent":15}');
+
+    final note = await db.addTimedNote(experienceId: exp.id, time: DateTime(2026, 7, 1, 21), note: 'peak');
+    final rating = await db.addRating(experienceId: exp.id, shulgin: 'plus3', scores: {'mood': 8});
+    expect(note.showOnTimeline, isTrue);
+    expect(rating.scoresJson, '{"mood":8}');
+    await db.deleteTimedNote(note.id);
+    await db.deleteRating(rating.id);
+    expect(await db.watchTimedNotes(exp.id).first, isEmpty);
+    expect(await db.watchRatings(exp.id).first, isEmpty);
   });
 }

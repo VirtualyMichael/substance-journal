@@ -75,3 +75,10 @@ Each phase ends with passing tests, and a build you can open.
 - iOS needs Apple tooling you may not have; Android, Windows and Linux do not.
 - Browser/web build is possible later (Flutter web) but is not planned.
 - Alcohol Tracker's MCP server reads its own SQLite file today; it will need to point at the new database in phase 9.
+
+## Status (2026-10-25)
+- **Phase 1 done:** Flutter app, core package, sync-ready database, compound ordering.
+- **Phase 2 done:** alcohol model, generic curves and cannabis dosing in Dart, checked against Python goldens.
+- **Phase 3 mostly done:** people with strict per-person scoping, experiences, the add flow (compound, route, interaction check, dose, time), compound picker (search, history, favourites, hidden), timeline chart, timed notes, ratings, settings, adaptive phone/desktop layout, light and dark themes.
+- **Phase 3 not yet built:** custom units ("1 pill = 120 mg"), custom substances, editing an ingestion's compound or route, per-ingestion colour choice, the calendar view and multi-person progress badge (phase 4), Alcohol mode (phase 4).
+- **Screenshots without launching the app:** `SJ_SCREENSHOTS_DIR=<dir> flutter test test/screenshots_test.dart` renders the main screens to PNG.
