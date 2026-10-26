@@ -15,6 +15,7 @@ import 'data/database.dart';
 import 'data/reference_repository.dart';
 import 'data/auto_sync.dart';
 import 'data/lan_sync.dart';
+import 'data/reminders.dart';
 import 'data/sync.dart';
 
 /// Overridden at startup (and in tests) with real instances.
@@ -213,6 +214,21 @@ final autoSyncProvider = Provider<AutoSync?>((ref) {
   auto.start();
   return auto;
 });
+
+/// How notifications are delivered. Replaced in tests.
+final notifierProvider = Provider<ReminderNotifier>((ref) => LocalNotifier());
+
+/// Daily check-in and limit alerts, running while the app is open. Not started in tests.
+final reminderServiceProvider = Provider<ReminderService>((ref) {
+  final service = ReminderService(ref.watch(databaseProvider), ref.watch(notifierProvider));
+  ref.onDispose(service.stop);
+  if (!Platform.environment.containsKey('FLUTTER_TEST')) service.start();
+  return service;
+});
+
+final reminderPrefsProvider = StreamProvider<ReminderPrefs>(
+  (ref) => ref.watch(databaseProvider).watchSetting('reminders').map(ReminderPrefs.decode),
+);
 
 final autoSyncEnabledProvider = StreamProvider<bool>(
   (ref) => ref.watch(databaseProvider).watchSetting('autoSync').map((v) => v != 'false'),

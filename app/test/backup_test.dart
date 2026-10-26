@@ -175,10 +175,7 @@ void main() {
     await settle(tester);
     await tester.tap(find.text('Settings'));
     await settle(tester);
-    final button = find.byKey(const ValueKey('create-backup'));
-    await tester.scrollUntilVisible(button, 300, scrollable: find.byType(Scrollable).first);
-    await tester.tap(button);
-    await settle(tester);
+    await tapKey(tester, 'create-backup');
     await tester.enterText(find.byKey(const ValueKey('passphrase')), 'secret one');
     await tester.enterText(find.byKey(const ValueKey('passphrase-again')), 'different');
     await tapKey(tester, 'passphrase-ok');

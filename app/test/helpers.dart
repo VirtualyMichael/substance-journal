@@ -78,6 +78,7 @@ Future<void> tapKey(WidgetTester tester, String key) async {
   final finder = find.byKey(ValueKey(key));
   expect(finder, findsOneWidget, reason: 'widget with key $key');
   await tester.ensureVisible(finder);
+  await tester.pumpAndSettle();
   await tester.tap(finder);
   await settle(tester);
 }

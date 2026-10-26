@@ -8,6 +8,7 @@ import '../alcohol/alcohol_settings.dart';
 import '../units/custom_units_page.dart';
 import '../sync/sync_page.dart';
 import 'backup_section.dart';
+import 'reminders_section.dart';
 import 'pw_import_flow.dart';
 
 const List<Color> _accentChoices = [
@@ -208,6 +209,8 @@ class SettingsPage extends ConsumerWidget {
               label: const Text('Manage custom units'),
               onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const CustomUnitsPage())),
             ),
+            const SizedBox(height: Gap.lg),
+            const RemindersSection(),
             const SizedBox(height: Gap.lg),
             Text('Sync', style: text.titleMedium),
             const SizedBox(height: 4),
