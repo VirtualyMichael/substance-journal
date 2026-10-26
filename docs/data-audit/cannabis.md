@@ -48,3 +48,10 @@ Ours lists Lithium as dangerous and 12 others as uncertain. PW lists the same 13
 - `scripts/sync_substance_data.py`: add `sublingual` to cannabis routes; add overrides for category, summary, oral onset max 120 min, oral peak 1-3 h; add `sources` field.
 - Keep dose bands as they are.
 - Add `core/cannabis.py` constants for bioavailability with citations.
+
+## Implementation (app/packages/sj_core/lib/src/cannabis.dart)
+- **Units used against PsychonautWiki's bands:** smoked, vaped and dabbed doses are compared as mg of THC *absorbed* (product mg x bioavailability). Oral doses are compared as the swallowed label mg, which is how edibles are sold. Sublingual has no published bands, so it is not classified.
+- **Bioavailability (low / central / high):** inhaled 10 / 25 / 35% (moderate confidence); vaporised or dabbed 30 / 45 / 60% (low confidence, one weak source); oral 4 / 10 / 20% (moderate); sublingual 10 / 25 / 35% (low). Each carries its source string in the code.
+- **Dose class is a range.** Because absorption varies several-fold the app reports the class at the low and high estimate ("light to strong") instead of one false-precise label. A whole 1 g joint at 20% is "heavy" at both ends; a 0.1 g bowl at 15% is "light" to "strong".
+- **Known tension:** Erowid calls 0.3 g of medium-potency flower a *strong* smoked dose. At 15% that is 45 mg THC, about 11 mg absorbed at the central 25% estimate, which PsychonautWiki would call *heavy*. The bands and the bioavailability literature do not line up neatly, which is another reason to show ranges. Sharing a joint, sidestream smoke and unfinished joints are handled by the `fractionUsed` input.
+- **Curves:** one-compartment curves with first-order absorption (peak normalised to 1, height from the dose factor). Inhaled: absorption half-life 6 min, effect half-life 60 min, peak about 22 min, under 10% of peak after 4 h. Oral: 20 min lag, absorption half-life 45 min, effect half-life 120 min, peak about 2 h, still above 20% of peak at 6 h. Sublingual: 5 min lag, 15 and 100 min. These are shape choices fitted to the published peak times and durations, not fitted to measured plasma data.

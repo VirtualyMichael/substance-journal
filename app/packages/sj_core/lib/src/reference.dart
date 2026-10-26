@@ -55,6 +55,32 @@ class RouteOfAdministration {
   }
 }
 
+/// Where a dose falls against a route's reference bands.
+enum DoseClass { belowThreshold, threshold, light, common, strong, heavy }
+
+/// Classifies [dose] (in the route's unit) against its bands, using [min, max) boundaries.
+/// Returns null when the route publishes no dose bands at all.
+DoseClass? classifyDose(RouteOfAdministration roa, double dose) {
+  final hasBands = roa.doseThreshold != null ||
+      roa.doseLight?.min != null ||
+      roa.doseCommon?.min != null ||
+      roa.doseStrong?.min != null ||
+      roa.doseHeavy != null;
+  if (!hasBands) return null;
+
+  final heavy = roa.doseHeavy;
+  if (heavy != null && dose >= heavy) return DoseClass.heavy;
+  final strong = roa.doseStrong?.min;
+  if (strong != null && dose >= strong) return DoseClass.strong;
+  final common = roa.doseCommon?.min;
+  if (common != null && dose >= common) return DoseClass.common;
+  final light = roa.doseLight?.min;
+  if (light != null && dose >= light) return DoseClass.light;
+  final threshold = roa.doseThreshold;
+  if (threshold != null && dose >= threshold) return DoseClass.threshold;
+  return DoseClass.belowThreshold;
+}
+
 class Substance {
   const Substance({
     required this.key,
