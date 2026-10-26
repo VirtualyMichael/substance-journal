@@ -39,7 +39,7 @@ class AppDatabase extends _$AppDatabase {
   Hlc _clock;
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -48,6 +48,9 @@ class AppDatabase extends _$AppDatabase {
           if (from < 2) {
             await m.addColumn(customSubstances, customSubstances.onsetMinutes);
             await m.addColumn(customSubstances, customSubstances.durationHours);
+          }
+          if (from < 3) {
+            await m.addColumn(peers, peers.sharedKey);
           }
         },
       );

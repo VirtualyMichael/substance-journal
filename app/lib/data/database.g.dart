@@ -5985,7 +5985,20 @@ class $PeersTable extends Peers with TableInfo<$PeersTable, Peer> {
     aliasedName,
     false,
     type: DriftSqlType.string,
-    requiredDuringInsert: true,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  static const VerificationMeta _sharedKeyMeta = const VerificationMeta(
+    'sharedKey',
+  );
+  @override
+  late final GeneratedColumn<String> sharedKey = GeneratedColumn<String>(
+    'shared_key',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
   );
   static const VerificationMeta _lastKnownAddressMeta = const VerificationMeta(
     'lastKnownAddress',
@@ -6026,6 +6039,7 @@ class $PeersTable extends Peers with TableInfo<$PeersTable, Peer> {
     deviceId,
     name,
     publicKey,
+    sharedKey,
     lastKnownAddress,
     lastSyncedHlc,
     pairedAt,
@@ -6063,8 +6077,12 @@ class $PeersTable extends Peers with TableInfo<$PeersTable, Peer> {
         _publicKeyMeta,
         publicKey.isAcceptableOrUnknown(data['public_key']!, _publicKeyMeta),
       );
-    } else if (isInserting) {
-      context.missing(_publicKeyMeta);
+    }
+    if (data.containsKey('shared_key')) {
+      context.handle(
+        _sharedKeyMeta,
+        sharedKey.isAcceptableOrUnknown(data['shared_key']!, _sharedKeyMeta),
+      );
     }
     if (data.containsKey('last_known_address')) {
       context.handle(
@@ -6113,6 +6131,10 @@ class $PeersTable extends Peers with TableInfo<$PeersTable, Peer> {
         DriftSqlType.string,
         data['${effectivePrefix}public_key'],
       )!,
+      sharedKey: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}shared_key'],
+      )!,
       lastKnownAddress: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}last_known_address'],
@@ -6138,6 +6160,7 @@ class Peer extends DataClass implements Insertable<Peer> {
   final String deviceId;
   final String name;
   final String publicKey;
+  final String sharedKey;
   final String? lastKnownAddress;
   final String lastSyncedHlc;
   final DateTime pairedAt;
@@ -6145,6 +6168,7 @@ class Peer extends DataClass implements Insertable<Peer> {
     required this.deviceId,
     required this.name,
     required this.publicKey,
+    required this.sharedKey,
     this.lastKnownAddress,
     required this.lastSyncedHlc,
     required this.pairedAt,
@@ -6155,6 +6179,7 @@ class Peer extends DataClass implements Insertable<Peer> {
     map['device_id'] = Variable<String>(deviceId);
     map['name'] = Variable<String>(name);
     map['public_key'] = Variable<String>(publicKey);
+    map['shared_key'] = Variable<String>(sharedKey);
     if (!nullToAbsent || lastKnownAddress != null) {
       map['last_known_address'] = Variable<String>(lastKnownAddress);
     }
@@ -6168,6 +6193,7 @@ class Peer extends DataClass implements Insertable<Peer> {
       deviceId: Value(deviceId),
       name: Value(name),
       publicKey: Value(publicKey),
+      sharedKey: Value(sharedKey),
       lastKnownAddress: lastKnownAddress == null && nullToAbsent
           ? const Value.absent()
           : Value(lastKnownAddress),
@@ -6185,6 +6211,7 @@ class Peer extends DataClass implements Insertable<Peer> {
       deviceId: serializer.fromJson<String>(json['deviceId']),
       name: serializer.fromJson<String>(json['name']),
       publicKey: serializer.fromJson<String>(json['publicKey']),
+      sharedKey: serializer.fromJson<String>(json['sharedKey']),
       lastKnownAddress: serializer.fromJson<String?>(json['lastKnownAddress']),
       lastSyncedHlc: serializer.fromJson<String>(json['lastSyncedHlc']),
       pairedAt: serializer.fromJson<DateTime>(json['pairedAt']),
@@ -6197,6 +6224,7 @@ class Peer extends DataClass implements Insertable<Peer> {
       'deviceId': serializer.toJson<String>(deviceId),
       'name': serializer.toJson<String>(name),
       'publicKey': serializer.toJson<String>(publicKey),
+      'sharedKey': serializer.toJson<String>(sharedKey),
       'lastKnownAddress': serializer.toJson<String?>(lastKnownAddress),
       'lastSyncedHlc': serializer.toJson<String>(lastSyncedHlc),
       'pairedAt': serializer.toJson<DateTime>(pairedAt),
@@ -6207,6 +6235,7 @@ class Peer extends DataClass implements Insertable<Peer> {
     String? deviceId,
     String? name,
     String? publicKey,
+    String? sharedKey,
     Value<String?> lastKnownAddress = const Value.absent(),
     String? lastSyncedHlc,
     DateTime? pairedAt,
@@ -6214,6 +6243,7 @@ class Peer extends DataClass implements Insertable<Peer> {
     deviceId: deviceId ?? this.deviceId,
     name: name ?? this.name,
     publicKey: publicKey ?? this.publicKey,
+    sharedKey: sharedKey ?? this.sharedKey,
     lastKnownAddress: lastKnownAddress.present
         ? lastKnownAddress.value
         : this.lastKnownAddress,
@@ -6225,6 +6255,7 @@ class Peer extends DataClass implements Insertable<Peer> {
       deviceId: data.deviceId.present ? data.deviceId.value : this.deviceId,
       name: data.name.present ? data.name.value : this.name,
       publicKey: data.publicKey.present ? data.publicKey.value : this.publicKey,
+      sharedKey: data.sharedKey.present ? data.sharedKey.value : this.sharedKey,
       lastKnownAddress: data.lastKnownAddress.present
           ? data.lastKnownAddress.value
           : this.lastKnownAddress,
@@ -6241,6 +6272,7 @@ class Peer extends DataClass implements Insertable<Peer> {
           ..write('deviceId: $deviceId, ')
           ..write('name: $name, ')
           ..write('publicKey: $publicKey, ')
+          ..write('sharedKey: $sharedKey, ')
           ..write('lastKnownAddress: $lastKnownAddress, ')
           ..write('lastSyncedHlc: $lastSyncedHlc, ')
           ..write('pairedAt: $pairedAt')
@@ -6253,6 +6285,7 @@ class Peer extends DataClass implements Insertable<Peer> {
     deviceId,
     name,
     publicKey,
+    sharedKey,
     lastKnownAddress,
     lastSyncedHlc,
     pairedAt,
@@ -6264,6 +6297,7 @@ class Peer extends DataClass implements Insertable<Peer> {
           other.deviceId == this.deviceId &&
           other.name == this.name &&
           other.publicKey == this.publicKey &&
+          other.sharedKey == this.sharedKey &&
           other.lastKnownAddress == this.lastKnownAddress &&
           other.lastSyncedHlc == this.lastSyncedHlc &&
           other.pairedAt == this.pairedAt);
@@ -6273,6 +6307,7 @@ class PeersCompanion extends UpdateCompanion<Peer> {
   final Value<String> deviceId;
   final Value<String> name;
   final Value<String> publicKey;
+  final Value<String> sharedKey;
   final Value<String?> lastKnownAddress;
   final Value<String> lastSyncedHlc;
   final Value<DateTime> pairedAt;
@@ -6281,6 +6316,7 @@ class PeersCompanion extends UpdateCompanion<Peer> {
     this.deviceId = const Value.absent(),
     this.name = const Value.absent(),
     this.publicKey = const Value.absent(),
+    this.sharedKey = const Value.absent(),
     this.lastKnownAddress = const Value.absent(),
     this.lastSyncedHlc = const Value.absent(),
     this.pairedAt = const Value.absent(),
@@ -6289,19 +6325,20 @@ class PeersCompanion extends UpdateCompanion<Peer> {
   PeersCompanion.insert({
     required String deviceId,
     required String name,
-    required String publicKey,
+    this.publicKey = const Value.absent(),
+    this.sharedKey = const Value.absent(),
     this.lastKnownAddress = const Value.absent(),
     this.lastSyncedHlc = const Value.absent(),
     required DateTime pairedAt,
     this.rowid = const Value.absent(),
   }) : deviceId = Value(deviceId),
        name = Value(name),
-       publicKey = Value(publicKey),
        pairedAt = Value(pairedAt);
   static Insertable<Peer> custom({
     Expression<String>? deviceId,
     Expression<String>? name,
     Expression<String>? publicKey,
+    Expression<String>? sharedKey,
     Expression<String>? lastKnownAddress,
     Expression<String>? lastSyncedHlc,
     Expression<DateTime>? pairedAt,
@@ -6311,6 +6348,7 @@ class PeersCompanion extends UpdateCompanion<Peer> {
       if (deviceId != null) 'device_id': deviceId,
       if (name != null) 'name': name,
       if (publicKey != null) 'public_key': publicKey,
+      if (sharedKey != null) 'shared_key': sharedKey,
       if (lastKnownAddress != null) 'last_known_address': lastKnownAddress,
       if (lastSyncedHlc != null) 'last_synced_hlc': lastSyncedHlc,
       if (pairedAt != null) 'paired_at': pairedAt,
@@ -6322,6 +6360,7 @@ class PeersCompanion extends UpdateCompanion<Peer> {
     Value<String>? deviceId,
     Value<String>? name,
     Value<String>? publicKey,
+    Value<String>? sharedKey,
     Value<String?>? lastKnownAddress,
     Value<String>? lastSyncedHlc,
     Value<DateTime>? pairedAt,
@@ -6331,6 +6370,7 @@ class PeersCompanion extends UpdateCompanion<Peer> {
       deviceId: deviceId ?? this.deviceId,
       name: name ?? this.name,
       publicKey: publicKey ?? this.publicKey,
+      sharedKey: sharedKey ?? this.sharedKey,
       lastKnownAddress: lastKnownAddress ?? this.lastKnownAddress,
       lastSyncedHlc: lastSyncedHlc ?? this.lastSyncedHlc,
       pairedAt: pairedAt ?? this.pairedAt,
@@ -6349,6 +6389,9 @@ class PeersCompanion extends UpdateCompanion<Peer> {
     }
     if (publicKey.present) {
       map['public_key'] = Variable<String>(publicKey.value);
+    }
+    if (sharedKey.present) {
+      map['shared_key'] = Variable<String>(sharedKey.value);
     }
     if (lastKnownAddress.present) {
       map['last_known_address'] = Variable<String>(lastKnownAddress.value);
@@ -6371,6 +6414,7 @@ class PeersCompanion extends UpdateCompanion<Peer> {
           ..write('deviceId: $deviceId, ')
           ..write('name: $name, ')
           ..write('publicKey: $publicKey, ')
+          ..write('sharedKey: $sharedKey, ')
           ..write('lastKnownAddress: $lastKnownAddress, ')
           ..write('lastSyncedHlc: $lastSyncedHlc, ')
           ..write('pairedAt: $pairedAt, ')
@@ -10395,7 +10439,8 @@ typedef $$SettingsTableProcessedTableManager =
 typedef $$PeersTableCreateCompanionBuilder = PeersCompanion Function({
   required String deviceId,
   required String name,
-  required String publicKey,
+  Value<String> publicKey,
+  Value<String> sharedKey,
   Value<String?> lastKnownAddress,
   Value<String> lastSyncedHlc,
   required DateTime pairedAt,
@@ -10405,6 +10450,7 @@ typedef $$PeersTableUpdateCompanionBuilder = PeersCompanion Function({
   Value<String> deviceId,
   Value<String> name,
   Value<String> publicKey,
+  Value<String> sharedKey,
   Value<String?> lastKnownAddress,
   Value<String> lastSyncedHlc,
   Value<DateTime> pairedAt,
@@ -10431,6 +10477,11 @@ class $$PeersTableFilterComposer extends Composer<_$AppDatabase, $PeersTable> {
 
   ColumnFilters<String> get publicKey => $composableBuilder(
     column: $table.publicKey,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get sharedKey => $composableBuilder(
+    column: $table.sharedKey,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -10474,6 +10525,11 @@ class $$PeersTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get sharedKey => $composableBuilder(
+    column: $table.sharedKey,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get lastKnownAddress => $composableBuilder(
     column: $table.lastKnownAddress,
     builder: (column) => ColumnOrderings(column),
@@ -10507,6 +10563,9 @@ class $$PeersTableAnnotationComposer
 
   GeneratedColumn<String> get publicKey =>
       $composableBuilder(column: $table.publicKey, builder: (column) => column);
+
+  GeneratedColumn<String> get sharedKey =>
+      $composableBuilder(column: $table.sharedKey, builder: (column) => column);
 
   GeneratedColumn<String> get lastKnownAddress => $composableBuilder(
     column: $table.lastKnownAddress,
@@ -10553,6 +10612,7 @@ class $$PeersTableTableManager
                 Value<String> deviceId = const Value.absent(),
                 Value<String> name = const Value.absent(),
                 Value<String> publicKey = const Value.absent(),
+                Value<String> sharedKey = const Value.absent(),
                 Value<String?> lastKnownAddress = const Value.absent(),
                 Value<String> lastSyncedHlc = const Value.absent(),
                 Value<DateTime> pairedAt = const Value.absent(),
@@ -10561,6 +10621,7 @@ class $$PeersTableTableManager
                 deviceId: deviceId,
                 name: name,
                 publicKey: publicKey,
+                sharedKey: sharedKey,
                 lastKnownAddress: lastKnownAddress,
                 lastSyncedHlc: lastSyncedHlc,
                 pairedAt: pairedAt,
@@ -10570,7 +10631,8 @@ class $$PeersTableTableManager
               ({
                 required String deviceId,
                 required String name,
-                required String publicKey,
+                Value<String> publicKey = const Value.absent(),
+                Value<String> sharedKey = const Value.absent(),
                 Value<String?> lastKnownAddress = const Value.absent(),
                 Value<String> lastSyncedHlc = const Value.absent(),
                 required DateTime pairedAt,
@@ -10579,6 +10641,7 @@ class $$PeersTableTableManager
                 deviceId: deviceId,
                 name: name,
                 publicKey: publicKey,
+                sharedKey: sharedKey,
                 lastKnownAddress: lastKnownAddress,
                 lastSyncedHlc: lastSyncedHlc,
                 pairedAt: pairedAt,

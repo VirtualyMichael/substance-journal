@@ -131,7 +131,11 @@ class Settings extends Table {
 class Peers extends Table {
   TextColumn get deviceId => text()();
   TextColumn get name => text()();
-  TextColumn get publicKey => text()();
+  TextColumn get publicKey => text().withDefault(const Constant(''))();
+  // The 256-bit key shared with this device (base64url), set when pairing. Packages are
+  // encrypted with it. A device id starting with "pending:" is a pairing offered but not yet
+  // claimed by the other device.
+  TextColumn get sharedKey => text().withDefault(const Constant(''))();
   TextColumn get lastKnownAddress => text().nullable()();
   // Highest clock of this peer's changes we have already applied.
   TextColumn get lastSyncedHlc => text().withDefault(const Constant(''))();

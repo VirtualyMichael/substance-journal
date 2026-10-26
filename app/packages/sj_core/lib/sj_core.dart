@@ -10,4 +10,5 @@ export 'src/hlc.dart';
 export 'src/ids.dart';
 export 'src/interactions.dart';
 export 'src/reference.dart';
+export 'src/sync_package.dart';
 export 'src/tolerance.dart';
