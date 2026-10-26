@@ -44,6 +44,7 @@ class LocalNotifier implements ReminderNotifier {
       channelDescription: 'Check-ins and limit alerts',
       importance: Importance.defaultImportance,
     ),
+    iOS: DarwinNotificationDetails(),
     windows: WindowsNotificationDetails(),
     linux: LinuxNotificationDetails(),
   );
@@ -59,6 +60,7 @@ class LocalNotifier implements ReminderNotifier {
                 appUserModelId: 'com.substancejournal.app',
                 guid: '8c1f3a52-6b8e-4d2a-9f0e-5a7d2c9b1e44',
               ),
+              iOS: DarwinInitializationSettings(requestAlertPermission: false, requestBadgePermission: false, requestSoundPermission: false),
               linux: LinuxInitializationSettings(defaultActionName: 'Open'),
             ),
           );
@@ -78,6 +80,10 @@ class LocalNotifier implements ReminderNotifier {
       if (Platform.isAndroid) {
         final android = _plugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
         return await android?.requestNotificationsPermission() ?? true;
+      }
+      if (Platform.isIOS) {
+        final ios = _plugin.resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>();
+        return await ios?.requestPermissions(alert: true, sound: true) ?? false;
       }
       return true;
     } on Object {

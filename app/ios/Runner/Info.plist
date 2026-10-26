@@ -6,8 +6,17 @@
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>NSCameraUsageDescription</key>
+	<string>The camera scans the QR codes that pair and sync your devices. Nothing is recorded.</string>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Substance Journal finds your other paired devices on this Wi-Fi to sync your journal directly between them.</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+	</dict>
 	<key>CFBundleDisplayName</key>
-	<string>Substance Journal App</string>
+	<string>Substance Journal</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
