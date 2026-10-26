@@ -102,6 +102,10 @@ class Substance {
     this.chemicalClass = '',
     this.license,
     this.wikiUrl,
+    this.addictionPotential,
+    this.toleranceFull,
+    this.toleranceHalf,
+    this.toleranceZero,
   });
 
   final String key;
@@ -126,6 +130,12 @@ class Substance {
   final String chemicalClass;
   final String? license;
   final String? wikiUrl;
+
+  /// PsychonautWiki's wording, shown as written.
+  final String? addictionPotential;
+  final String? toleranceFull;
+  final String? toleranceHalf;
+  final String? toleranceZero;
 
   RouteOfAdministration? route(String route) {
     for (final r in roas) {
@@ -216,6 +226,10 @@ Substance _parseSubstance(Map<String, dynamic> j) {
     chemicalClass: j['chemical_class'] as String? ?? '',
     license: j['license'] as String?,
     wikiUrl: j['wiki_url'] as String?,
+    addictionPotential: j['addiction_potential'] as String?,
+    toleranceFull: j['tolerance_full'] as String?,
+    toleranceHalf: j['tolerance_half'] as String?,
+    toleranceZero: j['tolerance_zero'] as String?,
   );
 }
 

@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:sj_core/sj_core.dart';
 
 import 'data/alcohol_import.dart';
@@ -246,6 +247,15 @@ final lanClientProvider = Provider<LanSyncClient>(
 );
 
 /// Cameras are for phones and tablets; computers use paste, a file or Share instead.
+/// Opens a web link in the browser. Replaced in tests.
+final urlOpenerProvider = Provider<Future<bool> Function(Uri)>((ref) => (uri) async {
+  try {
+    return await launchUrl(uri, mode: LaunchMode.externalApplication);
+  } on Object {
+    return false;
+  }
+});
+
 final cameraScannerAvailableProvider = Provider<bool>((ref) => Platform.isAndroid || Platform.isIOS);
 
 /// Picks a sync package file and returns its text. Replaced in tests.

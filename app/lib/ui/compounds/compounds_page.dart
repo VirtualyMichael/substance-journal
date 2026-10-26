@@ -7,6 +7,8 @@ import '../../data/database.dart';
 import '../../providers.dart';
 import '../add/add_ingestion_page.dart';
 import '../design.dart';
+import '../link_tile.dart';
+import 'route_timeline_chart.dart';
 import '../journal/journal_page.dart';
 import 'compound_picker.dart';
 import 'tolerance_page.dart';
@@ -145,9 +147,31 @@ class CompoundDetailPage extends ConsumerWidget {
           child: ListView(
             padding: const EdgeInsets.fromLTRB(Gap.md, Gap.md, Gap.md, 96),
             children: [
-              Text(substance.category, style: text.labelLarge),
+              Text(
+                [substance.category, if (substance.chemicalClass.isNotEmpty) substance.chemicalClass].where((e) => e.isNotEmpty).join(' · '),
+                style: text.labelLarge,
+              ),
+              if (substance.commonNames.where((n) => n.toLowerCase() != substance.name.toLowerCase()).isNotEmpty) ...[
+                const SizedBox(height: 2),
+                Text(
+                  'Also known as ${substance.commonNames.where((n) => n.toLowerCase() != substance.name.toLowerCase()).join(', ')}',
+                  key: const ValueKey('also-known-as'),
+                  style: text.bodySmall,
+                ),
+              ],
               const SizedBox(height: Gap.sm),
               Text(substance.summary),
+              if (!isCustom) ...[
+                const SizedBox(height: Gap.sm),
+                Text(
+                  substance.audited
+                      ? 'Doses and timings here were checked against several published sources.'
+                      : 'Copied from PsychonautWiki and not independently checked, so treat the numbers as a starting point.',
+                  key: const ValueKey('audit-note'),
+                  style: text.bodySmall,
+                ),
+                if (substance.wikiUrl != null) LinkTile(substance.wikiUrl!, label: 'Read more on PsychonautWiki'),
+              ],
               if (substance.safetyNotes.isNotEmpty) ...[
                 const SizedBox(height: Gap.md),
                 Card(
@@ -197,6 +221,10 @@ class CompoundDetailPage extends ConsumerWidget {
                           Text(titleCase(roa.route), style: text.titleMedium),
                           const SizedBox(height: Gap.sm),
                           Text(describeRoute(roa)),
+                          const SizedBox(height: Gap.md),
+                          Text('How it typically unfolds', style: text.titleSmall),
+                          const SizedBox(height: Gap.sm),
+                          RouteTimelineChart(roa: roa),
                           const SizedBox(height: Gap.sm),
                           Wrap(
                             spacing: Gap.md,
@@ -211,14 +239,25 @@ class CompoundDetailPage extends ConsumerWidget {
                       ),
                     ),
                   ),
-              if (substance.hasTolerance) ...[
-                Text('Tolerance', style: text.titleMedium),
-                Text(
-                  [
-                    if (substance.toleranceHalfDays != null) 'Halves in about ${substance.toleranceHalfDays!.toStringAsFixed(0)} days',
-                    if (substance.toleranceZeroDays != null) 'back to baseline in about ${substance.toleranceZeroDays!.toStringAsFixed(0)} days',
-                  ].join(', '),
-                ),
+              if (substance.hasTolerance || substance.addictionPotential != null) ...[
+                Text('Tolerance and dependence', style: text.titleMedium),
+                const SizedBox(height: 4),
+                if (substance.hasTolerance) ...[
+                  if (substance.toleranceFull != null) Text('Tolerance builds: ${substance.toleranceFull}'),
+                  Text(
+                    [
+                      if (substance.toleranceHalfDays != null) 'Halves in about ${substance.toleranceHalfDays!.toStringAsFixed(0)} days',
+                      if (substance.toleranceZeroDays != null) 'back to baseline in about ${substance.toleranceZeroDays!.toStringAsFixed(0)} days',
+                    ].join(', '),
+                  ),
+                  if (substance.toleranceGroup != null && substance.toleranceGroup!.isNotEmpty)
+                    Text('Cross-tolerance group: ${titleCase(substance.toleranceGroup!)}. Others in the group build and share tolerance.', style: text.bodySmall),
+                ],
+                if (substance.addictionPotential != null && substance.addictionPotential!.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4),
+                    child: Text('Dependence: ${substance.addictionPotential}', key: const ValueKey('addiction-potential')),
+                  ),
                 const SizedBox(height: Gap.md),
               ],
               if (!isCustom) ...[
@@ -233,7 +272,7 @@ class CompoundDetailPage extends ConsumerWidget {
               if (substance.sources.isNotEmpty) ...[
                 const SizedBox(height: Gap.md),
                 Text('Sources', style: text.titleMedium),
-                for (final s in substance.sources) SelectableText(s, style: text.bodySmall),
+                for (final s in substance.sources) LinkTile(s),
                 if (substance.license != null) Text('Content: ${substance.license}', style: text.bodySmall),
               ],
             ],

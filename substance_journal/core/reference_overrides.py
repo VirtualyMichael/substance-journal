@@ -144,8 +144,10 @@ SAFETY_NOTES = {
         "New users: Erowid's strong oral range starts at 4 mg and PsychonautWiki's at 10 mg. Start with 2.5 mg and wait.",
     ],
     "psilocybin_mushrooms": [
-        "Dried P. cubensis holds roughly 6-12 mg psilocybin per gram and varies up to 10x between batches.",
-        "Erowid puts heavy at 35 mg+ (PsychonautWiki 50 mg+).",
+        "Doses are grams of DRIED mushrooms (P. cubensis), the way they are weighed. Dried P. cubensis holds roughly 6-12 mg psilocybin per gram and varies up to 10x between batches.",
+        "Fresh mushrooms are about 90% water, so a dried dose is roughly 10 times heavier fresh: a common 1-2.5 g dried dose is about 10-25 g fresh. Never use dried numbers for fresh weight.",
+        "Other species (azurescens, cyanescens and others) can be several times stronger by weight than P. cubensis. The bands are for P. cubensis.",
+        "Erowid puts heavy at 3.5 g+ dried (PsychonautWiki 5 g+). A scale reading to 0.1 g or better matters here.",
     ],
     "lsd": [
         "Blotter is often NBOMe sold as LSD; reagent test it.",
@@ -221,6 +223,22 @@ def apply_overrides(substances: list[dict]) -> list[dict]:
             substance["tolerance_half_days"] = parse_tolerance_days(substance.get("tolerance_half"))
         else:
             substance["tolerance_half_days"] = None
+
+    # --- psilocybin: people weigh dried mushrooms, not pure psilocybin ---
+    # The published bands were in mg of psilocybin; PsychonautWiki's dried P. cubensis table is the
+    # same numbers over about 10 mg psilocybin per gram (2.5 mg = 0.25 g, 25 mg = 2.5 g, 50 mg = 5 g).
+    # Only convert data still in mg, so re-running the overrides never converts twice.
+    oral = _find_route(by_key["psilocybin_mushrooms"], "oral")
+    if oral is not None and oral.get("unit") == "mg":
+        oral["unit"] = "g"
+        for band in ("dose_threshold", "dose_heavy"):
+            if oral.get(band) is not None:
+                oral[band] = round(oral[band] / 10, 4)
+        for band in ("dose_light", "dose_common", "dose_strong"):
+            if oral.get(band):
+                oral[band] = {k: (round(v / 10, 4) if v is not None else None) for k, v in oral[band].items()}
+
+    note("psilocybin_mushrooms", "Doses now in grams of dried mushrooms (about 10 mg psilocybin per gram) instead of mg of pure psilocybin.")
 
     by_key["2c-b"]["tolerance_group"] = None
     note("2c-b", "Own tolerance track: PsychonautWiki reports no cross-tolerance with other serotonergic psychedelics.")

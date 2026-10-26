@@ -529,21 +529,21 @@
     "roas": [
       {
         "route": "oral",
-        "unit": "mg",
-        "dose_threshold": 2.5,
+        "unit": "g",
+        "dose_threshold": 0.25,
         "dose_light": {
-          "min": 2.5,
-          "max": 10.0
+          "min": 0.25,
+          "max": 1.0
         },
         "dose_common": {
-          "min": 10.0,
-          "max": 25.0
+          "min": 1.0,
+          "max": 2.5
         },
         "dose_strong": {
-          "min": 25.0,
-          "max": 50.0
+          "min": 2.5,
+          "max": 5.0
         },
-        "dose_heavy": 50.0,
+        "dose_heavy": 5.0,
         "duration": {
           "onset": {
             "min": 20.0,
@@ -595,12 +595,15 @@
       "https://pubmed.ncbi.nlm.nih.gov/39812743/"
     ],
     "safety_notes": [
-      "Dried P. cubensis holds roughly 6-12 mg psilocybin per gram and varies up to 10x between batches.",
-      "Erowid puts heavy at 35 mg+ (PsychonautWiki 50 mg+)."
+      "Doses are grams of DRIED mushrooms (P. cubensis), the way they are weighed. Dried P. cubensis holds roughly 6-12 mg psilocybin per gram and varies up to 10x between batches.",
+      "Fresh mushrooms are about 90% water, so a dried dose is roughly 10 times heavier fresh: a common 1-2.5 g dried dose is about 10-25 g fresh. Never use dried numbers for fresh weight.",
+      "Other species (azurescens, cyanescens and others) can be several times stronger by weight than P. cubensis. The bands are for P. cubensis.",
+      "Erowid puts heavy at 3.5 g+ dried (PsychonautWiki 5 g+). A scale reading to 0.1 g or better matters here."
     ],
     "tolerance_half_days": 3.0,
     "overrides": [
       "Replaced placeholder or off-topic summary.",
+      "Doses now in grams of dried mushrooms (about 10 mg psilocybin per gram) instead of mg of pure psilocybin.",
       "Lithium moved to dangerous, matching LSD/DMT/2C-B (PsychonautWiki: strictly avoid)."
     ],
     "audited": true

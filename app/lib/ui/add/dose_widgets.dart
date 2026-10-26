@@ -69,6 +69,8 @@ class DoseInput {
     this.unitCountText = '',
     this.productId,
     this.productName,
+    this.mushroomForm = 'dried',
+    this.mushroomText = '',
   });
 
   const DoseInput.empty() : this();
@@ -100,6 +102,10 @@ class DoseInput {
   final String? productId;
   final String? productName;
 
+  // Psilocybin mushrooms: what was weighed ('dried', 'fresh' or 'mg' of pure psilocybin) and the number typed.
+  final String mushroomForm;
+  final String mushroomText;
+
   DoseInput copyWith({
     String? text,
     bool? unknown,
@@ -122,6 +128,8 @@ class DoseInput {
     String? productId,
     String? productName,
     bool clearProduct = false,
+    String? mushroomForm,
+    String? mushroomText,
   }) =>
       DoseInput(
         text: text ?? this.text,
@@ -142,9 +150,29 @@ class DoseInput {
         unitCountText: unitCountText ?? this.unitCountText,
         productId: clearProduct ? null : (productId ?? this.productId),
         productName: clearProduct ? null : (productName ?? this.productName),
+        mushroomForm: mushroomForm ?? this.mushroomForm,
+        mushroomText: mushroomText ?? this.mushroomText,
       );
 
   static double? _num(String s) => double.tryParse(s.trim().replaceAll(',', '.'));
+
+  /// Grams of dried mushrooms for what was weighed: dried as is, fresh at a tenth (about 90% water),
+  /// and pure psilocybin at about 10 mg per gram of dried P. cubensis.
+  static double? mushroomDriedGrams(String form, String text) {
+    final n = _num(text);
+    if (n == null || n <= 0) return null;
+    return switch (form) {
+      'fresh' => n / 10,
+      'mg' => n / 10,
+      _ => n,
+    };
+  }
+
+  /// "0.25" rather than "0.250000".
+  static String formatGrams(double g) {
+    final t = g.toStringAsFixed(3);
+    return t.contains('.') ? t.replaceFirst(RegExp(r'0+$'), '').replaceFirst(RegExp(r'\.$'), '') : t;
+  }
 
   double? get unitCount => _num(unitCountText);
 
@@ -284,7 +312,11 @@ class DoseInput {
       absorbedMg: null,
       method: null,
       // Keep what was actually poured, so it reads "12 fl oz at 5%" rather than grams of ethanol.
-      details: drink ? {'drink': '', 'volume': volume, 'volumeUnit': volumeUnit, 'abv': abv} : const {},
+      details: drink
+          ? {'drink': '', 'volume': volume, 'volumeUnit': volumeUnit, 'abv': abv}
+          : (roa.substanceKey == 'psilocybin_mushrooms' && !unknown && mushroomText.trim().isNotEmpty)
+              ? {'form': mushroomForm, 'entered': _num(mushroomText)}
+              : const {},
     );
   }
 }
@@ -467,7 +499,8 @@ class _GenericFormState extends ConsumerState<_GenericForm> {
           value: value,
           onChanged: onChanged,
         ),
-        if (!value.unknown && chosen == null)
+        if (!value.unknown && chosen == null && _isMushroom(substance, roa)) _MushroomEntry(value: value, onChanged: onChanged),
+        if (!value.unknown && chosen == null && !_isMushroom(substance, roa))
           TextField(
             key: const ValueKey('dose-field'),
             controller: _doseController,
@@ -513,6 +546,78 @@ class _GenericFormState extends ConsumerState<_GenericForm> {
               style: Theme.of(context).textTheme.bodySmall,
             ),
           ),
+      ],
+    );
+  }
+}
+
+bool _isMushroom(Substance substance, RouteOfAdministration roa) => substance.key == 'psilocybin_mushrooms' && roa.route == 'oral';
+
+/// Mushrooms are weighed in grams, dried or fresh, not in mg of psilocybin. This takes either (or mg
+/// of pure psilocybin) and keeps the dose as grams of dried mushrooms, which is what the reference
+/// bands and the timeline use.
+class _MushroomEntry extends StatelessWidget {
+  const _MushroomEntry({required this.value, required this.onChanged});
+
+  final DoseInput value;
+  final ValueChanged<DoseInput> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final form = value.mushroomForm;
+    final dried = DoseInput.mushroomDriedGrams(form, value.mushroomText);
+    final small = Theme.of(context).textTheme.bodySmall;
+
+    void update({String? newForm, String? text}) {
+      final f = newForm ?? form;
+      final t = text ?? value.mushroomText;
+      final g = DoseInput.mushroomDriedGrams(f, t);
+      onChanged(value.copyWith(mushroomForm: f, mushroomText: t, text: g == null ? '' : DoseInput.formatGrams(g)));
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SegmentedButton<String>(
+          key: const ValueKey('mushroom-form'),
+          segments: const [
+            ButtonSegment(value: 'dried', label: Text('Dried g')),
+            ButtonSegment(value: 'fresh', label: Text('Fresh g')),
+            ButtonSegment(value: 'mg', label: Text('Pure mg')),
+          ],
+          selected: {form},
+          onSelectionChanged: (s) => update(newForm: s.first),
+        ),
+        const SizedBox(height: Gap.sm),
+        TextFormField(
+          key: ValueKey('mushroom-amount-$form'),
+          initialValue: value.mushroomText,
+          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          decoration: InputDecoration(
+            labelText: switch (form) {
+              'fresh' => 'Weight of fresh mushrooms',
+              'mg' => 'Pure psilocybin',
+              _ => 'Weight of dried mushrooms',
+            },
+            suffixText: form == 'mg' ? 'mg' : 'g',
+          ),
+          onChanged: (t) => update(text: t),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          switch (form) {
+            'fresh' => 'Fresh mushrooms are about 90% water, so this counts as a tenth of its weight in dried mushrooms.',
+            'mg' => 'Converted at about 10 mg of psilocybin per gram of dried P. cubensis.',
+            _ => 'Dried P. cubensis holds roughly 6 to 12 mg psilocybin per gram and varies up to 10x between batches.',
+          },
+          style: small,
+        ),
+        if (dried != null && form != 'dried')
+          Padding(
+            padding: const EdgeInsets.only(top: 4),
+            child: Text('= ${DoseInput.formatGrams(dried)} g dried (about ${(dried * 10).toStringAsFixed(dried * 10 < 10 ? 1 : 0)} mg psilocybin)', key: const ValueKey('mushroom-dried'), style: small),
+          ),
+        const SizedBox(height: Gap.sm),
       ],
     );
   }
