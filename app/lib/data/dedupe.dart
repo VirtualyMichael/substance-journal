@@ -17,11 +17,11 @@ import 'database.dart';
 /// ratings, and every change can be undone.
 
 String doseKey(String personId, String substanceKey, String route, DateTime time, double? dose) =>
-    '$personId|$substanceKey|$route|${time.millisecondsSinceEpoch ~/ 1000}|${dose == null ? '' : dose.toStringAsFixed(4)}';
+    '$personId|$substanceKey|$route|${time.millisecondsSinceEpoch ~/ 60000}|${dose == null ? '' : dose.toStringAsFixed(2)}';
 
-String noteKey(TimedNote n) => '${n.time.millisecondsSinceEpoch ~/ 1000}|${n.note.trim().toLowerCase()}';
+String noteKey(TimedNote n) => '${n.time.millisecondsSinceEpoch ~/ 60000}|${n.note.trim().toLowerCase()}';
 
-String ratingKey(Rating r) => '${r.time == null ? '' : r.time!.millisecondsSinceEpoch ~/ 1000}|${r.shulgin ?? ''}|${r.scoresJson}';
+String ratingKey(Rating r) => '${r.time == null ? '' : r.time!.millisecondsSinceEpoch ~/ 60000}|${r.shulgin ?? ''}|${r.scoresJson}';
 
 int _experienceScore(Experience e) =>
     (e.title.isNotEmpty ? 2 : 0) + (e.notes.isNotEmpty ? 1 : 0) + (e.isFavorite ? 1 : 0) + (e.locationName != null ? 1 : 0);

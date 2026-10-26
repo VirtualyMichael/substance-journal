@@ -803,7 +803,7 @@ Future<PwImportResult> importPwJournal(AppDatabase db, PwExport export, Referenc
 }
 
 String _pwKey(String substanceKey, String route, DateTime time, double? dose) =>
-    '$substanceKey|$route|${time.millisecondsSinceEpoch ~/ 1000}|${dose ?? ''}';
+    '$substanceKey|$route|${time.millisecondsSinceEpoch ~/ 60000}|${dose ?? ''}';
 
 /// The person's existing experience whose doses are within [gap] of [p]'s, if any.
 Future<Experience?> _nearbyExperience(AppDatabase db, _PendingExperience p, Duration gap) async {

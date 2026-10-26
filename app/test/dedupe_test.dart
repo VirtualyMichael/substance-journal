@@ -114,6 +114,18 @@ void main() {
       expect((await b.ingestionsForPerson((await b.activePeople()).single.id)).any((i) => i.substanceKey == 'cannabis'), isFalse);
     });
 
+    test('the same dose logged to the second on one device and the minute on another still matches', () async {
+      final me = await a.ensureDefaultPerson();
+      final ea = await a.addExperience(personId: me.id, sortDate: t1);
+      await a.addIngestion(experience: ea, substanceKey: 'lsd', route: 'sublingual', time: DateTime(2026, 6, 1, 20, 0, 41), dose: 100, unit: 'µg');
+      final meB = await b.ensureDefaultPerson();
+      final eb = await b.addExperience(personId: meB.id, sortDate: t1);
+      await b.addIngestion(experience: eb, substanceKey: 'lsd', route: 'sublingual', time: DateTime(2026, 6, 1, 20, 0), dose: 100, unit: 'µg');
+      await syncBoth();
+      expect(await liveDoses(a), 1);
+      expect(await liveDoses(b), 1);
+    });
+
     test('different doses are never merged', () async {
       final me = await a.ensureDefaultPerson();
       final e = await a.addExperience(personId: me.id, sortDate: t1);
