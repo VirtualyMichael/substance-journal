@@ -507,6 +507,7 @@ class AppDatabase extends _$AppDatabase {
     double durationMinutes = 0,
     String notes = '',
     double shotOz = shotVolumeOz,
+    String? importKey,
   }) async {
     var experience = await recentExperienceFor(personId, at);
     final created = experience == null;
@@ -523,7 +524,7 @@ class AppDatabase extends _$AppDatabase {
       dose: drinkGrams(volume, volumeUnit, abvPercent, shotOz: shotOz),
       unit: 'g',
       notes: notes,
-      details: {'drink': name, 'volume': volume, 'volumeUnit': volumeUnit, 'abv': abvPercent},
+      details: {'drink': name, 'volume': volume, 'volumeUnit': volumeUnit, 'abv': abvPercent, 'importKey': ?importKey},
     );
     return LoggedDrink(ingestion: ingestion, experienceId: experience.id, createdExperience: created);
   }
@@ -648,6 +649,11 @@ class AppDatabase extends _$AppDatabase {
         ..where((t) => t.personId.equals(personId) & t.deleted.equals(false))
         ..orderBy([(t) => OrderingTerm.asc(t.time)]))
       .get();
+
+  /// Every ingestion of one person including deleted ones. Importers use it so a drink you
+  /// deleted is not brought back by importing the same file again.
+  Future<List<Ingestion>> ingestionsForPersonIncludingDeleted(String personId) =>
+      (select(ingestions)..where((t) => t.personId.equals(personId))).get();
 
   Future<List<Ingestion>> ingestionsForExperience(String experienceId) => (select(ingestions)
         ..where((t) => t.experienceId.equals(experienceId) & t.deleted.equals(false))

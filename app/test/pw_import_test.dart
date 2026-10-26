@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -215,6 +216,26 @@ void main() {
       expect(again.customCompoundsCreated, isEmpty);
       expect(await db.ingestionsForPerson(me.id), hasLength(4));
       expect(await db.watchExperiences(me.id).first, hasLength(2));
+    });
+
+    test('importing again never overwrites, resurrects or duplicates what you changed', () async {
+      final me = await db.ensureDefaultPerson();
+      final export = parsePwJournalJson(exportJson());
+      final reference = fullReference();
+      await importPwJournal(db, export, reference);
+      final rows = await db.ingestionsForPerson(me.id);
+      final lsd = rows.firstWhere((r) => r.substanceKey == 'lsd');
+      final cannabis = rows.firstWhere((r) => r.substanceKey == 'cannabis');
+      await db.updateIngestion(lsd.id, time: lsd.time.add(const Duration(hours: 1)), notes: 'edited', dose: const Value(75.0));
+      await db.setIngestionDeleted(cannabis.id, true);
+
+      final again = await importPwJournal(db, export, reference);
+      expect(again.ingestions, 0);
+      final after = await db.ingestionsForPerson(me.id);
+      expect(after.where((r) => r.substanceKey == 'cannabis'), isEmpty);
+      final edited = after.where((r) => r.substanceKey == 'lsd').single;
+      expect(edited.notes, 'edited');
+      expect(edited.dose, 75.0);
     });
 
     test('a failure part-way changes nothing', () async {

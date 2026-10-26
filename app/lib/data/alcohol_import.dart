@@ -277,12 +277,12 @@ Future<TrackerImportResult> importTrackerExport(AppDatabase db, TrackerExport ex
       final cached = existingCounts[person.id];
       if (cached != null) return cached;
       final counts = <String, int>{};
-      for (final i in await db.ingestionsForPerson(person.id)) {
+      // Deleted drinks count too, so importing again never brings back one you removed, and a
+      // drink you edited keeps the key it was imported under, so it is not added a second time.
+      for (final i in await db.ingestionsForPersonIncludingDeleted(person.id)) {
         if (i.substanceKey != 'alcohol') continue;
-        final d = _details(i);
-        final volume = d.$1;
-        if (volume == null) continue;
-        final key = '${i.time.toIso8601String().split('.').first}|$volume|${d.$2}';
+        final key = _importKeyOf(i);
+        if (key == null) continue;
         counts[key] = (counts[key] ?? 0) + 1;
       }
       return existingCounts[person.id] = counts;
@@ -310,6 +310,7 @@ Future<TrackerImportResult> importTrackerExport(AppDatabase db, TrackerExport ex
         name: drink.label,
         durationMinutes: drink.durationMinutes,
         notes: drink.notes,
+        importKey: drink.key,
       );
       imported++;
       if (logged.createdExperience) experiences++;
@@ -339,6 +340,19 @@ Future<TrackerImportResult> importTrackerExport(AppDatabase db, TrackerExport ex
       recipesIgnored: export.recipeCount,
     );
   });
+}
+
+/// The key a drink was imported under, or, for drinks logged before keys were recorded, the key
+/// its current time, volume and name give.
+String? _importKeyOf(Ingestion i) {
+  if (i.detailsJson.isNotEmpty) {
+    final stored = (jsonDecode(i.detailsJson) as Map<String, dynamic>)['importKey'];
+    if (stored is String) return stored;
+  }
+  final d = _details(i);
+  final volume = d.$1;
+  if (volume == null) return null;
+  return '${i.time.toIso8601String().split('.').first}|$volume|${d.$2}';
 }
 
 /// (volume, name) recorded on an alcohol ingestion's details, if any.

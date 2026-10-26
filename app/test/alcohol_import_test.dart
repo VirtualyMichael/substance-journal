@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:drift/drift.dart' show Value;
 import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -163,6 +164,33 @@ void main() {
       expect(loko.time, DateTime(2026, 7, 30, 19, 46, 45));
       expect(rows.where((r) => r.endTime != null), hasLength(2));
     }, skip: _skipBackup);
+
+    test('importing again never overwrites, resurrects or duplicates what you changed', () async {
+      final me = await db.ensureDefaultPerson();
+      final export = TrackerExport(source: 'json', drinks: [
+        TrackerDrink(at: DateTime(2026, 7, 1, 20), amount: 12, unit: 'oz', abvPercent: 5, label: 'Beer', notes: 'original'),
+        TrackerDrink(at: DateTime(2026, 7, 1, 21), amount: 1.5, unit: 'oz', abvPercent: 40, label: 'Whiskey'),
+        TrackerDrink(at: DateTime(2026, 7, 2, 20), amount: 5, unit: 'oz', abvPercent: 12, label: 'Wine'),
+      ]);
+      await importTrackerExport(db, export);
+      final rows = await db.ingestionsForPerson(me.id);
+      final beer = rows.firstWhere((r) => r.detailsJson.contains('Beer'));
+      final whiskey = rows.firstWhere((r) => r.detailsJson.contains('Whiskey'));
+
+      // Edit one (new time, volume and note) and delete another.
+      await db.updateIngestion(beer.id, time: DateTime(2026, 7, 1, 22, 30), notes: 'my note', dose: const Value(20.0));
+      await db.setIngestionDeleted(whiskey.id, true);
+
+      final again = await importTrackerExport(db, export);
+      expect(again.imported, 0);
+      expect(again.duplicatesSkipped, 3);
+      final after = await db.ingestionsForPerson(me.id);
+      expect(after, hasLength(2)); // the deleted whiskey stays deleted
+      final kept = after.firstWhere((r) => r.id == beer.id);
+      expect(kept.notes, 'my note');
+      expect(kept.time, DateTime(2026, 7, 1, 22, 30));
+      expect(kept.dose, 20.0);
+    });
 
     test('importing the same file again adds nothing', () async {
       final me = await db.ensureDefaultPerson();
@@ -457,6 +485,7 @@ class _FailingDb extends AppDatabase {
     double durationMinutes = 0,
     String notes = '',
     double shotOz = shotVolumeOz,
+    String? importKey,
   }) {
     if (++calls == failOnCall) throw StateError('boom');
     return super.logDrink(
@@ -468,6 +497,7 @@ class _FailingDb extends AppDatabase {
       name: name,
       durationMinutes: durationMinutes,
       notes: notes,
+      importKey: importKey,
       shotOz: shotOz,
     );
   }

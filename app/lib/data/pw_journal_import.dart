@@ -666,15 +666,16 @@ Future<PwImportResult> importPwJournal(AppDatabase db, PwExport export, Referenc
     }
 
     // What each person already has, counted, so a repeat import adds nothing.
-    String ingestionKey(String substanceKey, String route, DateTime time, double? dose) =>
-        '$substanceKey|$route|${time.millisecondsSinceEpoch ~/ 1000}|${dose ?? ''}';
+    String ingestionKey(String substanceKey, String route, DateTime time, double? dose) => _pwKey(substanceKey, route, time, dose);
     final existingCounts = <String, Map<String, int>>{};
     Future<Map<String, int>> countsFor(Person person) async {
       final cached = existingCounts[person.id];
       if (cached != null) return cached;
       final counts = <String, int>{};
-      for (final i in await db.ingestionsForPerson(person.id)) {
-        final key = ingestionKey(i.substanceKey, i.route, i.time, i.dose);
+      // Deleted ones count, and an edited one keeps the key it was imported under.
+      for (final i in await db.ingestionsForPersonIncludingDeleted(person.id)) {
+        final stored = i.detailsJson.isEmpty ? null : (jsonDecode(i.detailsJson) as Map<String, dynamic>)['importKey'];
+        final key = stored is String ? stored : ingestionKey(i.substanceKey, i.route, i.time, i.dose);
         counts[key] = (counts[key] ?? 0) + 1;
       }
       return existingCounts[person.id] = counts;
@@ -795,6 +796,9 @@ Future<PwImportResult> importPwJournal(AppDatabase db, PwExport export, Referenc
   });
 }
 
+String _pwKey(String substanceKey, String route, DateTime time, double? dose) =>
+    '$substanceKey|$route|${time.millisecondsSinceEpoch ~/ 1000}|${dose ?? ''}';
+
 class _PendingExperience {
   _PendingExperience({
     required this.personId,
@@ -881,5 +885,6 @@ Future<void> _addIngestion(AppDatabase db, Experience experience, (PwIngestion, 
     stomachFullness: i.route == 'oral' ? i.stomach : null,
     notes: i.notes,
     customUnitId: i.customUnitId == null ? null : unitIds[i.customUnitId],
+    details: {'importKey': _pwKey(r.$3, i.route, i.time, i.dose)},
   );
 }
