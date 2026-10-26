@@ -16,6 +16,8 @@ void main() {
     await settle(tester);
     final swatch = find.byKey(const ValueKey('accent-ffd1495b'));
     await tester.scrollUntilVisible(swatch, 200, scrollable: find.byType(Scrollable).first);
+    await tester.ensureVisible(swatch);
+    await tester.pumpAndSettle();
     await tester.tap(swatch);
     await settle(tester, rounds: 8);
     final red = primaryOf(tester);

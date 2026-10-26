@@ -136,6 +136,7 @@ class AppDatabase extends _$AppDatabase {
     String? notes,
     Map<String, Object?>? details,
     String? customUnitId,
+    String? productId,
   }) async {
     final id = newId();
     await into(ingestions).insert(IngestionsCompanion.insert(
@@ -155,6 +156,7 @@ class AppDatabase extends _$AppDatabase {
       absorbedMg: Value(absorbedMg),
       method: Value(method),
       customUnitId: Value(customUnitId),
+      productId: Value(productId),
       notes: Value(notes ?? ''),
       detailsJson: Value(jsonEncode(details ?? const {})),
     ));
@@ -619,6 +621,51 @@ class AppDatabase extends _$AppDatabase {
       (select(settings)..where((t) => t.key.equals('compoundPrefs:$personId')))
           .watchSingleOrNull()
           .map((row) => CompoundPrefs.decode(row?.value));
+
+  // ---- products (cannabis strains and batches) ----
+
+  Stream<List<Product>> watchProducts(String substanceKey) => (select(products)
+        ..where((t) => t.substanceKey.equals(substanceKey) & t.deleted.equals(false))
+        ..orderBy([(t) => OrderingTerm.asc(t.name)]))
+      .watch();
+
+  Future<Product> addProduct({
+    required String substanceKey,
+    required String name,
+    double? thcPercent,
+    double? cbdPercent,
+    Map<String, Object?> details = const {},
+  }) async {
+    final id = newId();
+    await into(products).insert(ProductsCompanion.insert(
+      id: id,
+      hlc: nextHlc(),
+      substanceKey: substanceKey,
+      name: name.trim(),
+      thcPercent: Value(thcPercent),
+      cbdPercent: Value(cbdPercent),
+      detailsJson: Value(jsonEncode(details)),
+    ));
+    return (select(products)..where((t) => t.id.equals(id))).getSingle();
+  }
+
+  Future<void> updateProduct(
+    String id, {
+    required String name,
+    double? thcPercent,
+    double? cbdPercent,
+    Map<String, Object?> details = const {},
+  }) =>
+      (update(products)..where((t) => t.id.equals(id))).write(ProductsCompanion(
+        name: Value(name.trim()),
+        thcPercent: Value(thcPercent),
+        cbdPercent: Value(cbdPercent),
+        detailsJson: Value(jsonEncode(details)),
+        hlc: Value(nextHlc()),
+      ));
+
+  Future<void> setProductDeleted(String id, bool value) =>
+      (update(products)..where((t) => t.id.equals(id))).write(ProductsCompanion(deleted: Value(value), hlc: Value(nextHlc())));
 
   // ---- recipes ----
 

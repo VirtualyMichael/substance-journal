@@ -376,6 +376,8 @@ void main() {
 
       final button = find.byKey(const ValueKey('import-pw-file'));
       await tester.scrollUntilVisible(button, 300, scrollable: find.byType(Scrollable).first);
+      await tester.ensureVisible(button);
+      await tester.pumpAndSettle();
       await tester.tap(button);
       await settle(tester);
       expect(find.textContaining('2 experiences (5 ingestions, 1 timed notes, 2 ratings)'), findsOneWidget);

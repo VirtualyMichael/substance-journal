@@ -181,6 +181,7 @@ class _AddIngestionPageState extends ConsumerState<AddIngestionPage> {
         notes: _notes.text.trim(),
         details: values.details,
         customUnitId: values.customUnitId,
+        productId: values.productId,
       );
       if (mounted) Navigator.of(context).pop(experience.id);
     } catch (e) {

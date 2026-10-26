@@ -8,6 +8,7 @@ import '../alcohol/alcohol_settings.dart';
 import '../units/custom_units_page.dart';
 import '../sync/sync_page.dart';
 import 'backup_section.dart';
+import '../products/products_page.dart';
 import 'reminders_section.dart';
 import 'pw_import_flow.dart';
 
@@ -208,6 +209,13 @@ class SettingsPage extends ConsumerWidget {
               icon: const Icon(Icons.medication_outlined),
               label: const Text('Manage custom units'),
               onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const CustomUnitsPage())),
+            ),
+            const SizedBox(height: Gap.sm),
+            OutlinedButton.icon(
+              key: const ValueKey('manage-products'),
+              icon: const Icon(Icons.grass),
+              label: const Text('Cannabis products'),
+              onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ProductsPage())),
             ),
             const SizedBox(height: Gap.lg),
             const RemindersSection(),

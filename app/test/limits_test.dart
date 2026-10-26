@@ -54,6 +54,8 @@ void main() {
     await settle(tester);
     final daily = find.byKey(const ValueKey('limit-daily'));
     await tester.scrollUntilVisible(daily, 300, scrollable: find.byType(Scrollable).first);
+    await tester.ensureVisible(daily);
+    await tester.pumpAndSettle();
 
     await tester.enterText(daily, 'abc');
     await tapKey(tester, 'limits-save');

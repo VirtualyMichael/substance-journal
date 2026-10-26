@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sj_core/sj_core.dart';
 
+import '../../data/cannabis_products.dart';
 import '../../data/database.dart';
 import '../../providers.dart';
 import '../design.dart';
@@ -66,6 +67,8 @@ class DoseInput {
     this.abvText = '',
     this.unit,
     this.unitCountText = '',
+    this.productId,
+    this.productName,
   });
 
   const DoseInput.empty() : this();
@@ -93,6 +96,10 @@ class DoseInput {
   final CustomUnitChoice? unit;
   final String unitCountText;
 
+  /// A saved cannabis product this dose came from.
+  final String? productId;
+  final String? productName;
+
   DoseInput copyWith({
     String? text,
     bool? unknown,
@@ -112,6 +119,9 @@ class DoseInput {
     CustomUnitChoice? unit,
     bool clearUnit = false,
     String? unitCountText,
+    String? productId,
+    String? productName,
+    bool clearProduct = false,
   }) =>
       DoseInput(
         text: text ?? this.text,
@@ -130,6 +140,8 @@ class DoseInput {
         abvText: abvText ?? this.abvText,
         unit: clearUnit ? null : (unit ?? this.unit),
         unitCountText: unitCountText ?? this.unitCountText,
+        productId: clearProduct ? null : (productId ?? this.productId),
+        productName: clearProduct ? null : (productName ?? this.productName),
       );
 
   static double? _num(String s) => double.tryParse(s.trim().replaceAll(',', '.'));
@@ -220,7 +232,9 @@ class DoseInput {
         stdDev: null,
         absorbedMg: e.absorbedCentralMg,
         method: m.name,
+        productId: productId,
         details: {
+          if (productName != null) 'product': productName,
           'mode': modeFor(m).name,
           if (modeFor(m) == CannabisEntryMode.product) ...{
             'grams': _num(gramsText),
@@ -285,6 +299,7 @@ class DoseStorage {
     required this.method,
     required this.details,
     this.customUnitId,
+    this.productId,
   });
   final double? dose;
   final String unit;
@@ -294,6 +309,7 @@ class DoseStorage {
   final String? method;
   final Map<String, Object?> details;
   final String? customUnitId;
+  final String? productId;
 
   String get detailsJson => jsonEncode(details);
 }
@@ -578,7 +594,7 @@ class _AlcoholCalculator extends StatelessWidget {
   }
 }
 
-class _CannabisForm extends StatelessWidget {
+class _CannabisForm extends ConsumerWidget {
   const _CannabisForm({required this.roa, required this.value, required this.onChanged});
 
   final RouteOfAdministration roa;
@@ -597,13 +613,58 @@ class _CannabisForm extends StatelessWidget {
       };
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final saved = ref.watch(cannabisProductsProvider).value ?? const <Product>[];
     final methods = [for (final m in CannabisMethod.values) if (m.route == roa.route) m];
     final method = value.methodFor(roa);
     final mode = value.modeFor(method);
     final estimate = value.cannabisEstimate(roa);
     final range = estimate?.classRange(roa);
 
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (saved.isNotEmpty) ...[
+          DropdownButtonFormField<String?>(
+            key: const ValueKey('cannabis-product-pick'),
+            initialValue: saved.any((p) => p.id == value.productId) ? value.productId : null,
+            decoration: const InputDecoration(labelText: 'Saved product (optional)'),
+            items: [
+              const DropdownMenuItem<String?>(value: null, child: Text('None')),
+              for (final p in saved) DropdownMenuItem<String?>(value: p.id, child: Text(p.name)),
+            ],
+            onChanged: (id) {
+              if (id == null) return onChanged(value.copyWith(clearProduct: true));
+              onChanged(_withProduct(value, saved.firstWhere((p) => p.id == id)));
+            },
+          ),
+          const SizedBox(height: Gap.md),
+        ],
+        KeyedSubtree(
+          key: ValueKey('cannabis-fields-${value.productId}'),
+          child: _fields(context, methods, method, mode, estimate, range),
+        ),
+      ],
+    );
+  }
+
+  /// Fills the THC and CBD from a saved product, and the label mg for edibles.
+  static DoseInput _withProduct(DoseInput v, Product p) {
+    final d = ProductDetails.of(p);
+    String n(double? x) => x == null ? '' : (x == x.roundToDouble() ? x.toStringAsFixed(0) : '$x');
+    final label = d.thcMgPerUnit != null;
+    return v.copyWith(
+      productId: p.id,
+      productName: p.name,
+      thcText: n(p.thcPercent),
+      cbdText: label ? '' : n(p.cbdPercent),
+      labelMgText: n(d.thcMgPerUnit),
+      mode: label ? CannabisEntryMode.label : (p.thcPercent != null ? CannabisEntryMode.product : null),
+    );
+  }
+
+  Widget _fields(BuildContext context, List<CannabisMethod> methods, CannabisMethod method, CannabisEntryMode mode,
+      CannabisDoseEstimate? estimate, (dynamic, dynamic)? range) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

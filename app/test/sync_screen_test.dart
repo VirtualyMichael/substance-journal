@@ -42,6 +42,8 @@ void main() {
     await settle(tester);
     final open = find.byKey(const ValueKey('open-sync'));
     await tester.scrollUntilVisible(open, 300, scrollable: find.byType(Scrollable).first);
+    await tester.ensureVisible(open);
+    await tester.pumpAndSettle();
     await tester.tap(open);
     await settle(tester);
     return built;
