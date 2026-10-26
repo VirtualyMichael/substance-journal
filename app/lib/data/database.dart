@@ -147,6 +147,19 @@ class AppDatabase extends _$AppDatabase {
         ..orderBy([(t) => OrderingTerm.asc(t.time)]))
       .watch();
 
+  /// Every person's experiences. Only the calendar uses this, to show who is on which day;
+  /// anything that draws curves, tolerance or warnings must stay per person.
+  Stream<List<Experience>> watchAllExperiences() => (select(experiences)
+        ..where((t) => t.deleted.equals(false))
+        ..orderBy([(t) => OrderingTerm.asc(t.sortDate)]))
+      .watch();
+
+  /// Every person's ingestions, for the calendar only (see [watchAllExperiences]).
+  Stream<List<Ingestion>> watchAllIngestions() => (select(ingestions)
+        ..where((t) => t.deleted.equals(false))
+        ..orderBy([(t) => OrderingTerm.asc(t.time)]))
+      .watch();
+
   Stream<List<Ingestion>> watchIngestionsForExperience(String experienceId) => (select(ingestions)
         ..where((t) => t.experienceId.equals(experienceId) & t.deleted.equals(false))
         ..orderBy([(t) => OrderingTerm.asc(t.time)]))

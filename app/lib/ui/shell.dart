@@ -3,12 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../data/database.dart';
 import '../providers.dart';
+import 'calendar/calendar_page.dart';
 import 'compounds/compounds_page.dart';
 import 'design.dart';
 import 'journal/journal_page.dart';
 import 'settings/settings_page.dart';
 
-enum _Destination { journal, compounds, settings }
+enum _Destination { journal, calendar, compounds, settings }
 
 /// Navigation frame: a bottom bar on phones, a rail on wide windows. Shows the current
 /// person's pages and a switcher to change who is on screen.
@@ -24,6 +25,7 @@ class _AppShellState extends ConsumerState<AppShell> {
 
   static const _items = [
     (_Destination.journal, Icons.menu_book_outlined, Icons.menu_book, 'Journal'),
+    (_Destination.calendar, Icons.calendar_month_outlined, Icons.calendar_month, 'Calendar'),
     (_Destination.compounds, Icons.science_outlined, Icons.science, 'Compounds'),
     (_Destination.settings, Icons.settings_outlined, Icons.settings, 'Settings'),
   ];
@@ -39,6 +41,7 @@ class _AppShellState extends ConsumerState<AppShell> {
     final body = switch (_destination) {
       // Keyed by person so no widget state (search text, scroll) leaks between people.
       _Destination.journal => JournalPage(key: ValueKey('journal-${person.id}'), person: person),
+      _Destination.calendar => CalendarPage(key: ValueKey('calendar-${person.id}'), person: person),
       _Destination.compounds => CompoundsPage(key: ValueKey('compounds-${person.id}'), personId: person.id),
       _Destination.settings => SettingsPage(key: ValueKey('settings-${person.id}'), person: person),
     };

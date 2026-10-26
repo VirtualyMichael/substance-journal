@@ -69,6 +69,14 @@ final compoundPrefsProvider = StreamProvider.autoDispose.family<CompoundPrefs, S
   (ref, personId) => ref.watch(databaseProvider).watchCompoundPrefs(personId),
 );
 
+// ---- calendar (the one place that looks across people) ----
+
+final allExperiencesProvider =
+    StreamProvider.autoDispose<List<Experience>>((ref) => ref.watch(databaseProvider).watchAllExperiences());
+
+final allIngestionsProvider =
+    StreamProvider.autoDispose<List<Ingestion>>((ref) => ref.watch(databaseProvider).watchAllIngestions());
+
 // ---- one experience ----
 
 final experienceProvider = StreamProvider.autoDispose.family<Experience?, String>(
