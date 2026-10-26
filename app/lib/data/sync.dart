@@ -64,6 +64,7 @@ class SyncService {
     _SyncTable<$TimedNotesTable, TimedNote>(db.timedNotes, TimedNote.fromJson, (r) => r.hlc, (r) => r.toJson()),
     _SyncTable<$RatingsTable, Rating>(db.ratings, Rating.fromJson, (r) => r.hlc, (r) => r.toJson()),
     _SyncTable<$PresetsTable, Preset>(db.presets, Preset.fromJson, (r) => r.hlc, (r) => r.toJson()),
+    _SyncTable<$RecipesTable, RecipeRow>(db.recipes, RecipeRow.fromJson, (r) => r.hlc, (r) => r.toJson()),
   ];
 
   // ---- pairing ----

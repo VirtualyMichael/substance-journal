@@ -74,7 +74,19 @@ class AlcoholDayView extends ConsumerWidget {
         child: ListView(
           padding: const EdgeInsets.fromLTRB(Gap.md, Gap.md, Gap.md, 96),
           children: [
-            _StatusCard(summary: summary, isToday: isToday, settings: settings, day: day ?? now),
+            _StatusCard(
+              summary: summary,
+              isToday: isToday,
+              settings: settings,
+              day: day ?? now,
+              limits: isToday
+                  ? limitStatus(
+                      limits: ref.watch(limitsProvider(person.id)).value ?? const DrinkLimits(),
+                      standardByDay: dailyStandardDrinks(drinks, settings),
+                      now: now,
+                    )
+                  : null,
+            ),
             const SizedBox(height: Gap.md),
             if (isToday) ...[
               QuickAddBar(person: person, settings: settings),
@@ -125,7 +137,9 @@ class AlcoholDayView extends ConsumerWidget {
 }
 
 class _StatusCard extends StatelessWidget {
-  const _StatusCard({required this.summary, required this.isToday, required this.settings, required this.day});
+  const _StatusCard({required this.summary, required this.isToday, required this.settings, required this.day, this.limits});
+
+  final LimitStatus? limits;
 
   final AlcoholDaySummary summary;
   final bool isToday;
@@ -165,6 +179,29 @@ class _StatusCard extends StatelessWidget {
                   ),
               ],
             ),
+            if (limits != null && limits!.limits.hasAny) ...[
+              const SizedBox(height: Gap.sm),
+              Column(
+                key: const ValueKey('limits-status'),
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  for (final line in limits!.lines) Text(line, style: text.bodyMedium),
+                  if (limits!.limits.daily != null) ...[
+                    const SizedBox(height: 4),
+                    LinearProgressIndicator(
+                      value: (limits!.today / limits!.limits.daily!).clamp(0.0, 1.0),
+                      color: limits!.overDaily ? scheme.error : null,
+                      minHeight: 6,
+                    ),
+                  ],
+                  if (limits!.warning != null)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4),
+                      child: Text(limits!.warning!, key: const ValueKey('limit-warning'), style: text.bodyMedium?.copyWith(color: scheme.error)),
+                    ),
+                ],
+              ),
+            ],
             const SizedBox(height: Gap.sm),
             Text(
               'Estimates only. Do not use them to decide whether it is safe or legal to drive.',
@@ -205,10 +242,17 @@ class _QuickAddBarState extends ConsumerState<QuickAddBar> {
       shotOz: widget.settings.standardDrinkVolumeOz,
     );
     if (!mounted) return;
+    // Say so when this drink takes the day or week past a limit the person set.
+    final limits = ref.read(limitsProvider(widget.person.id)).value ?? const DrinkLimits();
+    final status = limitStatus(
+      limits: limits,
+      standardByDay: dailyStandardDrinks([...ref.read(alcoholDrinksProvider(widget.person.id)), logged.ingestion], widget.settings),
+      now: now,
+    );
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(SnackBar(
-        content: Text('Added ${preset.name}'),
+        content: Text('Added ${preset.name}${status.warning == null ? '' : '. ${status.warning}'}'),
         action: SnackBarAction(label: 'Undo', onPressed: () => db.undoLoggedDrink(logged)),
       ));
   }

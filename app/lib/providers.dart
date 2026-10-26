@@ -89,6 +89,10 @@ final estimateSettingsProvider = StreamProvider.autoDispose.family<EstimateSetti
   (ref, personId) => ref.watch(databaseProvider).watchEstimateSettings(personId),
 );
 
+final limitsProvider = StreamProvider.autoDispose.family<DrinkLimits, String>(
+  (ref, personId) => ref.watch(databaseProvider).watchLimits(personId),
+);
+
 final drinkPresetsProvider = StreamProvider<List<Preset>>((ref) => ref.watch(databaseProvider).watchDrinkPresets());
 
 /// One person's alcohol ingestions, oldest first.

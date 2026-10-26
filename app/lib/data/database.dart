@@ -12,7 +12,7 @@ import 'tables.dart';
 part 'database.g.dart';
 
 /// Bumped when a table changes; backups copy the file before an upgrade past an older number.
-const int currentSchemaVersion = 3;
+const int currentSchemaVersion = 4;
 
 @DriftDatabase(tables: [
   People,
@@ -24,6 +24,7 @@ const int currentSchemaVersion = 3;
   CustomSubstances,
   Products,
   Presets,
+  Recipes,
   Settings,
   Peers,
 ])
@@ -54,6 +55,9 @@ class AppDatabase extends _$AppDatabase {
           }
           if (from < 3) {
             await m.addColumn(peers, peers.sharedKey);
+          }
+          if (from < 4) {
+            await m.createTable(recipes);
           }
         },
       );
@@ -615,6 +619,89 @@ class AppDatabase extends _$AppDatabase {
       (select(settings)..where((t) => t.key.equals('compoundPrefs:$personId')))
           .watchSingleOrNull()
           .map((row) => CompoundPrefs.decode(row?.value));
+
+  // ---- recipes ----
+
+  Stream<List<RecipeRow>> watchRecipes() => (select(recipes)
+        ..where((t) => t.deleted.equals(false))
+        ..orderBy([(t) => OrderingTerm(expression: t.name.lower())]))
+      .watch();
+
+  static String builtInId(String name) =>
+      'builtin:${name.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]+'), '-').replaceAll(RegExp(r'^-+|-+$'), '')}';
+
+  /// Adds the built-in recipes once. Each has a fixed id, so two devices seeding separately end
+  /// up with the same rows, and a recipe you edited or deleted is never put back.
+  Future<void> ensureBuiltInRecipes() async {
+    if (await getSetting('recipesSeeded') == '1') return;
+    await transaction(() async {
+      for (final r in builtInRecipes) {
+        await into(recipes).insert(
+          RecipesCompanion.insert(
+            id: builtInId(r.name),
+            hlc: nextHlc(),
+            name: r.name,
+            payload: jsonEncode(r.payload()),
+            fingerprint: r.fingerprint,
+          ),
+          mode: InsertMode.insertOrIgnore,
+        );
+      }
+      await setSetting('recipesSeeded', '1', shared: true);
+    });
+  }
+
+  /// Saves a new recipe. Returns false (and adds nothing) if an identical one already exists.
+  Future<bool> addRecipe(Recipe recipe) async {
+    final existing = await (select(recipes)..where((t) => t.fingerprint.equals(recipe.fingerprint))).get();
+    if (existing.any((r) => !r.deleted)) return false;
+    final deleted = existing.where((r) => r.deleted).firstOrNull;
+    if (deleted != null) {
+      // Importing something you deleted before brings it back.
+      await (update(recipes)..where((t) => t.id.equals(deleted.id)))
+          .write(RecipesCompanion(deleted: const Value(false), hlc: Value(nextHlc())));
+      return true;
+    }
+    await into(recipes).insert(RecipesCompanion.insert(
+      id: newId(),
+      hlc: nextHlc(),
+      name: recipe.name,
+      payload: jsonEncode(recipe.payload()),
+      fingerprint: recipe.fingerprint,
+    ));
+    return true;
+  }
+
+  /// (added, skipped as duplicates).
+  Future<(int, int)> importRecipes(List<Recipe> list) async {
+    var added = 0;
+    await transaction(() async {
+      for (final r in list) {
+        if (await addRecipe(r)) added++;
+      }
+    });
+    return (added, list.length - added);
+  }
+
+  Future<void> updateRecipe(String id, Recipe recipe) async {
+    await (update(recipes)..where((t) => t.id.equals(id))).write(RecipesCompanion(
+      name: Value(recipe.name),
+      payload: Value(jsonEncode(recipe.payload())),
+      fingerprint: Value(recipe.fingerprint),
+      hlc: Value(nextHlc()),
+    ));
+  }
+
+  Future<void> setRecipeDeleted(String id, bool value) async {
+    await (update(recipes)..where((t) => t.id.equals(id))).write(RecipesCompanion(deleted: Value(value), hlc: Value(nextHlc())));
+  }
+
+  /// This person's drinking limits (shared, so they follow the person to other devices).
+  Stream<DrinkLimits> watchLimits(String personId) => watchSetting('limits:$personId').map(DrinkLimits.decode);
+
+  Future<DrinkLimits> getLimits(String personId) async => DrinkLimits.decode(await getSetting('limits:$personId'));
+
+  Future<void> setLimits(String personId, DrinkLimits limits) => setSetting('limits:$personId', limits.encode(), shared: true);
 
   Future<CompoundPrefs> getCompoundPrefs(String personId) async =>
       CompoundPrefs.decode(await getSetting('compoundPrefs:$personId'));

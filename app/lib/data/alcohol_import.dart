@@ -46,6 +46,7 @@ class TrackerExport {
     required this.drinks,
     this.presets = const [],
     this.recipeCount = 0,
+    this.recipes = const [],
     this.problems = const [],
     required this.source,
   });
@@ -55,6 +56,9 @@ class TrackerExport {
 
   /// Recipes found in a database file. They are not imported (the new app has no recipe book yet).
   final int recipeCount;
+
+  /// The recipes in a database file that could be read (the rest are counted in [recipeCount] only).
+  final List<Recipe> recipes;
 
   /// Rows that could not be read, each with the reason.
   final List<String> problems;
@@ -123,7 +127,7 @@ TrackerDrink _drinkFrom(Map<String, dynamic> row) {
   );
 }
 
-TrackerExport _collect(List<Map<String, dynamic>> rows, {List<TrackerPreset> presets = const [], int recipes = 0, required String source}) {
+TrackerExport _collect(List<Map<String, dynamic>> rows, {List<TrackerPreset> presets = const [], int recipeCount = 0, List<Recipe> recipes = const [], required String source}) {
   final drinks = <TrackerDrink>[];
   final problems = <String>[];
   for (var i = 0; i < rows.length; i++) {
@@ -133,7 +137,7 @@ TrackerExport _collect(List<Map<String, dynamic>> rows, {List<TrackerPreset> pre
       problems.add('Row ${i + 1}: ${e.message}');
     }
   }
-  return TrackerExport(drinks: drinks, presets: presets, recipeCount: recipes, problems: problems, source: source);
+  return TrackerExport(drinks: drinks, presets: presets, recipeCount: recipeCount, recipes: recipes, problems: problems, source: source);
 }
 
 /// Parses Alcohol Tracker's JSON export (a list of drinks).
@@ -186,8 +190,20 @@ TrackerExport parseTrackerDatabase(String path) {
         }
       }
     }
-    final recipes = tables.contains('recipes') ? (db.select('SELECT COUNT(*) AS n FROM recipes').first['n'] as int) : 0;
-    return _collect(rows, presets: presets, recipes: recipes, source: 'database');
+    final recipes = <Recipe>[];
+    var recipeCount = 0;
+    if (tables.contains('recipes')) {
+      for (final r in db.select('SELECT payload FROM recipes ORDER BY name COLLATE NOCASE')) {
+        recipeCount++;
+        try {
+          final recipe = Recipe.fromPayload(jsonDecode(r['payload'] as String));
+          if (recipe != null) recipes.add(recipe);
+        } on Object {
+          // A recipe we cannot read is left out; the drinks matter more.
+        }
+      }
+    }
+    return _collect(rows, presets: presets, recipeCount: recipeCount, recipes: recipes, source: 'database');
   } finally {
     db.close();
   }
@@ -231,6 +247,8 @@ class TrackerImportResult {
     required this.peopleCreated,
     required this.problems,
     required this.recipesIgnored,
+    this.recipesAdded = 0,
+    this.recipesSkipped = 0,
   });
 
   final int imported;
@@ -241,6 +259,10 @@ class TrackerImportResult {
   final List<String> peopleCreated;
   final List<String> problems;
   final int recipesIgnored;
+  final int recipesAdded;
+
+  /// Duplicates, and Alcohol Tracker's unedited built-in cards (this app has its own).
+  final int recipesSkipped;
 }
 
 const _personColors = [0xFFE07A5F, 0xFF3D9970, 0xFFD1495B, 0xFF2EB5C4, 0xFFE0A100, 0xFF7A6FF0];
@@ -329,6 +351,18 @@ Future<TrackerImportResult> importTrackerExport(AppDatabase db, TrackerExport ex
       presetsAdded++;
     }
 
+    // Recipes: your own and edited ones come across; Alcohol Tracker's untouched built-ins are
+    // skipped because this app has its own library, and an identical recipe is never added twice.
+    var recipesAdded = 0;
+    var recipesSkipped = 0;
+    for (final recipe in export.recipes) {
+      if (isGenericBuiltIn(recipe) || !await db.addRecipe(recipe)) {
+        recipesSkipped++;
+      } else {
+        recipesAdded++;
+      }
+    }
+
     return TrackerImportResult(
       imported: imported,
       duplicatesSkipped: skipped,
@@ -337,7 +371,9 @@ Future<TrackerImportResult> importTrackerExport(AppDatabase db, TrackerExport ex
       experiencesCreated: experiences,
       peopleCreated: created,
       problems: export.problems,
-      recipesIgnored: export.recipeCount,
+      recipesIgnored: export.recipeCount - export.recipes.length,
+      recipesAdded: recipesAdded,
+      recipesSkipped: recipesSkipped,
     );
   });
 }

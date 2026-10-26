@@ -90,7 +90,7 @@ class _ConfirmDialog extends StatelessWidget {
       if (export.drinks.any((d) => d.consumer.toLowerCase() == 'me')) 'Drinks by "Me" go to your own journal.',
       if (others.isNotEmpty) 'People: ${others.join(', ')} (added if they do not exist yet).',
       'Drinks already in the journal are skipped, so importing the same file again adds nothing.',
-      if (export.recipeCount > 0) '${export.recipeCount} recipes in the file are not imported yet.',
+      if (export.recipeCount > 0) '${export.recipeCount} recipes (your own and edited ones are added; unedited built-ins are skipped).',
       if (export.problems.isNotEmpty) '${export.problems.length} rows could not be read and will be skipped.',
     ];
     return AlertDialog(
@@ -121,6 +121,7 @@ class _ResultDialog extends StatelessWidget {
       '${result.imported} drinks imported in ${result.experiencesCreated} new experiences.',
       if (result.duplicatesSkipped > 0) '${result.duplicatesSkipped} already in the journal, skipped.',
       if (result.presetsAdded > 0) '${result.presetsAdded} presets added.',
+      if (result.recipesAdded > 0) '${result.recipesAdded} recipes added.',
       if (result.presetsSkipped > 0) '${result.presetsSkipped} presets already existed.',
       if (result.peopleCreated.isNotEmpty) 'New people: ${result.peopleCreated.join(', ')}.',
       if (result.problems.isNotEmpty) '${result.problems.length} rows skipped. First: ${result.problems.first}',

@@ -42,6 +42,8 @@ class AlcoholSettingsSection extends ConsumerWidget {
         ),
         EstimateSettingsForm(key: ValueKey('estimates-${person.id}'), person: person),
         const SizedBox(height: Gap.sm),
+        LimitsForm(key: ValueKey('limits-${person.id}'), person: person),
+        const SizedBox(height: Gap.sm),
         Text('Import from Alcohol Tracker', style: text.titleSmall),
         const SizedBox(height: 4),
         Text(
@@ -287,6 +289,96 @@ class _EstimateSettingsFormState extends ConsumerState<EstimateSettingsForm> {
           ],
         ),
         const SizedBox(height: Gap.sm),
+      ],
+    );
+  }
+}
+
+/// Limits this person sets for themselves; the Today view shows progress and warns when passed.
+class LimitsForm extends ConsumerStatefulWidget {
+  const LimitsForm({super.key, required this.person});
+
+  final Person person;
+
+  @override
+  ConsumerState<LimitsForm> createState() => _LimitsFormState();
+}
+
+class _LimitsFormState extends ConsumerState<LimitsForm> {
+  final _daily = TextEditingController();
+  final _weekly = TextEditingController();
+  final _days = TextEditingController();
+  bool _loaded = false;
+  String? _message;
+
+  @override
+  void dispose() {
+    _daily.dispose();
+    _weekly.dispose();
+    _days.dispose();
+    super.dispose();
+  }
+
+  String _n(double? v) => v == null ? '' : (v == v.roundToDouble() ? v.toStringAsFixed(0) : v.toString());
+
+  double? _num(String s) => double.tryParse(s.trim().replaceAll(',', '.'));
+
+  Future<void> _save() async {
+    final daily = _num(_daily.text);
+    final weekly = _num(_weekly.text);
+    final days = int.tryParse(_days.text.trim());
+    final bad = (_daily.text.trim().isNotEmpty && (daily == null || daily <= 0)) ||
+        (_weekly.text.trim().isNotEmpty && (weekly == null || weekly <= 0)) ||
+        (_days.text.trim().isNotEmpty && (days == null || days < 0 || days > 7));
+    if (bad) return setState(() => _message = 'Limits must be positive numbers (drinking days 0 to 7), or left blank.');
+    await ref.read(databaseProvider).setLimits(widget.person.id, DrinkLimits(daily: daily, weekly: weekly, maxDrinkingDays: days));
+    if (mounted) setState(() => _message = 'Saved');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final limits = ref.watch(limitsProvider(widget.person.id));
+    if (!_loaded && limits.hasValue) {
+      final l = limits.value!;
+      _daily.text = _n(l.daily);
+      _weekly.text = _n(l.weekly);
+      _days.text = l.maxDrinkingDays?.toString() ?? '';
+      _loaded = true;
+    }
+    final text = Theme.of(context).textTheme;
+    Widget field(String key, String label, TextEditingController c, String suffix) => Expanded(
+          child: Padding(
+            padding: const EdgeInsets.only(right: Gap.sm),
+            child: TextField(
+              key: ValueKey(key),
+              controller: c,
+              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              decoration: InputDecoration(labelText: label, suffixText: suffix),
+              onChanged: (_) => setState(() => _message = null),
+            ),
+          ),
+        );
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Limits', style: text.titleSmall),
+        const SizedBox(height: 4),
+        Text(
+          'Your own targets, in standard drinks. Today shows progress, and adding a drink that passes one tells you. Leave blank for none.',
+          style: text.bodySmall,
+        ),
+        const SizedBox(height: Gap.sm),
+        Row(children: [
+          field('limit-daily', 'Per day', _daily, 'drinks'),
+          field('limit-weekly', 'Per 7 days', _weekly, 'drinks'),
+          field('limit-days', 'Drinking days', _days, 'of 7'),
+        ]),
+        const SizedBox(height: Gap.sm),
+        Row(children: [
+          FilledButton.tonal(key: const ValueKey('limits-save'), onPressed: _save, child: const Text('Save limits')),
+          const SizedBox(width: Gap.sm),
+          if (_message != null) Expanded(child: Text(_message!, key: const ValueKey('limits-message'), style: text.bodySmall)),
+        ]),
       ],
     );
   }

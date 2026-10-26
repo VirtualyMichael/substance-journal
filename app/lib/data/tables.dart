@@ -116,6 +116,15 @@ class Presets extends Table with SyncColumns {
   TextColumn get detailsJson => text().withDefault(const Constant('{}'))();
 }
 
+/// A drink recipe. [payload] is the portable JSON (the same keys Alcohol Tracker writes) and
+/// [fingerprint] its content hash, so the same recipe is never stored twice.
+@DataClassName('RecipeRow')
+class Recipes extends Table with SyncColumns {
+  TextColumn get name => text()();
+  TextColumn get payload => text()();
+  TextColumn get fingerprint => text()();
+}
+
 /// Key/value settings. Only rows with `shared = true` sync to other devices.
 class Settings extends Table {
   TextColumn get key => text()();

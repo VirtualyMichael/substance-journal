@@ -6,13 +6,14 @@ import '../providers.dart';
 import 'alcohol/alcohol_analytics_page.dart';
 import 'alcohol/alcohol_day_view.dart';
 import 'alcohol/alcohol_history_page.dart';
+import 'alcohol/recipes_page.dart';
 import 'calendar/calendar_page.dart';
 import 'compounds/compounds_page.dart';
 import 'design.dart';
 import 'journal/journal_page.dart';
 import 'settings/settings_page.dart';
 
-enum _Destination { journal, calendar, compounds, settings, today, history, analytics }
+enum _Destination { journal, calendar, compounds, settings, today, history, analytics, recipes }
 
 typedef _Item = (_Destination, IconData, IconData, String);
 
@@ -26,6 +27,7 @@ const List<_Item> _fullItems = [
 const List<_Item> _alcoholItems = [
   (_Destination.today, Icons.local_bar_outlined, Icons.local_bar, 'Today'),
   (_Destination.history, Icons.history, Icons.history, 'History'),
+  (_Destination.recipes, Icons.menu_book_outlined, Icons.menu_book, 'Recipes'),
   (_Destination.analytics, Icons.insights_outlined, Icons.insights, 'Analytics'),
   (_Destination.settings, Icons.settings_outlined, Icons.settings, 'Settings'),
 ];
@@ -74,6 +76,7 @@ class _AppShellState extends ConsumerState<AppShell> {
       _Destination.today => AlcoholDayView(key: ValueKey('today-${person.id}'), person: person),
       _Destination.history => AlcoholHistoryPage(key: ValueKey('history-${person.id}'), person: person),
       _Destination.analytics => AlcoholAnalyticsPage(key: ValueKey('analytics-${person.id}'), person: person),
+      _Destination.recipes => const RecipesPage(),
     };
 
     return Scaffold(
