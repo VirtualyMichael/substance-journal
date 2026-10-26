@@ -1,67 +1,61 @@
 # Substance Journal
 
-Local, offline, dark-mode desktop journal for logging substance ingestions, tracking
-subjective effects against PsychonautWiki's Subjective Effect Index, and surfacing
-dosing/duration/interaction reference data. Windows and Linux are both supported.
+A private, offline harm-reduction journal for Windows and Android (Linux and iOS build from the
+same code). Log what you take, see effect timelines, get dose and interaction heads-ups, and keep
+your phone and computer in sync with no account and no server. Your data never leaves your devices.
 
-This is a companion project to [Alcohol Tracker](../Alcohol%20ingestion%20marking%20app),
-reusing its architecture (PySide6 + SQLite + PyInstaller) but generalized to many
-substances instead of just alcohol.
+> Harm-reduction tool, not medical advice. Estimates (BAC, dose classes, effect curves, tolerance)
+> are guides, not measurements. It contains no synthesis, sourcing or acquisition information.
 
-Tracked substances (v1): Alcohol, Nicotine, Cannabis (flower/concentrate/edible),
-Psilocybin, LSD, DMT, MDMA, 2C-B, Ketamine.
+## What it does
 
-Logging a smoked cannabis ingestion includes a flower dose calculator: pick Joint
-(1g default) or Blunt (2g default) or a custom amount, enter the flower's THC%, and
-the mg amount is computed automatically (grams x THC% = mg THC).
+- **Journal and timelines:** experiences with doses, notes and ratings; combined effect curves per
+  substance with hover read-outs; per-substance toggles to see each alone or overlapping.
+- **Per-person:** every curve, tolerance estimate and warning is for one person, with several
+  people on one device and a calendar showing who was on which day.
+- **Safety:** warnings for strong or repeat doses, high daily totals and raised tolerance; a
+  tolerance and break page; drinking limits with alerts.
+- **Alcohol mode:** fl oz, shots and standard drinks, BAC estimate, a library of 100+ recipes, and
+  import from [Alcohol Tracker](https://github.com/VirtualyMichael/alcohol-tracker).
+- **Cannabis:** absorbed-dose estimates by method, saved strains and batches with usage and spend.
+- **Import:** PsychonautWiki Journal exports, with a review screen to choose what to keep. Importing
+  twice never overwrites, resurrects or duplicates anything.
+- **Sync without a server:** automatic over Wi-Fi, or by QR codes, a file or pasted text. All packages
+  are encrypted with a key shared at pairing; edits and deletes merge.
+- **Backup:** encrypted backups with a passphrase, CSV and JSON export, automatic daily copies.
+- **Reminders:** daily check-in and limit alerts, local to the device.
+- **Voice and AI:** [`mcp/substance-journal`](mcp/substance-journal) lets an assistant log doses
+  (with a read-back and a yes) and produce reports.
 
-On first launch, if an existing Alcohol Tracker database is found at its default
-location, you'll be prompted to import your drinking history straight from it (no
-manual export step needed) - or point the import at a different file instead.
+## Download
 
-## Data sources
+Get the latest build from [Releases](../../releases): the Android `.apk` and a Windows `.zip`
+(unzip and run `substance_journal_app.exe`).
 
-Reference data (dosing, duration, interactions, subjective effects) is synced from:
+## Build it yourself
 
-- [PsychonautWiki](https://psychonautwiki.org) via its [Bifrost GraphQL API](https://github.com/psychonautwiki/bifrost)
-- [TripSit](https://tripsit.me)'s open [drug combination dataset](https://github.com/TripSit/drugs)
-
-into `data/*.json`, which is bundled with the app so it runs fully offline. Run
-`scripts/sync_substance_data.py` to refresh it.
-
-This is a harm-reduction journaling tool, not a source of synthesis, sourcing, or
-acquisition information. All effect/dose/duration/interaction data comes from the
-publicly published harm-reduction references above.
-
-## Build (Windows)
-
-```powershell
-.\build.ps1
-```
-
-## Build (Linux)
+Flutter 3.4x or newer. From `app/`:
 
 ```bash
-./build.sh
+flutter pub get
+flutter test
+flutter run -d windows        # or an Android device
+flutter build windows --release
+flutter build apk --release
 ```
 
-## Run During Development
+`app/packages/sj_core` holds the pure-Dart logic (reference data, dosing, sync, backup). GitHub
+Actions builds and tests all platforms on every push. The original Python/PySide6 prototype is still
+in `substance_journal/`.
 
-```bash
-python3 -m venv .venv
-source .venv/bin/activate   # or .venv\Scripts\Activate.ps1 on Windows
-python -m pip install -r requirements.txt
-python -m substance_journal
-```
+## Reference data and credit
 
-## Test
+Dose, duration and interaction data comes from [PsychonautWiki](https://psychonautwiki.org) (CC BY-SA 4.0)
+and [TripSit](https://tripsit.me)'s open combination dataset. Nine compounds are audited against
+sources; the other 272 are copied from PsychonautWiki and marked as not audited. See
+[docs/ATTRIBUTION.md](docs/ATTRIBUTION.md) and [docs/ROADMAP.md](docs/ROADMAP.md).
 
-```bash
-.venv/bin/python -m unittest tests.test_core   # or .venv\Scripts\python.exe on Windows
-```
+## License
 
-## Accuracy Note
-
-All dosing, duration, tolerance, and interaction information is for harm-reduction
-journaling only. It is not medical advice, and using any of these substances carries
-real risk regardless of what this app displays.
+Code: GPL-3.0 (see [LICENSE](LICENSE)). Reference data derived from PsychonautWiki stays under
+CC BY-SA 4.0.
