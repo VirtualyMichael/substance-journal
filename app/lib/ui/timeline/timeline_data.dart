@@ -14,7 +14,11 @@ class TimelineSeries {
     required this.points,
     required this.ingestionId,
     this.doses = const [],
+    this.substanceKey,
   });
+
+  /// The substance this curve belongs to (null for charts that are not per substance).
+  final String? substanceKey;
   final String label;
   final Color color;
   final List<(DateTime, double)> points;
@@ -78,6 +82,7 @@ List<TimelineSeries> buildTimelineSeries({
       points: points,
       ingestionId: used.first.id,
       doses: [for (final i in used) i.time],
+      substanceKey: substance.key,
     ));
   }
   return result;

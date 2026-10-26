@@ -48,13 +48,6 @@ class _AppShellState extends ConsumerState<AppShell> {
   int _index = 0;
   bool? _lastMode;
 
-  @override
-  void initState() {
-    super.initState();
-    // Start answering Wi-Fi sync requests from paired devices for as long as the app is open.
-    ref.read(lanServerProvider);
-  }
-
   Future<void> _setMode(bool on) async {
     final db = ref.read(databaseProvider);
     if (on) await db.ensureDefaultDrinkPresets();
@@ -63,6 +56,9 @@ class _AppShellState extends ConsumerState<AppShell> {
 
   @override
   Widget build(BuildContext context) {
+    // Answers Wi-Fi sync requests from paired devices while the app is open. It must be watched:
+    // a provider nobody listens to is disposed when its inputs change and never restarts.
+    ref.watch(lanServerProvider);
     final person = ref.watch(currentPersonProvider);
     if (person == null) return const Scaffold(body: Center(child: CircularProgressIndicator()));
 

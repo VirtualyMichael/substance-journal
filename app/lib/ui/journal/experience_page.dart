@@ -32,6 +32,9 @@ class _ExperiencePageState extends ConsumerState<ExperiencePage> {
   final _notes = TextEditingController();
   Timer? _saveTimer;
   bool _notesLoaded = false;
+
+  /// Substances switched off on the timeline, to see the others alone.
+  final Set<String> _hidden = {};
   String _lastSavedNotes = '';
 
   @override
@@ -250,24 +253,46 @@ class _ExperiencePageState extends ConsumerState<ExperiencePage> {
                       ),
                       const SizedBox(height: Gap.md),
                       TimelineChart(
-                        series: series,
+                        series: [for (final s in series) if (!_hidden.contains(s.substanceKey)) s],
                         markers: markers,
                         now: now,
                         extraInfo: drinks.isEmpty ? null : (t) => alcoholReadout(t, drinks, settings, bac),
                       ),
                       const SizedBox(height: Gap.sm),
                       Wrap(
-                        spacing: Gap.md,
+                        spacing: Gap.sm,
                         runSpacing: 4,
                         children: [
                           for (final s in series)
-                            Row(mainAxisSize: MainAxisSize.min, children: [
-                              CircleAvatar(radius: 5, backgroundColor: s.color),
-                              const SizedBox(width: 6),
-                              Text(s.label, style: Theme.of(context).textTheme.bodySmall),
-                            ]),
+                            FilterChip(
+                              key: ValueKey('toggle-${s.substanceKey}'),
+                              avatar: CircleAvatar(radius: 6, backgroundColor: s.color),
+                              label: Text(s.label, style: Theme.of(context).textTheme.bodySmall),
+                              selected: !_hidden.contains(s.substanceKey),
+                              showCheckmark: false,
+                              visualDensity: VisualDensity.compact,
+                              onSelected: (on) => setState(() => on ? _hidden.remove(s.substanceKey) : _hidden.add(s.substanceKey ?? '')),
+                            ),
+                          if (series.length > 1)
+                            ActionChip(
+                              key: const ValueKey('toggle-all'),
+                              label: Text(_hidden.isEmpty ? 'Hide all' : 'Show all', style: Theme.of(context).textTheme.bodySmall),
+                              visualDensity: VisualDensity.compact,
+                              onPressed: () => setState(() {
+                                if (_hidden.isEmpty) {
+                                  _hidden.addAll([for (final s in series) s.substanceKey ?? '']);
+                                } else {
+                                  _hidden.clear();
+                                }
+                              }),
+                            ),
                         ],
                       ),
+                      if (series.length > 1)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 4),
+                          child: Text('Tap a substance to show or hide its curve. All on shows how they overlap.', style: Theme.of(context).textTheme.bodySmall),
+                        ),
                     ],
                   ),
                 ),

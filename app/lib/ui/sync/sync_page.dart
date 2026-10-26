@@ -99,9 +99,9 @@ class _SyncPageState extends ConsumerState<SyncPage> {
     if (text != null && text.isNotEmpty) await _wifiSync(only: peer, address: text);
   }
 
-  Future<void> _findDuplicates() async {
+  Future<void> _findDuplicates({bool sameDay = false}) async {
     final cleaner = DuplicateCleaner(ref.read(databaseProvider));
-    final scan = await cleaner.scan();
+    final scan = await cleaner.scan(combineNearby: sameDay);
     if (!mounted) return;
     if (scan.isEmpty) return _message('No duplicates found.');
     final go = await showDialog<bool>(
@@ -465,6 +465,12 @@ class _SyncPageState extends ConsumerState<SyncPage> {
                   icon: const Icon(Icons.content_copy),
                   label: const Text('Find and merge duplicates'),
                   onPressed: _findDuplicates,
+                ),
+                OutlinedButton.icon(
+                  key: const ValueKey('combine-days'),
+                  icon: const Icon(Icons.merge_type),
+                  label: const Text('Combine experiences on the same day'),
+                  onPressed: () => _findDuplicates(sameDay: true),
                 ),
                 if (_canUndoCleanup)
                   OutlinedButton.icon(

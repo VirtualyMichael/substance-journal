@@ -67,7 +67,9 @@ class DuplicateCleaner {
 
   // ---- finding ----
 
-  Future<DuplicateScan> scan() async {
+  /// [combineNearby]: also join one person's experiences whose doses are within [gap] of each other
+  /// (the same evening or day, whatever the substance), so a day is one listing.
+  Future<DuplicateScan> scan({bool combineNearby = false, Duration gap = const Duration(hours: 12)}) async {
     final experiences = {for (final e in await (db.select(db.experiences)..where((t) => t.deleted.equals(false))).get()) e.id: e};
     final doses = [for (final i in await (db.select(db.ingestions)..where((t) => t.deleted.equals(false))).get()) if (experiences.containsKey(i.experienceId)) i];
 
@@ -115,6 +117,32 @@ class DuplicateCleaner {
         for (final copy in entry.value) {
           deletes[copy.id] = kept[next % kept.length].id;
           next++;
+        }
+      }
+    }
+
+    if (combineNearby) {
+      final spans = <String, (DateTime, DateTime)>{};
+      for (final i in doses) {
+        final s = spans[i.experienceId];
+        spans[i.experienceId] = s == null ? (i.time, i.time) : (i.time.isBefore(s.$1) ? i.time : s.$1, i.time.isAfter(s.$2) ? i.time : s.$2);
+      }
+      final byPerson = <String, List<String>>{};
+      for (final id in spans.keys) {
+        byPerson.putIfAbsent(experiences[id]!.personId, () => []).add(id);
+      }
+      for (final ids in byPerson.values) {
+        ids.sort((a, b) => spans[a]!.$1.compareTo(spans[b]!.$1));
+        var current = ids.first;
+        var reach = spans[current]!.$2;
+        for (final id in ids.skip(1)) {
+          if (spans[id]!.$1.difference(reach) <= gap) {
+            union(current, id);
+            if (spans[id]!.$2.isAfter(reach)) reach = spans[id]!.$2;
+          } else {
+            current = id;
+            reach = spans[id]!.$2;
+          }
         }
       }
     }

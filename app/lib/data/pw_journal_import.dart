@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:drift/drift.dart' show BooleanExpressionOperators;
+
 import 'custom_substances.dart';
 import 'database.dart';
 import 'reference_repository.dart';
@@ -750,7 +752,10 @@ Future<PwImportResult> importPwJournal(AppDatabase db, PwExport export, Referenc
     // Doses taken close together by the same person belong on one timeline.
     final toCreate = choices.combine ? _combine(pending, choices.combineGap) : pending;
     for (final p in toCreate) {
-      final experience = await db.addExperience(
+      // With combining on, doses close in time to something already in the journal (an alcohol night
+      // logged in Alcohol mode, say) go into that experience rather than starting a second listing.
+      final existing = choices.combine && p.doses.isNotEmpty ? await _nearbyExperience(db, p, choices.combineGap) : null;
+      final experience = existing ?? await db.addExperience(
         personId: p.personId,
         sortDate: p.sortDate,
         title: p.title,
@@ -761,6 +766,7 @@ Future<PwImportResult> importPwJournal(AppDatabase db, PwExport export, Referenc
         longitude: p.longitude,
         createdAt: p.createdAt,
       );
+      if (existing != null && p.title.isNotEmpty && existing.title.isEmpty) await db.updateExperience(existing.id, title: p.title);
       for (final r in p.doses) {
         await _addIngestion(db, experience, r, unitIds);
         ingestionTotal++;
@@ -798,6 +804,30 @@ Future<PwImportResult> importPwJournal(AppDatabase db, PwExport export, Referenc
 
 String _pwKey(String substanceKey, String route, DateTime time, double? dose) =>
     '$substanceKey|$route|${time.millisecondsSinceEpoch ~/ 1000}|${dose ?? ''}';
+
+/// The person's existing experience whose doses are within [gap] of [p]'s, if any.
+Future<Experience?> _nearbyExperience(AppDatabase db, _PendingExperience p, Duration gap) async {
+  final rows = await db.ingestionsForPerson(p.personId);
+  final spans = <String, (DateTime, DateTime)>{};
+  for (final i in rows) {
+    final s = spans[i.experienceId];
+    spans[i.experienceId] = s == null ? (i.time, i.time) : (i.time.isBefore(s.$1) ? i.time : s.$1, i.time.isAfter(s.$2) ? i.time : s.$2);
+  }
+  String? best;
+  Duration? bestGap;
+  for (final e in spans.entries) {
+    final before = p.first.difference(e.value.$2); // positive when the new doses start after the old ones end
+    final after = e.value.$1.difference(p.last);
+    final distance = before > Duration.zero ? before : (after > Duration.zero ? after : Duration.zero);
+    if (distance <= gap && (bestGap == null || distance < bestGap)) {
+      best = e.key;
+      bestGap = distance;
+    }
+  }
+  final id = best;
+  if (id == null) return null;
+  return (db.select(db.experiences)..where((t) => t.id.equals(id) & t.deleted.equals(false))).getSingleOrNull();
+}
 
 class _PendingExperience {
   _PendingExperience({

@@ -186,4 +186,36 @@ void main() {
       expect(await liveExperiences(b), 2);
     });
   });
+
+  group('combining a day', () {
+    test('experiences within 12 hours join into one, whatever the substance; other days and people stay apart', () async {
+      final me = await a.ensureDefaultPerson();
+      final alex = await a.addPerson('Alex');
+      Future<void> night(dynamic person, String substance, DateTime at) async {
+        final e = await a.addExperience(personId: person.id, sortDate: at);
+        await a.addIngestion(experience: e, substanceKey: substance, route: 'oral', time: at, dose: 5, unit: 'mg');
+      }
+
+      await night(me, 'alcohol', DateTime(2026, 10, 21, 19, 39));
+      await night(me, 'cannabis', DateTime(2026, 10, 21, 20, 22)); // same evening
+      await night(me, 'mdma', DateTime(2026, 10, 22, 2, 0)); // chained: within 12 h of the last
+      await night(me, 'alcohol', DateTime(2026, 10, 25, 19, 0)); // a different day
+      await night(alex, 'cannabis', DateTime(2026, 10, 21, 20, 0)); // someone else
+
+      final cleaner = DuplicateCleaner(a);
+      expect((await cleaner.scan()).isEmpty, isTrue); // not duplicates, so the plain scan leaves them
+      final scan = await cleaner.scan(combineNearby: true);
+      expect(scan.experienceGroups, 1);
+      expect(scan.experienceMerges.single.length, 3);
+
+      await cleaner.apply(scan);
+      final mine = await a.watchExperiences(me.id).first;
+      expect(mine, hasLength(2));
+      final evening = (await Future.wait([for (final e in mine) a.ingestionsForExperience(e.id)])).firstWhere((l) => l.length == 3);
+      expect(evening.map((i) => i.substanceKey).toSet(), {'alcohol', 'cannabis', 'mdma'});
+      expect(await a.watchExperiences(alex.id).first, hasLength(1));
+      expect(await cleaner.undo(), greaterThan(0));
+      expect(await a.watchExperiences(me.id).first, hasLength(4));
+    });
+  });
 }
