@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="quick_log_short">Quick log</string>
+    <string name="quick_log_long">Quick log a dose</string>
+    <string name="quick_log_widget_description">Opens the Quick log in Substance Journal</string>
+</resources>

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -12,6 +14,7 @@ import 'compounds/compounds_page.dart';
 import 'design.dart';
 import 'insights/insights_page.dart';
 import 'journal/journal_page.dart';
+import 'quicklog/quick_log_page.dart';
 import 'settings/settings_page.dart';
 
 enum _Destination { journal, calendar, compounds, insights, settings, today, history, analytics, recipes }
@@ -47,6 +50,37 @@ class AppShell extends ConsumerStatefulWidget {
 class _AppShellState extends ConsumerState<AppShell> {
   int _index = 0;
   bool? _lastMode;
+  StreamSubscription<String>? _routes;
+
+  @override
+  void initState() {
+    super.initState();
+    final launch = ref.read(launchRoutesProvider);
+    _routes = launch.stream.listen(_openRoute);
+    launch.initial().then((route) {
+      if (route != null && mounted) _openRoute(route);
+    });
+  }
+
+  @override
+  void dispose() {
+    _routes?.cancel();
+    super.dispose();
+  }
+
+  /// A route that arrived before the person had loaded, opened as soon as they have.
+  String? _pendingRoute;
+
+  void _openRoute(String route) {
+    final person = ref.read(currentPersonProvider);
+    if (person == null) {
+      _pendingRoute = route;
+      return;
+    }
+    if (route == 'quicklog' && mounted) {
+      Navigator.of(context).push(MaterialPageRoute(builder: (_) => QuickLogPage(person: person)));
+    }
+  }
 
   Future<void> _setMode(bool on) async {
     final db = ref.read(databaseProvider);
@@ -63,6 +97,11 @@ class _AppShellState extends ConsumerState<AppShell> {
     ref.watch(reminderServiceProvider);
     final person = ref.watch(currentPersonProvider);
     if (person == null) return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    final pending = _pendingRoute;
+    if (pending != null) {
+      _pendingRoute = null;
+      WidgetsBinding.instance.addPostFrameCallback((_) => _openRoute(pending));
+    }
 
     final alcoholMode = ref.watch(alcoholModeProvider).value ?? false;
     // Switching mode swaps the whole set of pages, so start again at the first one.
@@ -91,6 +130,12 @@ class _AppShellState extends ConsumerState<AppShell> {
       appBar: AppBar(
         title: Text(items[index].$4),
         actions: [
+          IconButton(
+            key: const ValueKey('quick-log'),
+            tooltip: 'Quick log',
+            icon: const Icon(Icons.bolt),
+            onPressed: () => _openRoute('quicklog'),
+          ),
           IconButton(
             key: const ValueKey('mode-toggle'),
             tooltip: alcoholMode ? 'Back to the full journal' : 'Alcohol mode',

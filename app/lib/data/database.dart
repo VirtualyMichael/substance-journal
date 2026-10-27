@@ -591,6 +591,12 @@ class AppDatabase extends _$AppDatabase {
   Future<void> setPresetDeleted(String id, bool value) =>
       (update(presets)..where((t) => t.id.equals(id))).write(PresetsCompanion(deleted: Value(value), hlc: Value(nextHlc())));
 
+  /// Every saved dose preset that is not an alcohol drink, for the Quick log.
+  Stream<List<Preset>> watchAllDosePresets() => (select(presets)
+        ..where((t) => t.substanceKey.equals('alcohol').not() & t.deleted.equals(false))
+        ..orderBy([(t) => OrderingTerm.asc(t.name)]))
+      .watch();
+
   Stream<List<Preset>> watchDrinkPresets() => (select(presets)
         ..where((t) => t.substanceKey.equals('alcohol') & t.deleted.equals(false))
         ..orderBy([(t) => OrderingTerm.asc(t.name)]))

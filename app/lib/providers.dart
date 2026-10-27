@@ -17,6 +17,7 @@ import 'data/reference_repository.dart';
 import 'data/auto_sync.dart';
 import 'data/lan_sync.dart';
 import 'data/reminders.dart';
+import 'ui/quicklog/launch_route.dart';
 import 'data/sync.dart';
 
 /// Overridden at startup (and in tests) with real instances.
@@ -114,6 +115,8 @@ final dosePresetsProvider = StreamProvider.autoDispose.family<List<Preset>, Stri
 final samplesProvider = StreamProvider<List<Product>>((ref) => ref.watch(databaseProvider).watchSamples());
 
 final reagentTestsProvider = StreamProvider<List<ReagentTest>>((ref) => ref.watch(databaseProvider).watchReagentTests());
+
+final allDosePresetsProvider = StreamProvider<List<Preset>>((ref) => ref.watch(databaseProvider).watchAllDosePresets());
 
 final drinkPresetsProvider = StreamProvider<List<Preset>>((ref) => ref.watch(databaseProvider).watchDrinkPresets());
 
@@ -266,6 +269,9 @@ final urlOpenerProvider = Provider<Future<bool> Function(Uri)>((ref) => (uri) as
     return false;
   }
 });
+
+/// Routes from outside the app (Android shortcut, tile, widget). Replaced in tests.
+final launchRoutesProvider = Provider<LaunchRoutes>((ref) => LaunchRoutes());
 
 final cameraScannerAvailableProvider = Provider<bool>((ref) => Platform.isAndroid || Platform.isIOS);
 

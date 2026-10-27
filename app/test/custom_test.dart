@@ -584,7 +584,7 @@ void main() {
 
       await tester.tap(find.text('Journal'));
       await settle(tester);
-      expect(find.text('Magnesium'), findsOneWidget); // the old experience still names it
+      expect(find.widgetWithText(Chip, 'Magnesium'), findsOneWidget); // the old experience still names it
 
       await tester.pump(const Duration(seconds: 1));
       await tester.tap(find.text('Undo'));

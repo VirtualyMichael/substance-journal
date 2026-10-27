@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="quick_log"
+        android:enabled="true"
+        android:icon="@drawable/ic_quick_log"
+        android:shortcutShortLabel="@string/quick_log_short"
+        android:shortcutLongLabel="@string/quick_log_long">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetClass="com.substancejournal.substance_journal_app.MainActivity"
+            android:targetPackage="com.substancejournal.substance_journal_app">
+            <extra
+                android:name="sj_route"
+                android:value="quicklog" />
+        </intent>
+    </shortcut>
+</shortcuts>

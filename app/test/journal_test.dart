@@ -39,7 +39,7 @@ void main() {
     await startApp(tester, app);
 
     expect(find.text('Saturday night'), findsOneWidget);
-    expect(find.text('MDMA'), findsOneWidget);
+    expect(find.widgetWithText(Chip, 'MDMA'), findsOneWidget);
     expect(find.text('1 ingestion  |  Jul 3, 2026 20:00'), findsOneWidget);
 
     await tester.tap(find.text('Saturday night'));
@@ -147,8 +147,8 @@ void main() {
     await settle(tester);
     expect(find.text("Bob's night"), findsOneWidget);
     expect(find.text('My night'), findsNothing);
-    expect(find.text('LSD'), findsOneWidget);
-    expect(find.text('MDMA'), findsNothing);
+    expect(find.widgetWithText(Chip, 'LSD'), findsOneWidget);
+    expect(find.widgetWithText(Chip, 'MDMA'), findsNothing);
 
     await tapKey(tester, 'person-switcher');
     await tester.tap(find.byKey(ValueKey('switch-${me.id}')));
