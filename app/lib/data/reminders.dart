@@ -8,8 +8,10 @@ import 'package:sj_core/sj_core.dart';
 import 'package:timezone/data/latest_all.dart' as tzdata;
 import 'package:timezone/timezone.dart' as tz;
 
+import 'active_now.dart';
 import 'alcohol_data.dart';
 import 'database.dart';
+import 'reference_repository.dart';
 
 /// Something that can put a notification in front of you. A fake one stands in for tests.
 abstract class ReminderNotifier {
@@ -124,21 +126,25 @@ class LocalNotifier implements ReminderNotifier {
 
 /// What the user asked to be reminded about. Kept per device: reminders are about this phone or PC.
 class ReminderPrefs {
-  const ReminderPrefs({this.checkIn = false, this.hour = 21, this.minute = 0, this.limitAlerts = true});
+  const ReminderPrefs({this.checkIn = false, this.hour = 21, this.minute = 0, this.limitAlerts = true, this.waitAlerts = false});
 
   final bool checkIn;
   final int hour;
   final int minute;
   final bool limitAlerts;
 
-  ReminderPrefs copyWith({bool? checkIn, int? hour, int? minute, bool? limitAlerts}) => ReminderPrefs(
+  /// A heads-up when a dose should have fully arrived, so there is no urge to redose early.
+  final bool waitAlerts;
+
+  ReminderPrefs copyWith({bool? checkIn, int? hour, int? minute, bool? limitAlerts, bool? waitAlerts}) => ReminderPrefs(
         checkIn: checkIn ?? this.checkIn,
         hour: hour ?? this.hour,
         minute: minute ?? this.minute,
         limitAlerts: limitAlerts ?? this.limitAlerts,
+        waitAlerts: waitAlerts ?? this.waitAlerts,
       );
 
-  String encode() => jsonEncode({'checkIn': checkIn, 'hour': hour, 'minute': minute, 'limitAlerts': limitAlerts});
+  String encode() => jsonEncode({'checkIn': checkIn, 'hour': hour, 'minute': minute, 'limitAlerts': limitAlerts, 'waitAlerts': waitAlerts});
 
   static ReminderPrefs decode(String? text) {
     if (text == null || text.isEmpty) return const ReminderPrefs();
@@ -150,6 +156,7 @@ class ReminderPrefs {
         hour: inRange(j['hour'], 0, 23, 21),
         minute: inRange(j['minute'], 0, 59, 0),
         limitAlerts: j['limitAlerts'] != false,
+        waitAlerts: j['waitAlerts'] == true,
       );
     } on Object {
       return const ReminderPrefs();
@@ -165,21 +172,25 @@ const _prefsKey = 'reminders';
 /// arrive with the app closed; on a computer they appear while the app is open. Limit alerts fire
 /// right after a drink is logged that takes you close to, or over, a limit you set.
 class ReminderService {
-  ReminderService(this.db, this.notifier, {DateTime Function()? now, this.debounce = const Duration(seconds: 2)})
+  ReminderService(this.db, this.notifier, {this.reference, DateTime Function()? now, this.debounce = const Duration(seconds: 2)})
       : _now = now ?? DateTime.now;
 
+  /// Needed for dose-timing alerts; without it only check-ins and limit alerts run.
+  final ReferenceRepository? reference;
   final AppDatabase db;
   final ReminderNotifier notifier;
   final DateTime Function() _now;
   final Duration debounce;
 
   StreamSubscription<dynamic>? _prefsSub, _updates;
-  Timer? _checkInTimer, _debounceTimer;
+  final _timers = <Timer>[];
+  Timer? _debounceTimer;
   ReminderPrefs _prefs = const ReminderPrefs();
   final _alerted = <String>{};
   bool _started = false;
 
   static const _checkInId = 100;
+  static const _waitId = 300;
   static const _limitId = 200;
 
   Future<void> start() async {
@@ -193,7 +204,10 @@ class ReminderService {
     });
     _updates = db.tableUpdates(TableUpdateQuery.onAllTables([db.ingestions])).listen((_) {
       _debounceTimer?.cancel();
-      _debounceTimer = Timer(debounce, checkLimits);
+      _debounceTimer = Timer(debounce, () {
+        checkLimits();
+        refresh();
+      });
     });
   }
 
@@ -201,7 +215,9 @@ class ReminderService {
     _started = false;
     _prefsSub?.cancel();
     _updates?.cancel();
-    _checkInTimer?.cancel();
+    for (final t in _timers) {
+      t.cancel();
+    }
     _debounceTimer?.cancel();
   }
 
@@ -217,25 +233,70 @@ class ReminderService {
     return [for (var i = 0; i < count; i++) DateTime(day.year, day.month, day.day + i, _prefs.hour, _prefs.minute)];
   }
 
-  /// Applies the current settings: (re)schedules or clears the check-ins.
-  Future<void> refresh() async {
-    _checkInTimer?.cancel();
-    if (!_prefs.checkIn) {
-      await notifier.scheduleAll(const []);
-      return;
+  /// "Fully arrived" alerts for doses still coming up: one per substance, at the time the longest
+  /// published onset and come-up end. Nothing is sent for doses already at full strength.
+  Future<List<ScheduledReminder>> _waitReminders() async {
+    final ref = reference;
+    if (!_prefs.waitAlerts || ref == null) return const [];
+    final person = await _person();
+    if (person == null) return const [];
+    final now = _now();
+    final recent = [for (final i in await db.ingestionsForPerson(person)) if (now.difference(i.time) < const Duration(hours: 12)) i];
+    final items = <ScheduledReminder>[];
+    var n = 0;
+    for (final a in activeNow(ingestions: recent, reference: ref, now: now)) {
+      final d = a.latest;
+      if (d.fullEffectReached || !d.fullEffectAt.isAfter(now)) continue;
+      items.add(ScheduledReminder(
+        _waitId + n++,
+        d.fullEffectAt,
+        '${a.substance.name} should be fully in',
+        'If you feel little, wait longer. Taking more too soon is a common way to take too much.',
+      ));
     }
+    return items;
+  }
+
+  Future<void> _queue = Future.value();
+
+  /// Applies the current settings: (re)schedules or clears check-ins and dose-timing alerts. Runs one
+  /// at a time and always reads the latest settings, so a slow earlier pass cannot undo a newer one.
+  Future<void> refresh() {
+    final next = _queue.then((_) => _refreshNow());
+    _queue = next.then((_) {}, onError: (_) {});
+    return next;
+  }
+
+  Future<void> _refreshNow() async {
+    for (final t in _timers) {
+      t.cancel();
+    }
+    _timers.clear();
     const title = 'Daily check-in';
     const body = 'How did today go? Log anything you missed.';
+    final checkIns = _prefs.checkIn ? upcomingCheckIns() : const <DateTime>[];
+    final items = <ScheduledReminder>[
+      for (final (i, at) in checkIns.indexed) ScheduledReminder(_checkInId + i, at, title, body),
+      ...await _waitReminders(),
+    ];
     if (notifier.canSchedule) {
-      await notifier.scheduleAll([
-        for (final (i, at) in upcomingCheckIns().indexed) ScheduledReminder(_checkInId + i, at, title, body),
-      ]);
-    } else {
-      final due = upcomingCheckIns(count: 1).first;
-      _checkInTimer = Timer(due.difference(_now()), () async {
-        await notifier.show(_checkInId, title, body);
-        await refresh();
-      });
+      await notifier.scheduleAll(items);
+      return;
+    }
+    await notifier.scheduleAll(const []);
+    // A computer cannot wake itself, so alerts fire while the app is open. Only the next check-in is armed.
+    final now = _now();
+    final armed = [
+      if (checkIns.isNotEmpty) items.first,
+      ...items.where((r) => r.id >= _waitId),
+    ];
+    for (final r in armed) {
+      final wait = r.at.difference(now);
+      if (wait.isNegative) continue;
+      _timers.add(Timer(wait, () async {
+        await notifier.show(r.id, r.title, r.body);
+        if (r.id < _waitId) await refresh();
+      }));
     }
   }
 

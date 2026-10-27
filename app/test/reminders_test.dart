@@ -4,6 +4,8 @@ import 'package:sj_core/sj_core.dart';
 import 'package:substance_journal_app/data/database.dart';
 import 'package:substance_journal_app/data/reminders.dart';
 
+import 'helpers.dart';
+
 class FakeNotifier implements ReminderNotifier {
   FakeNotifier({this.canSchedule = false});
   @override
@@ -91,9 +93,35 @@ void main() {
   test('preferences round trip and ignore nonsense', () {
     const prefs = ReminderPrefs(checkIn: true, hour: 8, minute: 15, limitAlerts: false);
     final back = ReminderPrefs.decode(prefs.encode());
-    expect((back.checkIn, back.hour, back.minute, back.limitAlerts), (true, 8, 15, false));
+    expect((back.checkIn, back.hour, back.minute, back.limitAlerts, back.waitAlerts), (true, 8, 15, false, false));
     final bad = ReminderPrefs.decode('{"hour": 99, "minute": "x"}');
     expect((bad.hour, bad.minute, bad.checkIn, bad.limitAlerts), (21, 0, false, true));
     expect(ReminderPrefs.decode('not json').checkIn, isFalse);
+  });
+
+  test('a dose still coming up gets one alert at the time it should be fully in; one already at full strength gets none', () async {
+    final reference = loadReference();
+    final phone = FakeNotifier(canSchedule: true);
+    final base = DateTime(2026, 7, 1, 20, 30);
+    final svc = ReminderService(db, phone, reference: reference, now: () => base);
+    final e = await db.addExperience(personId: personId, sortDate: base);
+    await db.addIngestion(experience: e, substanceKey: 'mdma', route: 'oral', time: base.subtract(const Duration(minutes: 10)), dose: 100, unit: 'mg');
+    final old = await db.addExperience(personId: personId, sortDate: base);
+    await db.addIngestion(experience: old, substanceKey: 'lsd', route: 'sublingual', time: base.subtract(const Duration(hours: 5)), dose: 100, unit: 'µg');
+
+    await svc.save(const ReminderPrefs(waitAlerts: true));
+    await svc.start();
+    final waits = phone.scheduled.where((r) => r.id >= 300).toList();
+    expect(waits, hasLength(1));
+    expect(waits.single.title, 'MDMA should be fully in');
+    expect(waits.single.body, contains('wait longer'));
+    final roa = reference.byKey['mdma']!.roas.first;
+    final minutes = (roa.duration('onset')!.maxMinutes ?? 0) + (roa.duration('comeup')!.maxMinutes ?? 0);
+    expect(waits.single.at, base.subtract(const Duration(minutes: 10)).add(Duration(minutes: minutes.round())));
+
+    await svc.save(const ReminderPrefs(waitAlerts: false)); // switched off: nothing scheduled
+    await Future<void>.delayed(const Duration(milliseconds: 100));
+    expect(phone.scheduled, isEmpty);
+    svc.stop();
   });
 }

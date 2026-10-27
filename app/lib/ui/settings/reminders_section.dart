@@ -15,7 +15,7 @@ class RemindersSection extends ConsumerWidget {
     final service = ref.read(reminderServiceProvider);
 
     Future<void> change(ReminderPrefs next) async {
-      if ((next.checkIn && !prefs.checkIn) || (next.limitAlerts && !prefs.limitAlerts)) {
+      if ((next.checkIn && !prefs.checkIn) || (next.limitAlerts && !prefs.limitAlerts) || (next.waitAlerts && !prefs.waitAlerts)) {
         await ref.read(notifierProvider).requestPermission();
       }
       await service.save(next);
@@ -34,6 +34,14 @@ class RemindersSection extends ConsumerWidget {
           subtitle: const Text('A heads-up when a drink gets you close to, or over, a limit you set.'),
           value: prefs.limitAlerts,
           onChanged: (v) => change(prefs.copyWith(limitAlerts: v)),
+        ),
+        SwitchListTile(
+          key: const ValueKey('wait-alerts'),
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Tell me when a dose has fully arrived'),
+          subtitle: const Text('So there is no urge to take more because it feels weak. Based on published timings.'),
+          value: prefs.waitAlerts,
+          onChanged: (v) => change(prefs.copyWith(waitAlerts: v)),
         ),
         SwitchListTile(
           key: const ValueKey('check-in-reminder'),

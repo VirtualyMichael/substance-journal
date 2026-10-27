@@ -5,6 +5,7 @@ import '../../data/database.dart';
 import '../../providers.dart';
 import '../add/add_ingestion_page.dart';
 import '../design.dart';
+import 'active_now_card.dart';
 import 'experience_page.dart';
 
 /// Opens the add flow and, once saved, the experience it went into.
@@ -60,7 +61,7 @@ class JournalPage extends ConsumerWidget {
       );
     }
 
-    final children = <Widget>[];
+    final children = <Widget>[ActiveNowCard(personId: person.id, ingestions: ingestions)];
     String? lastMonth;
     const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
     for (final e in experiences) {

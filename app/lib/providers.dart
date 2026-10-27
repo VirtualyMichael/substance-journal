@@ -239,7 +239,7 @@ final notifierProvider = Provider<ReminderNotifier>((ref) => LocalNotifier());
 
 /// Daily check-in and limit alerts, running while the app is open. Not started in tests.
 final reminderServiceProvider = Provider<ReminderService>((ref) {
-  final service = ReminderService(ref.watch(databaseProvider), ref.watch(notifierProvider));
+  final service = ReminderService(ref.watch(databaseProvider), ref.watch(notifierProvider), reference: ref.watch(catalogProvider));
   ref.onDispose(service.stop);
   if (!Platform.environment.containsKey('FLUTTER_TEST')) service.start();
   return service;
