@@ -104,6 +104,12 @@ final limitsProvider = StreamProvider.autoDispose.family<DrinkLimits, String>(
 /// Saved cannabis strains and batches, shared by everyone on this journal.
 final cannabisProductsProvider = StreamProvider<List<Product>>((ref) => ref.watch(databaseProvider).watchProducts('cannabis'));
 
+/// Saved dose presets for one substance and route, keyed "substance|route".
+final dosePresetsProvider = StreamProvider.autoDispose.family<List<Preset>, String>((ref, key) {
+  final parts = key.split('|');
+  return ref.watch(databaseProvider).watchDosePresets(parts[0], parts[1]);
+});
+
 final drinkPresetsProvider = StreamProvider<List<Preset>>((ref) => ref.watch(databaseProvider).watchDrinkPresets());
 
 /// One person's alcohol ingestions, oldest first.

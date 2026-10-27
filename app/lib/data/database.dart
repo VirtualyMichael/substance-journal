@@ -554,6 +554,39 @@ class AppDatabase extends _$AppDatabase {
     if (logged.createdExperience) await deleteExperience(logged.experienceId);
   }
 
+  // ---- dose presets (any substance except alcohol, which has drink presets) ----
+
+  Stream<List<Preset>> watchDosePresets(String substanceKey, String route) => (select(presets)
+        ..where((t) => t.substanceKey.equals(substanceKey) & t.route.equals(route) & t.deleted.equals(false))
+        ..orderBy([(t) => OrderingTerm.asc(t.name)]))
+      .watch();
+
+  /// Saves what the dose step holds ([input], the dose form's own JSON) under [name].
+  Future<Preset> addDosePreset({
+    required String substanceKey,
+    required String route,
+    required String name,
+    required double amount,
+    required String unit,
+    required Map<String, Object?> input,
+  }) async {
+    final id = newId();
+    await into(presets).insert(PresetsCompanion.insert(
+      id: id,
+      hlc: nextHlc(),
+      substanceKey: substanceKey,
+      route: route,
+      name: name.trim(),
+      amount: amount,
+      unit: unit,
+      detailsJson: Value(jsonEncode({'input': input})),
+    ));
+    return (select(presets)..where((t) => t.id.equals(id))).getSingle();
+  }
+
+  Future<void> setPresetDeleted(String id, bool value) =>
+      (update(presets)..where((t) => t.id.equals(id))).write(PresetsCompanion(deleted: Value(value), hlc: Value(nextHlc())));
+
   Stream<List<Preset>> watchDrinkPresets() => (select(presets)
         ..where((t) => t.substanceKey.equals('alcohol') & t.deleted.equals(false))
         ..orderBy([(t) => OrderingTerm.asc(t.name)]))

@@ -9,6 +9,7 @@ import '../../data/database.dart';
 import '../../providers.dart';
 import '../design.dart';
 import '../units/custom_unit_picker.dart';
+import 'dose_presets.dart';
 
 enum CannabisEntryMode { product, label }
 
@@ -71,6 +72,7 @@ class DoseInput {
     this.productName,
     this.mushroomForm = 'dried',
     this.mushroomText = '',
+    this.presetNonce = 0,
   });
 
   const DoseInput.empty() : this();
@@ -106,6 +108,9 @@ class DoseInput {
   final String mushroomForm;
   final String mushroomText;
 
+  /// Bumped when a preset fills the form, so fields that only read their starting value redraw.
+  final int presetNonce;
+
   DoseInput copyWith({
     String? text,
     bool? unknown,
@@ -130,6 +135,7 @@ class DoseInput {
     bool clearProduct = false,
     String? mushroomForm,
     String? mushroomText,
+    int? presetNonce,
   }) =>
       DoseInput(
         text: text ?? this.text,
@@ -152,7 +158,62 @@ class DoseInput {
         productName: clearProduct ? null : (productName ?? this.productName),
         mushroomForm: mushroomForm ?? this.mushroomForm,
         mushroomText: mushroomText ?? this.mushroomText,
+        presetNonce: presetNonce ?? this.presetNonce,
       );
+
+  /// What a preset remembers. A custom unit ("2 pills") is not saved: save the preset from a plain dose.
+  Map<String, Object?> toPresetJson() => {
+        'text': text,
+        'isEstimate': isEstimate,
+        'stdDevText': stdDevText,
+        'method': method?.name,
+        'mode': mode?.name,
+        'gramsText': gramsText,
+        'thcText': thcText,
+        'labelMgText': labelMgText,
+        'cbdText': cbdText,
+        'fraction': fraction,
+        'volumeText': volumeText,
+        'volumeUnit': volumeUnit,
+        'abvText': abvText,
+        'productId': productId,
+        'productName': productName,
+        'mushroomForm': mushroomForm,
+        'mushroomText': mushroomText,
+      };
+
+  /// Fills this input from a saved preset's JSON, ignoring anything it does not understand.
+  DoseInput withPreset(Map<String, dynamic> j) {
+    String str(String k, String fallback) => j[k] is String ? j[k] as String : fallback;
+    CannabisMethod? method;
+    CannabisEntryMode? mode;
+    for (final m in CannabisMethod.values) {
+      if (m.name == j['method']) method = m;
+    }
+    for (final m in CannabisEntryMode.values) {
+      if (m.name == j['mode']) mode = m;
+    }
+    return DoseInput(
+      text: str('text', ''),
+      isEstimate: j['isEstimate'] == true,
+      stdDevText: str('stdDevText', ''),
+      method: method,
+      mode: mode,
+      gramsText: str('gramsText', ''),
+      thcText: str('thcText', ''),
+      labelMgText: str('labelMgText', ''),
+      cbdText: str('cbdText', ''),
+      fraction: (j['fraction'] as num?)?.toDouble() ?? 1.0,
+      volumeText: str('volumeText', ''),
+      volumeUnit: str('volumeUnit', 'oz'),
+      abvText: str('abvText', ''),
+      productId: j['productId'] as String?,
+      productName: j['productName'] as String?,
+      mushroomForm: str('mushroomForm', 'dried'),
+      mushroomText: str('mushroomText', ''),
+      presetNonce: presetNonce + 1,
+    );
+  }
 
   static double? _num(String s) => double.tryParse(s.trim().replaceAll(',', '.'));
 
@@ -444,8 +505,18 @@ class DoseEditor extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (substance.key == 'cannabis') return _CannabisForm(roa: roa, value: value, onChanged: onChanged);
-    return _GenericForm(substance: substance, roa: roa, value: value, onChanged: onChanged);
+    final form = substance.key == 'cannabis'
+        ? _CannabisForm(roa: roa, value: value, onChanged: onChanged)
+        : _GenericForm(substance: substance, roa: roa, value: value, onChanged: onChanged);
+    // Alcohol has its own drink presets and quick add; every other substance gets dose presets.
+    if (substance.key == 'alcohol') return form;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        DosePresetBar(substance: substance, roa: roa, value: value, onChanged: onChanged),
+        KeyedSubtree(key: ValueKey('dose-form-${value.presetNonce}'), child: form),
+      ],
+    );
   }
 }
 
