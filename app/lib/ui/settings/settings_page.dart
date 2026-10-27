@@ -10,6 +10,7 @@ import '../sync/sync_page.dart';
 import 'backup_section.dart';
 import 'clinician_report_section.dart';
 import '../products/products_page.dart';
+import '../safety/glossary_page.dart';
 import '../safety/research_page.dart';
 import '../testing/testing_page.dart';
 import '../safety/safer_use_page.dart';
@@ -227,6 +228,13 @@ class SettingsPage extends ConsumerWidget {
               icon: const Icon(Icons.science_outlined),
               label: const Text('Drug checking log'),
               onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const TestingPage())),
+            ),
+            const SizedBox(height: Gap.sm),
+            OutlinedButton.icon(
+              key: const ValueKey('open-glossary-settings'),
+              icon: const Icon(Icons.abc),
+              label: const Text('Glossary'),
+              onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const GlossaryPage())),
             ),
             const SizedBox(height: Gap.sm),
             OutlinedButton.icon(

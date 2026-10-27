@@ -9,6 +9,7 @@ import '../add/add_ingestion_page.dart';
 import '../design.dart';
 import '../../data/research_links.dart';
 import '../link_tile.dart';
+import '../safety/glossary_page.dart';
 import 'route_timeline_chart.dart';
 import '../journal/journal_page.dart';
 import 'compound_picker.dart';
@@ -225,7 +226,16 @@ class CompoundDetailPage extends ConsumerWidget {
                           const SizedBox(height: Gap.sm),
                           Text(describeRoute(roa)),
                           const SizedBox(height: Gap.md),
-                          Text('How it typically unfolds', style: text.titleSmall),
+                          Row(
+                            children: [
+                              Expanded(child: Text('How it typically unfolds', style: text.titleSmall)),
+                              TextButton(
+                                key: ValueKey('glossary-${roa.route}'),
+                                onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const GlossaryPage())),
+                                child: const Text('What do these terms mean?'),
+                              ),
+                            ],
+                          ),
                           const SizedBox(height: Gap.sm),
                           RouteTimelineChart(roa: roa),
                           const SizedBox(height: Gap.sm),

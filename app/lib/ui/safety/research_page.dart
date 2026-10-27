@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../data/research_links.dart';
 import '../design.dart';
 import '../link_tile.dart';
+import 'glossary_page.dart';
 
 /// Where to read more before taking something: the reference sites this app is built on, plus
 /// testing and support services. Links open in the browser.
@@ -25,6 +26,13 @@ class ResearchPage extends StatelessWidget {
                 'No single source is complete or always right. Read more than one, and treat anything you cannot confirm as unknown. '
                 'Opening a link leaves the app and uses your browser.',
                 style: text.bodyMedium,
+              ),
+              const SizedBox(height: Gap.sm),
+              OutlinedButton.icon(
+                key: const ValueKey('open-glossary'),
+                icon: const Icon(Icons.abc),
+                label: const Text('Glossary: what the words mean'),
+                onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const GlossaryPage())),
               ),
               const SizedBox(height: Gap.md),
               for (final (group, links) in researchHub) ...[
