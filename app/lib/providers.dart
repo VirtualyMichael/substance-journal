@@ -292,6 +292,20 @@ final packageSaverProvider = Provider<Future<String?> Function(String fileName, 
       return saved?.toFilePath();
     });
 
+/// Saves a binary file (a PDF) where the person chooses. Replaced in tests.
+final fileSaverProvider = Provider<Future<String?> Function(String fileName, Uint8List bytes)>((ref) => (fileName, bytes) async {
+      final saved = await FilePicker.saveFile(fileName: fileName, bytes: bytes, dialogTitle: 'Save summary');
+      return saved?.toFilePath();
+    });
+
+/// Shares a binary file through the system share sheet. Replaced in tests.
+final fileSharerProvider = Provider<Future<void> Function(String fileName, Uint8List bytes)>((ref) => (fileName, bytes) async {
+      final dir = await getTemporaryDirectory();
+      final file = File('${dir.path}/$fileName');
+      await file.writeAsBytes(bytes);
+      await SharePlus.instance.share(ShareParams(files: [XFile(file.path)], subject: 'Substance Journal summary'));
+    });
+
 /// Shares package text as a file through the system share sheet.
 final packageSharerProvider = Provider<Future<void> Function(String fileName, String text)>((ref) => (fileName, text) async {
       final dir = await getTemporaryDirectory();

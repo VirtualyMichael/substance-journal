@@ -8,6 +8,7 @@ import '../alcohol/alcohol_settings.dart';
 import '../units/custom_units_page.dart';
 import '../sync/sync_page.dart';
 import 'backup_section.dart';
+import 'clinician_report_section.dart';
 import '../products/products_page.dart';
 import '../safety/research_page.dart';
 import '../testing/testing_page.dart';
@@ -256,6 +257,8 @@ class SettingsPage extends ConsumerWidget {
             ),
             const SizedBox(height: Gap.lg),
             const BackupSection(),
+            const SizedBox(height: Gap.lg),
+            ClinicianReportSection(person: person),
             const SizedBox(height: Gap.lg),
             Text('Import from PsychonautWiki Journal', style: text.titleMedium),
             const SizedBox(height: 4),
