@@ -5090,6 +5090,719 @@ class ProductsCompanion extends UpdateCompanion<Product> {
   }
 }
 
+class $ReagentTestsTable extends ReagentTests
+    with TableInfo<$ReagentTestsTable, ReagentTest> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ReagentTestsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _hlcMeta = const VerificationMeta('hlc');
+  @override
+  late final GeneratedColumn<String> hlc = GeneratedColumn<String>(
+    'hlc',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _deletedMeta = const VerificationMeta(
+    'deleted',
+  );
+  @override
+  late final GeneratedColumn<bool> deleted = GeneratedColumn<bool>(
+    'deleted',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("deleted" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _productIdMeta = const VerificationMeta(
+    'productId',
+  );
+  @override
+  late final GeneratedColumn<String> productId = GeneratedColumn<String>(
+    'product_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _substanceKeyMeta = const VerificationMeta(
+    'substanceKey',
+  );
+  @override
+  late final GeneratedColumn<String> substanceKey = GeneratedColumn<String>(
+    'substance_key',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _testedAtMeta = const VerificationMeta(
+    'testedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> testedAt = GeneratedColumn<DateTime>(
+    'tested_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _kindMeta = const VerificationMeta('kind');
+  @override
+  late final GeneratedColumn<String> kind = GeneratedColumn<String>(
+    'kind',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _reagentMeta = const VerificationMeta(
+    'reagent',
+  );
+  @override
+  late final GeneratedColumn<String> reagent = GeneratedColumn<String>(
+    'reagent',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _initialColorMeta = const VerificationMeta(
+    'initialColor',
+  );
+  @override
+  late final GeneratedColumn<String> initialColor = GeneratedColumn<String>(
+    'initial_color',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  static const VerificationMeta _finalColorMeta = const VerificationMeta(
+    'finalColor',
+  );
+  @override
+  late final GeneratedColumn<String> finalColor = GeneratedColumn<String>(
+    'final_color',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  static const VerificationMeta _outcomeMeta = const VerificationMeta(
+    'outcome',
+  );
+  @override
+  late final GeneratedColumn<String> outcome = GeneratedColumn<String>(
+    'outcome',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _notesMeta = const VerificationMeta('notes');
+  @override
+  late final GeneratedColumn<String> notes = GeneratedColumn<String>(
+    'notes',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    hlc,
+    deleted,
+    productId,
+    substanceKey,
+    testedAt,
+    kind,
+    reagent,
+    initialColor,
+    finalColor,
+    outcome,
+    notes,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'reagent_tests';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<ReagentTest> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('hlc')) {
+      context.handle(
+        _hlcMeta,
+        hlc.isAcceptableOrUnknown(data['hlc']!, _hlcMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_hlcMeta);
+    }
+    if (data.containsKey('deleted')) {
+      context.handle(
+        _deletedMeta,
+        deleted.isAcceptableOrUnknown(data['deleted']!, _deletedMeta),
+      );
+    }
+    if (data.containsKey('product_id')) {
+      context.handle(
+        _productIdMeta,
+        productId.isAcceptableOrUnknown(data['product_id']!, _productIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_productIdMeta);
+    }
+    if (data.containsKey('substance_key')) {
+      context.handle(
+        _substanceKeyMeta,
+        substanceKey.isAcceptableOrUnknown(
+          data['substance_key']!,
+          _substanceKeyMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_substanceKeyMeta);
+    }
+    if (data.containsKey('tested_at')) {
+      context.handle(
+        _testedAtMeta,
+        testedAt.isAcceptableOrUnknown(data['tested_at']!, _testedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_testedAtMeta);
+    }
+    if (data.containsKey('kind')) {
+      context.handle(
+        _kindMeta,
+        kind.isAcceptableOrUnknown(data['kind']!, _kindMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_kindMeta);
+    }
+    if (data.containsKey('reagent')) {
+      context.handle(
+        _reagentMeta,
+        reagent.isAcceptableOrUnknown(data['reagent']!, _reagentMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_reagentMeta);
+    }
+    if (data.containsKey('initial_color')) {
+      context.handle(
+        _initialColorMeta,
+        initialColor.isAcceptableOrUnknown(
+          data['initial_color']!,
+          _initialColorMeta,
+        ),
+      );
+    }
+    if (data.containsKey('final_color')) {
+      context.handle(
+        _finalColorMeta,
+        finalColor.isAcceptableOrUnknown(data['final_color']!, _finalColorMeta),
+      );
+    }
+    if (data.containsKey('outcome')) {
+      context.handle(
+        _outcomeMeta,
+        outcome.isAcceptableOrUnknown(data['outcome']!, _outcomeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_outcomeMeta);
+    }
+    if (data.containsKey('notes')) {
+      context.handle(
+        _notesMeta,
+        notes.isAcceptableOrUnknown(data['notes']!, _notesMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  ReagentTest map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ReagentTest(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      hlc: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}hlc'],
+      )!,
+      deleted: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}deleted'],
+      )!,
+      productId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}product_id'],
+      )!,
+      substanceKey: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}substance_key'],
+      )!,
+      testedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}tested_at'],
+      )!,
+      kind: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}kind'],
+      )!,
+      reagent: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}reagent'],
+      )!,
+      initialColor: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}initial_color'],
+      )!,
+      finalColor: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}final_color'],
+      )!,
+      outcome: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}outcome'],
+      )!,
+      notes: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}notes'],
+      )!,
+    );
+  }
+
+  @override
+  $ReagentTestsTable createAlias(String alias) {
+    return $ReagentTestsTable(attachedDatabase, alias);
+  }
+}
+
+class ReagentTest extends DataClass implements Insertable<ReagentTest> {
+  final String id;
+  final String hlc;
+  final bool deleted;
+
+  /// The sample (a Product) this test was done on.
+  final String productId;
+  final String substanceKey;
+  final DateTime testedAt;
+
+  /// 'reagent' (a colour test) or 'strip' (an immunoassay strip).
+  final String kind;
+
+  /// 'Marquis', 'Fentanyl strip', ...
+  final String reagent;
+  final String initialColor;
+  final String finalColor;
+
+  /// reagent: matched, unmatched or unclear (compared with a current chart). strip: positive, negative or invalid.
+  final String outcome;
+  final String notes;
+  const ReagentTest({
+    required this.id,
+    required this.hlc,
+    required this.deleted,
+    required this.productId,
+    required this.substanceKey,
+    required this.testedAt,
+    required this.kind,
+    required this.reagent,
+    required this.initialColor,
+    required this.finalColor,
+    required this.outcome,
+    required this.notes,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['hlc'] = Variable<String>(hlc);
+    map['deleted'] = Variable<bool>(deleted);
+    map['product_id'] = Variable<String>(productId);
+    map['substance_key'] = Variable<String>(substanceKey);
+    map['tested_at'] = Variable<DateTime>(testedAt);
+    map['kind'] = Variable<String>(kind);
+    map['reagent'] = Variable<String>(reagent);
+    map['initial_color'] = Variable<String>(initialColor);
+    map['final_color'] = Variable<String>(finalColor);
+    map['outcome'] = Variable<String>(outcome);
+    map['notes'] = Variable<String>(notes);
+    return map;
+  }
+
+  ReagentTestsCompanion toCompanion(bool nullToAbsent) {
+    return ReagentTestsCompanion(
+      id: Value(id),
+      hlc: Value(hlc),
+      deleted: Value(deleted),
+      productId: Value(productId),
+      substanceKey: Value(substanceKey),
+      testedAt: Value(testedAt),
+      kind: Value(kind),
+      reagent: Value(reagent),
+      initialColor: Value(initialColor),
+      finalColor: Value(finalColor),
+      outcome: Value(outcome),
+      notes: Value(notes),
+    );
+  }
+
+  factory ReagentTest.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ReagentTest(
+      id: serializer.fromJson<String>(json['id']),
+      hlc: serializer.fromJson<String>(json['hlc']),
+      deleted: serializer.fromJson<bool>(json['deleted']),
+      productId: serializer.fromJson<String>(json['productId']),
+      substanceKey: serializer.fromJson<String>(json['substanceKey']),
+      testedAt: serializer.fromJson<DateTime>(json['testedAt']),
+      kind: serializer.fromJson<String>(json['kind']),
+      reagent: serializer.fromJson<String>(json['reagent']),
+      initialColor: serializer.fromJson<String>(json['initialColor']),
+      finalColor: serializer.fromJson<String>(json['finalColor']),
+      outcome: serializer.fromJson<String>(json['outcome']),
+      notes: serializer.fromJson<String>(json['notes']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'hlc': serializer.toJson<String>(hlc),
+      'deleted': serializer.toJson<bool>(deleted),
+      'productId': serializer.toJson<String>(productId),
+      'substanceKey': serializer.toJson<String>(substanceKey),
+      'testedAt': serializer.toJson<DateTime>(testedAt),
+      'kind': serializer.toJson<String>(kind),
+      'reagent': serializer.toJson<String>(reagent),
+      'initialColor': serializer.toJson<String>(initialColor),
+      'finalColor': serializer.toJson<String>(finalColor),
+      'outcome': serializer.toJson<String>(outcome),
+      'notes': serializer.toJson<String>(notes),
+    };
+  }
+
+  ReagentTest copyWith({
+    String? id,
+    String? hlc,
+    bool? deleted,
+    String? productId,
+    String? substanceKey,
+    DateTime? testedAt,
+    String? kind,
+    String? reagent,
+    String? initialColor,
+    String? finalColor,
+    String? outcome,
+    String? notes,
+  }) => ReagentTest(
+    id: id ?? this.id,
+    hlc: hlc ?? this.hlc,
+    deleted: deleted ?? this.deleted,
+    productId: productId ?? this.productId,
+    substanceKey: substanceKey ?? this.substanceKey,
+    testedAt: testedAt ?? this.testedAt,
+    kind: kind ?? this.kind,
+    reagent: reagent ?? this.reagent,
+    initialColor: initialColor ?? this.initialColor,
+    finalColor: finalColor ?? this.finalColor,
+    outcome: outcome ?? this.outcome,
+    notes: notes ?? this.notes,
+  );
+  ReagentTest copyWithCompanion(ReagentTestsCompanion data) {
+    return ReagentTest(
+      id: data.id.present ? data.id.value : this.id,
+      hlc: data.hlc.present ? data.hlc.value : this.hlc,
+      deleted: data.deleted.present ? data.deleted.value : this.deleted,
+      productId: data.productId.present ? data.productId.value : this.productId,
+      substanceKey: data.substanceKey.present
+          ? data.substanceKey.value
+          : this.substanceKey,
+      testedAt: data.testedAt.present ? data.testedAt.value : this.testedAt,
+      kind: data.kind.present ? data.kind.value : this.kind,
+      reagent: data.reagent.present ? data.reagent.value : this.reagent,
+      initialColor: data.initialColor.present
+          ? data.initialColor.value
+          : this.initialColor,
+      finalColor: data.finalColor.present
+          ? data.finalColor.value
+          : this.finalColor,
+      outcome: data.outcome.present ? data.outcome.value : this.outcome,
+      notes: data.notes.present ? data.notes.value : this.notes,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ReagentTest(')
+          ..write('id: $id, ')
+          ..write('hlc: $hlc, ')
+          ..write('deleted: $deleted, ')
+          ..write('productId: $productId, ')
+          ..write('substanceKey: $substanceKey, ')
+          ..write('testedAt: $testedAt, ')
+          ..write('kind: $kind, ')
+          ..write('reagent: $reagent, ')
+          ..write('initialColor: $initialColor, ')
+          ..write('finalColor: $finalColor, ')
+          ..write('outcome: $outcome, ')
+          ..write('notes: $notes')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    hlc,
+    deleted,
+    productId,
+    substanceKey,
+    testedAt,
+    kind,
+    reagent,
+    initialColor,
+    finalColor,
+    outcome,
+    notes,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ReagentTest &&
+          other.id == this.id &&
+          other.hlc == this.hlc &&
+          other.deleted == this.deleted &&
+          other.productId == this.productId &&
+          other.substanceKey == this.substanceKey &&
+          other.testedAt == this.testedAt &&
+          other.kind == this.kind &&
+          other.reagent == this.reagent &&
+          other.initialColor == this.initialColor &&
+          other.finalColor == this.finalColor &&
+          other.outcome == this.outcome &&
+          other.notes == this.notes);
+}
+
+class ReagentTestsCompanion extends UpdateCompanion<ReagentTest> {
+  final Value<String> id;
+  final Value<String> hlc;
+  final Value<bool> deleted;
+  final Value<String> productId;
+  final Value<String> substanceKey;
+  final Value<DateTime> testedAt;
+  final Value<String> kind;
+  final Value<String> reagent;
+  final Value<String> initialColor;
+  final Value<String> finalColor;
+  final Value<String> outcome;
+  final Value<String> notes;
+  final Value<int> rowid;
+  const ReagentTestsCompanion({
+    this.id = const Value.absent(),
+    this.hlc = const Value.absent(),
+    this.deleted = const Value.absent(),
+    this.productId = const Value.absent(),
+    this.substanceKey = const Value.absent(),
+    this.testedAt = const Value.absent(),
+    this.kind = const Value.absent(),
+    this.reagent = const Value.absent(),
+    this.initialColor = const Value.absent(),
+    this.finalColor = const Value.absent(),
+    this.outcome = const Value.absent(),
+    this.notes = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ReagentTestsCompanion.insert({
+    required String id,
+    required String hlc,
+    this.deleted = const Value.absent(),
+    required String productId,
+    required String substanceKey,
+    required DateTime testedAt,
+    required String kind,
+    required String reagent,
+    this.initialColor = const Value.absent(),
+    this.finalColor = const Value.absent(),
+    required String outcome,
+    this.notes = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       hlc = Value(hlc),
+       productId = Value(productId),
+       substanceKey = Value(substanceKey),
+       testedAt = Value(testedAt),
+       kind = Value(kind),
+       reagent = Value(reagent),
+       outcome = Value(outcome);
+  static Insertable<ReagentTest> custom({
+    Expression<String>? id,
+    Expression<String>? hlc,
+    Expression<bool>? deleted,
+    Expression<String>? productId,
+    Expression<String>? substanceKey,
+    Expression<DateTime>? testedAt,
+    Expression<String>? kind,
+    Expression<String>? reagent,
+    Expression<String>? initialColor,
+    Expression<String>? finalColor,
+    Expression<String>? outcome,
+    Expression<String>? notes,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (hlc != null) 'hlc': hlc,
+      if (deleted != null) 'deleted': deleted,
+      if (productId != null) 'product_id': productId,
+      if (substanceKey != null) 'substance_key': substanceKey,
+      if (testedAt != null) 'tested_at': testedAt,
+      if (kind != null) 'kind': kind,
+      if (reagent != null) 'reagent': reagent,
+      if (initialColor != null) 'initial_color': initialColor,
+      if (finalColor != null) 'final_color': finalColor,
+      if (outcome != null) 'outcome': outcome,
+      if (notes != null) 'notes': notes,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ReagentTestsCompanion copyWith({
+    Value<String>? id,
+    Value<String>? hlc,
+    Value<bool>? deleted,
+    Value<String>? productId,
+    Value<String>? substanceKey,
+    Value<DateTime>? testedAt,
+    Value<String>? kind,
+    Value<String>? reagent,
+    Value<String>? initialColor,
+    Value<String>? finalColor,
+    Value<String>? outcome,
+    Value<String>? notes,
+    Value<int>? rowid,
+  }) {
+    return ReagentTestsCompanion(
+      id: id ?? this.id,
+      hlc: hlc ?? this.hlc,
+      deleted: deleted ?? this.deleted,
+      productId: productId ?? this.productId,
+      substanceKey: substanceKey ?? this.substanceKey,
+      testedAt: testedAt ?? this.testedAt,
+      kind: kind ?? this.kind,
+      reagent: reagent ?? this.reagent,
+      initialColor: initialColor ?? this.initialColor,
+      finalColor: finalColor ?? this.finalColor,
+      outcome: outcome ?? this.outcome,
+      notes: notes ?? this.notes,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (hlc.present) {
+      map['hlc'] = Variable<String>(hlc.value);
+    }
+    if (deleted.present) {
+      map['deleted'] = Variable<bool>(deleted.value);
+    }
+    if (productId.present) {
+      map['product_id'] = Variable<String>(productId.value);
+    }
+    if (substanceKey.present) {
+      map['substance_key'] = Variable<String>(substanceKey.value);
+    }
+    if (testedAt.present) {
+      map['tested_at'] = Variable<DateTime>(testedAt.value);
+    }
+    if (kind.present) {
+      map['kind'] = Variable<String>(kind.value);
+    }
+    if (reagent.present) {
+      map['reagent'] = Variable<String>(reagent.value);
+    }
+    if (initialColor.present) {
+      map['initial_color'] = Variable<String>(initialColor.value);
+    }
+    if (finalColor.present) {
+      map['final_color'] = Variable<String>(finalColor.value);
+    }
+    if (outcome.present) {
+      map['outcome'] = Variable<String>(outcome.value);
+    }
+    if (notes.present) {
+      map['notes'] = Variable<String>(notes.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ReagentTestsCompanion(')
+          ..write('id: $id, ')
+          ..write('hlc: $hlc, ')
+          ..write('deleted: $deleted, ')
+          ..write('productId: $productId, ')
+          ..write('substanceKey: $substanceKey, ')
+          ..write('testedAt: $testedAt, ')
+          ..write('kind: $kind, ')
+          ..write('reagent: $reagent, ')
+          ..write('initialColor: $initialColor, ')
+          ..write('finalColor: $finalColor, ')
+          ..write('outcome: $outcome, ')
+          ..write('notes: $notes, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $PresetsTable extends Presets with TableInfo<$PresetsTable, Preset> {
   @override
   final GeneratedDatabase attachedDatabase;
@@ -6847,6 +7560,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     this,
   );
   late final $ProductsTable products = $ProductsTable(this);
+  late final $ReagentTestsTable reagentTests = $ReagentTestsTable(this);
   late final $PresetsTable presets = $PresetsTable(this);
   late final $RecipesTable recipes = $RecipesTable(this);
   late final $SettingsTable settings = $SettingsTable(this);
@@ -6864,6 +7578,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     customUnits,
     customSubstances,
     products,
+    reagentTests,
     presets,
     recipes,
     settings,
@@ -10385,6 +11100,354 @@ typedef $$ProductsTableProcessedTableManager =
       Product,
       PrefetchHooks Function()
     >;
+typedef $$ReagentTestsTableCreateCompanionBuilder =
+    ReagentTestsCompanion Function({
+      required String id,
+      required String hlc,
+      Value<bool> deleted,
+      required String productId,
+      required String substanceKey,
+      required DateTime testedAt,
+      required String kind,
+      required String reagent,
+      Value<String> initialColor,
+      Value<String> finalColor,
+      required String outcome,
+      Value<String> notes,
+      Value<int> rowid,
+    });
+typedef $$ReagentTestsTableUpdateCompanionBuilder =
+    ReagentTestsCompanion Function({
+      Value<String> id,
+      Value<String> hlc,
+      Value<bool> deleted,
+      Value<String> productId,
+      Value<String> substanceKey,
+      Value<DateTime> testedAt,
+      Value<String> kind,
+      Value<String> reagent,
+      Value<String> initialColor,
+      Value<String> finalColor,
+      Value<String> outcome,
+      Value<String> notes,
+      Value<int> rowid,
+    });
+
+class $$ReagentTestsTableFilterComposer
+    extends Composer<_$AppDatabase, $ReagentTestsTable> {
+  $$ReagentTestsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get hlc => $composableBuilder(
+    column: $table.hlc,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get deleted => $composableBuilder(
+    column: $table.deleted,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get productId => $composableBuilder(
+    column: $table.productId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get substanceKey => $composableBuilder(
+    column: $table.substanceKey,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get testedAt => $composableBuilder(
+    column: $table.testedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get kind => $composableBuilder(
+    column: $table.kind,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get reagent => $composableBuilder(
+    column: $table.reagent,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get initialColor => $composableBuilder(
+    column: $table.initialColor,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get finalColor => $composableBuilder(
+    column: $table.finalColor,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get outcome => $composableBuilder(
+    column: $table.outcome,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get notes => $composableBuilder(
+    column: $table.notes,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$ReagentTestsTableOrderingComposer
+    extends Composer<_$AppDatabase, $ReagentTestsTable> {
+  $$ReagentTestsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get hlc => $composableBuilder(
+    column: $table.hlc,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get deleted => $composableBuilder(
+    column: $table.deleted,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get productId => $composableBuilder(
+    column: $table.productId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get substanceKey => $composableBuilder(
+    column: $table.substanceKey,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get testedAt => $composableBuilder(
+    column: $table.testedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get kind => $composableBuilder(
+    column: $table.kind,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get reagent => $composableBuilder(
+    column: $table.reagent,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get initialColor => $composableBuilder(
+    column: $table.initialColor,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get finalColor => $composableBuilder(
+    column: $table.finalColor,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get outcome => $composableBuilder(
+    column: $table.outcome,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get notes => $composableBuilder(
+    column: $table.notes,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$ReagentTestsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $ReagentTestsTable> {
+  $$ReagentTestsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get hlc =>
+      $composableBuilder(column: $table.hlc, builder: (column) => column);
+
+  GeneratedColumn<bool> get deleted =>
+      $composableBuilder(column: $table.deleted, builder: (column) => column);
+
+  GeneratedColumn<String> get productId =>
+      $composableBuilder(column: $table.productId, builder: (column) => column);
+
+  GeneratedColumn<String> get substanceKey => $composableBuilder(
+    column: $table.substanceKey,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get testedAt =>
+      $composableBuilder(column: $table.testedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get kind =>
+      $composableBuilder(column: $table.kind, builder: (column) => column);
+
+  GeneratedColumn<String> get reagent =>
+      $composableBuilder(column: $table.reagent, builder: (column) => column);
+
+  GeneratedColumn<String> get initialColor => $composableBuilder(
+    column: $table.initialColor,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get finalColor => $composableBuilder(
+    column: $table.finalColor,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get outcome =>
+      $composableBuilder(column: $table.outcome, builder: (column) => column);
+
+  GeneratedColumn<String> get notes =>
+      $composableBuilder(column: $table.notes, builder: (column) => column);
+}
+
+class $$ReagentTestsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $ReagentTestsTable,
+          ReagentTest,
+          $$ReagentTestsTableFilterComposer,
+          $$ReagentTestsTableOrderingComposer,
+          $$ReagentTestsTableAnnotationComposer,
+          $$ReagentTestsTableCreateCompanionBuilder,
+          $$ReagentTestsTableUpdateCompanionBuilder,
+          (
+            ReagentTest,
+            BaseReferences<_$AppDatabase, $ReagentTestsTable, ReagentTest>,
+          ),
+          ReagentTest,
+          PrefetchHooks Function()
+        > {
+  $$ReagentTestsTableTableManager(_$AppDatabase db, $ReagentTestsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ReagentTestsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ReagentTestsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ReagentTestsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> hlc = const Value.absent(),
+                Value<bool> deleted = const Value.absent(),
+                Value<String> productId = const Value.absent(),
+                Value<String> substanceKey = const Value.absent(),
+                Value<DateTime> testedAt = const Value.absent(),
+                Value<String> kind = const Value.absent(),
+                Value<String> reagent = const Value.absent(),
+                Value<String> initialColor = const Value.absent(),
+                Value<String> finalColor = const Value.absent(),
+                Value<String> outcome = const Value.absent(),
+                Value<String> notes = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ReagentTestsCompanion(
+                id: id,
+                hlc: hlc,
+                deleted: deleted,
+                productId: productId,
+                substanceKey: substanceKey,
+                testedAt: testedAt,
+                kind: kind,
+                reagent: reagent,
+                initialColor: initialColor,
+                finalColor: finalColor,
+                outcome: outcome,
+                notes: notes,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String hlc,
+                Value<bool> deleted = const Value.absent(),
+                required String productId,
+                required String substanceKey,
+                required DateTime testedAt,
+                required String kind,
+                required String reagent,
+                Value<String> initialColor = const Value.absent(),
+                Value<String> finalColor = const Value.absent(),
+                required String outcome,
+                Value<String> notes = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ReagentTestsCompanion.insert(
+                id: id,
+                hlc: hlc,
+                deleted: deleted,
+                productId: productId,
+                substanceKey: substanceKey,
+                testedAt: testedAt,
+                kind: kind,
+                reagent: reagent,
+                initialColor: initialColor,
+                finalColor: finalColor,
+                outcome: outcome,
+                notes: notes,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$ReagentTestsTable, ReagentTest>(table),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $ReagentTestsTable,
+                    ReagentTest
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$ReagentTestsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $ReagentTestsTable,
+      ReagentTest,
+      $$ReagentTestsTableFilterComposer,
+      $$ReagentTestsTableOrderingComposer,
+      $$ReagentTestsTableAnnotationComposer,
+      $$ReagentTestsTableCreateCompanionBuilder,
+      $$ReagentTestsTableUpdateCompanionBuilder,
+      (
+        ReagentTest,
+        BaseReferences<_$AppDatabase, $ReagentTestsTable, ReagentTest>,
+      ),
+      ReagentTest,
+      PrefetchHooks Function()
+    >;
 typedef $$PresetsTableCreateCompanionBuilder = PresetsCompanion Function({
   required String id,
   required String hlc,
@@ -11332,6 +12395,8 @@ class $AppDatabaseManager {
       $$CustomSubstancesTableTableManager(_db, _db.customSubstances);
   $$ProductsTableTableManager get products =>
       $$ProductsTableTableManager(_db, _db.products);
+  $$ReagentTestsTableTableManager get reagentTests =>
+      $$ReagentTestsTableTableManager(_db, _db.reagentTests);
   $$PresetsTableTableManager get presets =>
       $$PresetsTableTableManager(_db, _db.presets);
   $$RecipesTableTableManager get recipes =>

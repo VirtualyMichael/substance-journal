@@ -10,6 +10,7 @@ import '../sync/sync_page.dart';
 import 'backup_section.dart';
 import '../products/products_page.dart';
 import '../safety/research_page.dart';
+import '../testing/testing_page.dart';
 import '../safety/safer_use_page.dart';
 import 'reminders_section.dart';
 import 'pw_import_flow.dart';
@@ -218,6 +219,13 @@ class SettingsPage extends ConsumerWidget {
               icon: const Icon(Icons.grass),
               label: const Text('Cannabis products'),
               onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ProductsPage())),
+            ),
+            const SizedBox(height: Gap.sm),
+            OutlinedButton.icon(
+              key: const ValueKey('open-testing'),
+              icon: const Icon(Icons.science_outlined),
+              label: const Text('Drug checking log'),
+              onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const TestingPage())),
             ),
             const SizedBox(height: Gap.sm),
             OutlinedButton.icon(

@@ -61,6 +61,7 @@ class SyncService {
     _SyncTable<$CustomSubstancesTable, CustomSubstance>(db.customSubstances, CustomSubstance.fromJson, (r) => r.hlc, (r) => r.toJson()),
     _SyncTable<$CustomUnitsTable, CustomUnit>(db.customUnits, CustomUnit.fromJson, (r) => r.hlc, (r) => r.toJson()),
     _SyncTable<$ProductsTable, Product>(db.products, Product.fromJson, (r) => r.hlc, (r) => r.toJson()),
+    _SyncTable<$ReagentTestsTable, ReagentTest>(db.reagentTests, ReagentTest.fromJson, (r) => r.hlc, (r) => r.toJson()),
     _SyncTable<$IngestionsTable, Ingestion>(db.ingestions, Ingestion.fromJson, (r) => r.hlc, (r) => r.toJson()),
     _SyncTable<$TimedNotesTable, TimedNote>(db.timedNotes, TimedNote.fromJson, (r) => r.hlc, (r) => r.toJson()),
     _SyncTable<$RatingsTable, Rating>(db.ratings, Rating.fromJson, (r) => r.hlc, (r) => r.toJson()),

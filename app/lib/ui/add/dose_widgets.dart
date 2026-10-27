@@ -10,6 +10,7 @@ import '../../providers.dart';
 import '../design.dart';
 import '../units/custom_unit_picker.dart';
 import 'dose_presets.dart';
+import 'dose_sample.dart';
 
 enum CannabisEntryMode { product, label }
 
@@ -372,12 +373,13 @@ class DoseInput {
       stdDev: !unknown && isEstimate ? stdDev : null,
       absorbedMg: null,
       method: null,
+      productId: productId,
       // Keep what was actually poured, so it reads "12 fl oz at 5%" rather than grams of ethanol.
       details: drink
           ? {'drink': '', 'volume': volume, 'volumeUnit': volumeUnit, 'abv': abv}
           : (roa.substanceKey == 'psilocybin_mushrooms' && !unknown && mushroomText.trim().isNotEmpty)
-              ? {'form': mushroomForm, 'entered': _num(mushroomText)}
-              : const {},
+              ? {'form': mushroomForm, 'entered': _num(mushroomText), if (productName != null) 'sample': productName}
+              : {if (productName != null) 'sample': productName},
     );
   }
 }
@@ -514,6 +516,7 @@ class DoseEditor extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         DosePresetBar(substance: substance, roa: roa, value: value, onChanged: onChanged),
+        if (substance.key != 'cannabis') DoseSampleBar(substance: substance, value: value, onChanged: onChanged),
         KeyedSubtree(key: ValueKey('dose-form-${value.presetNonce}'), child: form),
       ],
     );

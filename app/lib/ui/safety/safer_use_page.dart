@@ -4,6 +4,7 @@ import 'package:sj_core/sj_core.dart';
 
 import '../../providers.dart';
 import '../design.dart';
+import '../testing/testing_page.dart';
 import 'research_page.dart';
 
 /// Harm-reduction basics and a combination checker. The checker only repeats what the bundled
@@ -89,6 +90,13 @@ class _SaferUsePageState extends ConsumerState<SaferUsePage> {
                 ),
               ),
               const SizedBox(height: Gap.md),
+              OutlinedButton.icon(
+                key: const ValueKey('safer-use-testing'),
+                icon: const Icon(Icons.science_outlined),
+                label: const Text('Drug checking log'),
+                onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const TestingPage())),
+              ),
+              const SizedBox(height: Gap.sm),
               OutlinedButton.icon(
                 key: const ValueKey('safer-use-research'),
                 icon: const Icon(Icons.menu_book_outlined),

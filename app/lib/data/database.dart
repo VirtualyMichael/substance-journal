@@ -12,7 +12,7 @@ import 'tables.dart';
 part 'database.g.dart';
 
 /// Bumped when a table changes; backups copy the file before an upgrade past an older number.
-const int currentSchemaVersion = 4;
+const int currentSchemaVersion = 5;
 
 @DriftDatabase(tables: [
   People,
@@ -23,6 +23,7 @@ const int currentSchemaVersion = 4;
   CustomUnits,
   CustomSubstances,
   Products,
+  ReagentTests,
   Presets,
   Recipes,
   Settings,
@@ -58,6 +59,9 @@ class AppDatabase extends _$AppDatabase {
           }
           if (from < 4) {
             await m.createTable(recipes);
+          }
+          if (from < 5) {
+            await m.createTable(reagentTests);
           }
         },
       );
@@ -706,6 +710,50 @@ class AppDatabase extends _$AppDatabase {
 
   Future<void> setProductDeleted(String id, bool value) =>
       (update(products)..where((t) => t.id.equals(id))).write(ProductsCompanion(deleted: Value(value), hlc: Value(nextHlc())));
+
+  // ---- drug checking ----
+
+  Stream<List<ReagentTest>> watchReagentTests() => (select(reagentTests)
+        ..where((t) => t.deleted.equals(false))
+        ..orderBy([(t) => OrderingTerm.desc(t.testedAt)]))
+      .watch();
+
+  /// Every live sample of any substance (cannabis strains included), by name.
+  Stream<List<Product>> watchSamples() => (select(products)
+        ..where((t) => t.deleted.equals(false))
+        ..orderBy([(t) => OrderingTerm.asc(t.name)]))
+      .watch();
+
+  Future<ReagentTest> addReagentTest({
+    required String productId,
+    required String substanceKey,
+    required DateTime testedAt,
+    required String kind,
+    required String reagent,
+    String initialColor = '',
+    String finalColor = '',
+    required String outcome,
+    String notes = '',
+  }) async {
+    final id = newId();
+    await into(reagentTests).insert(ReagentTestsCompanion.insert(
+      id: id,
+      hlc: nextHlc(),
+      productId: productId,
+      substanceKey: substanceKey,
+      testedAt: testedAt,
+      kind: kind,
+      reagent: reagent,
+      initialColor: Value(initialColor),
+      finalColor: Value(finalColor),
+      outcome: outcome,
+      notes: Value(notes.trim()),
+    ));
+    return (select(reagentTests)..where((t) => t.id.equals(id))).getSingle();
+  }
+
+  Future<void> setReagentTestDeleted(String id, bool value) =>
+      (update(reagentTests)..where((t) => t.id.equals(id))).write(ReagentTestsCompanion(deleted: Value(value), hlc: Value(nextHlc())));
 
   // ---- recipes ----
 

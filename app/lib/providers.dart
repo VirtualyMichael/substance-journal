@@ -110,6 +110,11 @@ final dosePresetsProvider = StreamProvider.autoDispose.family<List<Preset>, Stri
   return ref.watch(databaseProvider).watchDosePresets(parts[0], parts[1]);
 });
 
+/// Every saved sample, and the drug-checking tests done on them.
+final samplesProvider = StreamProvider<List<Product>>((ref) => ref.watch(databaseProvider).watchSamples());
+
+final reagentTestsProvider = StreamProvider<List<ReagentTest>>((ref) => ref.watch(databaseProvider).watchReagentTests());
+
 final drinkPresetsProvider = StreamProvider<List<Preset>>((ref) => ref.watch(databaseProvider).watchDrinkPresets());
 
 /// One person's alcohol ingestions, oldest first.

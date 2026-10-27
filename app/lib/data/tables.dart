@@ -106,6 +106,27 @@ class Products extends Table with SyncColumns {
   TextColumn get detailsJson => text().withDefault(const Constant('{}'))();
 }
 
+/// One drug-checking test on a sample (a Product row): a reagent colour test or a test strip. The app
+/// records what you saw and what you concluded; it never decides a sample is safe.
+class ReagentTests extends Table with SyncColumns {
+  /// The sample (a Product) this test was done on.
+  TextColumn get productId => text()();
+  TextColumn get substanceKey => text()();
+  DateTimeColumn get testedAt => dateTime()();
+
+  /// 'reagent' (a colour test) or 'strip' (an immunoassay strip).
+  TextColumn get kind => text()();
+
+  /// 'Marquis', 'Fentanyl strip', ...
+  TextColumn get reagent => text()();
+  TextColumn get initialColor => text().withDefault(const Constant(''))();
+  TextColumn get finalColor => text().withDefault(const Constant(''))();
+
+  /// reagent: matched, unmatched or unclear (compared with a current chart). strip: positive, negative or invalid.
+  TextColumn get outcome => text()();
+  TextColumn get notes => text().withDefault(const Constant(''))();
+}
+
 /// Quick-add presets (a favourite drink, a usual dose).
 class Presets extends Table with SyncColumns {
   TextColumn get substanceKey => text()();
