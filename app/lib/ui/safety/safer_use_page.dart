@@ -4,6 +4,7 @@ import 'package:sj_core/sj_core.dart';
 
 import '../../providers.dart';
 import '../design.dart';
+import 'research_page.dart';
 
 /// Harm-reduction basics and a combination checker. The checker only repeats what the bundled
 /// references (TripSit's combination chart and PsychonautWiki's interaction lists) say, and says
@@ -86,6 +87,13 @@ class _SaferUsePageState extends ConsumerState<SaferUsePage> {
                     ],
                   ),
                 ),
+              ),
+              const SizedBox(height: Gap.md),
+              OutlinedButton.icon(
+                key: const ValueKey('safer-use-research'),
+                icon: const Icon(Icons.menu_book_outlined),
+                label: const Text('Research and resources'),
+                onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ResearchPage())),
               ),
               const SizedBox(height: Gap.md),
               Text(

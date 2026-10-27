@@ -7,6 +7,7 @@ import '../../data/database.dart';
 import '../../providers.dart';
 import '../add/add_ingestion_page.dart';
 import '../design.dart';
+import '../../data/research_links.dart';
 import '../link_tile.dart';
 import 'route_timeline_chart.dart';
 import '../journal/journal_page.dart';
@@ -268,6 +269,14 @@ class CompoundDetailPage extends ConsumerWidget {
                       padding: const EdgeInsets.only(top: 6),
                       child: Text('$label: ${names.join(', ')}'),
                     ),
+              ],
+              if (!isCustom) ...[
+                const SizedBox(height: Gap.md),
+                Text('Research before you take it', style: text.titleMedium),
+                const SizedBox(height: 4),
+                Text('Read more from the sites this app draws on. Check more than one source.', style: text.bodySmall),
+                for (final l in researchLinksFor(substance)) LinkTile(l.url, label: l.title, description: l.description),
+                LinkTile(psychonautWikiIndex.url, label: psychonautWikiIndex.title, description: psychonautWikiIndex.description),
               ],
               if (substance.sources.isNotEmpty) ...[
                 const SizedBox(height: Gap.md),

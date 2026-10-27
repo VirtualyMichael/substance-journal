@@ -7,12 +7,15 @@ import '../providers.dart';
 /// A source reference. Web links open in the browser (long press copies the address); anything
 /// that is not a link is shown as plain selectable text.
 class LinkTile extends ConsumerWidget {
-  const LinkTile(this.source, {super.key, this.label});
+  const LinkTile(this.source, {super.key, this.label, this.description});
 
   final String source;
 
   /// Text to show instead of the address.
   final String? label;
+
+  /// One line about what the link leads to.
+  final String? description;
 
   static Uri? asUri(String s) {
     final uri = Uri.tryParse(s.trim());
@@ -55,9 +58,15 @@ class LinkTile extends ConsumerWidget {
             Icon(Icons.open_in_new, size: 16, color: scheme.primary),
             const SizedBox(width: 8),
             Expanded(
-              child: Text(
-                label ?? shortName(uri),
-                style: text?.copyWith(color: scheme.primary, decoration: TextDecoration.underline, decorationColor: scheme.primary),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label ?? shortName(uri),
+                    style: text?.copyWith(color: scheme.primary, decoration: TextDecoration.underline, decorationColor: scheme.primary),
+                  ),
+                  if (description != null) Text(description!, style: Theme.of(context).textTheme.bodySmall),
+                ],
               ),
             ),
           ],
