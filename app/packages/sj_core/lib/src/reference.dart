@@ -99,6 +99,7 @@ class Substance {
     this.unsafe = const [],
     this.uncertain = const [],
     this.audited = true,
+    this.crossChecked = false,
     this.chemicalClass = '',
     this.license,
     this.wikiUrl,
@@ -127,6 +128,9 @@ class Substance {
   /// False for the broad PsychonautWiki catalog, which is copied as published and has not been
   /// cross-checked the way the nine audited substances were.
   final bool audited;
+
+  /// Not audited by hand, but a second source (TripSit) gives dose bands within 50% of the first.
+  final bool crossChecked;
   final String chemicalClass;
   final String? license;
   final String? wikiUrl;
@@ -223,6 +227,7 @@ Substance _parseSubstance(Map<String, dynamic> j) {
     unsafe: _strings(j['unsafe_interactions']),
     uncertain: _strings(j['uncertain_interactions']),
     audited: j['audited'] as bool? ?? true,
+    crossChecked: j['cross_checked'] as bool? ?? false,
     chemicalClass: j['chemical_class'] as String? ?? '',
     license: j['license'] as String?,
     wikiUrl: j['wiki_url'] as String?,

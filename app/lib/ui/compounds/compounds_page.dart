@@ -167,7 +167,9 @@ class CompoundDetailPage extends ConsumerWidget {
                 Text(
                   substance.audited
                       ? 'Doses and timings here were checked against several published sources.'
-                      : 'Copied from PsychonautWiki and not independently checked, so treat the numbers as a starting point.',
+                      : substance.crossChecked
+                          ? 'From PsychonautWiki, and TripSit lists dose bands within 50% of it. That is two sources agreeing, not an independent audit.'
+                          : 'Copied from PsychonautWiki and not independently checked, so treat the numbers as a starting point.',
                   key: const ValueKey('audit-note'),
                   style: text.bodySmall,
                 ),

@@ -21,3 +21,7 @@ Interaction pairs in `data/interactions.json` come from the TripSit combination 
 
 The importer reads the JSON export file format of the PsychonautWiki Journal app. It uses none of that
 app's source code.
+
+## TripSit cross-check
+
+`data/crosscheck_tripsit.json` and `docs/data-audit/crosscheck.md` record, for each compound, whether TripSit's open drug dataset (https://github.com/TripSit/drugs, CC BY-SA 4.0) agrees with PsychonautWiki's dose bands and timings, and where they differ the figures from both. Only those verdicts and the differing numbers are kept, each linked to the TripSit factsheet.

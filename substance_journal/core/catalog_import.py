@@ -172,6 +172,60 @@ def normalize_substance(raw: dict, fetched: date | None = None) -> dict | None:
     }
 
 
+COPIED_NOTE = "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+CROSSCHECK_PREFIX = "Cross-check: "
+
+
+def apply_crosschecks(items: list[dict], crosschecks: dict) -> list[dict]:
+    """Fold data/crosscheck_tripsit.json into the catalog (safe to run again on its own output).
+
+    agrees     -> cross_checked = true, the copied-only note is replaced, TripSit's page is added as a source
+    conflicts  -> stays unchecked; a note names the disagreement and, where TripSit is lower, says to start there
+    otherwise  -> unchanged
+    """
+    for item in items:
+        verdict = crosschecks.get(item["key"])
+        notes = [n for n in item.get("safety_notes", []) if not n.startswith(CROSSCHECK_PREFIX)]
+        item["cross_checked"] = False
+        if verdict and verdict.get("status") in ("agrees", "conflicts"):
+            if verdict["url"] not in item.setdefault("sources", []):
+                item["sources"].append(verdict["url"])
+        if verdict and verdict["status"] == "agrees":
+            item["cross_checked"] = True
+            notes = [n for n in notes if n != COPIED_NOTE]
+            routes = ", ".join(verdict["agrees"])
+            notes.append(
+                f"{CROSSCHECK_PREFIX}TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for {routes}"
+                + (", and the timings overlap." if verdict.get("durations") == "overlap" else ".")
+                + " Two sources agreeing is reassuring but is not an independent audit."
+            )
+        elif verdict and verdict["status"] == "conflicts":
+            lower = [c for c in verdict["conflicts"] if c["tripsit_is_lower"]]
+            shown = lower or verdict["conflicts"]
+            for c in shown[:3]:
+                if c["tripsit_is_lower"]:
+                    notes.append(
+                        f"{CROSSCHECK_PREFIX}TripSit lists a lower {c['band'].lower()} dose for {c['route']} ({c['tripsit']}) than PsychonautWiki "
+                        f"({c['psychonautwiki']}). Start with the lower figure."
+                    )
+                else:
+                    notes.append(
+                        f"{CROSSCHECK_PREFIX}the sources differ on the {c['band'].lower()} dose for {c['route']}: PsychonautWiki {c['psychonautwiki']}, TripSit {c['tripsit']}."
+                    )
+            if len(shown) > 3:
+                notes.append(f"{CROSSCHECK_PREFIX}{len(shown) - 3} more dose bands differ between PsychonautWiki and TripSit. Compare both pages.")
+        item["safety_notes"] = notes
+    return items
+
+
+def load_crosschecks(path: "Path | None" = None) -> dict:
+    import json
+    from pathlib import Path as _P
+
+    target = path or _P(__file__).resolve().parents[2] / "data" / "crosscheck_tripsit.json"
+    return json.loads(target.read_text(encoding="utf-8")) if target.exists() else {}
+
+
 def build_extra_catalog(raw_substances: list[dict], fetched: date | None = None) -> list[dict]:
     """Normalize every record except the audited nine, sorted by name, with unique keys."""
     result: list[dict] = []
@@ -190,4 +244,4 @@ def build_extra_catalog(raw_substances: list[dict], fetched: date | None = None)
         item["key"] = key
         seen.add(key)
         result.append(item)
-    return result
+    return apply_crosschecks(result, load_crosschecks())

@@ -82,13 +82,16 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/1%2C4-Butanediol"
+      "https://psychonautwiki.org/wiki/1%2C4-Butanediol",
+      "https://tripsit.me/factsheets/1%2C4-butanediol"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower strong dose for oral (1.5ml+) than PsychonautWiki (2.5 ml). Start with the lower figure."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "1b-lsd",
@@ -172,13 +175,15 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/1B-LSD"
+      "https://psychonautwiki.org/wiki/1B-LSD",
+      "https://tripsit.me/factsheets/1b-lsd"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral, and the timings overlap. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "1cp-al-lad",
@@ -268,7 +273,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "1cp-lsd",
@@ -352,13 +358,15 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/1cP-LSD"
+      "https://psychonautwiki.org/wiki/1cP-LSD",
+      "https://tripsit.me/factsheets/1cp-lsd"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral, and the timings overlap. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "1cp-mipla",
@@ -444,7 +452,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "1p-eth-lad",
@@ -521,13 +530,15 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/1P-ETH-LAD"
+      "https://psychonautwiki.org/wiki/1P-ETH-LAD",
+      "https://tripsit.me/factsheets/1p-eth-lad"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral, and the timings overlap. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "1p-lsd",
@@ -611,13 +622,15 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/1P-LSD"
+      "https://psychonautwiki.org/wiki/1P-LSD",
+      "https://tripsit.me/factsheets/1p-lsd"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral, and the timings overlap. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "1v-lsd",
@@ -707,7 +720,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "2_5-dma",
@@ -778,7 +792,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "2-aminoindane",
@@ -859,13 +874,15 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/2-Aminoindane"
+      "https://psychonautwiki.org/wiki/2-Aminoindane",
+      "https://tripsit.me/factsheets/2-ai"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral, and the timings overlap. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "2-fa",
@@ -960,13 +977,18 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/2-FA"
+      "https://psychonautwiki.org/wiki/2-FA",
+      "https://tripsit.me/factsheets/2-fa"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower common dose for oral (15-30mg) than PsychonautWiki (30 mg). Start with the lower figure.",
+      "Cross-check: TripSit lists a lower light dose for oral (5-15mg) than PsychonautWiki (15 mg). Start with the lower figure.",
+      "Cross-check: TripSit lists a lower strong dose for oral (30-50mg) than PsychonautWiki (50 mg). Start with the lower figure."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "2-fea",
@@ -1065,7 +1087,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "2-fluorodeschloroketamine",
@@ -1187,13 +1210,16 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/2-Fluorodeschloroketamine"
+      "https://psychonautwiki.org/wiki/2-Fluorodeschloroketamine",
+      "https://tripsit.me/factsheets/2-fdck"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: the sources differ on the light dose for insufflated: PsychonautWiki 10 mg, TripSit 20-50mg."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "2-fma",
@@ -1342,13 +1368,17 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/2-FMA"
+      "https://psychonautwiki.org/wiki/2-FMA",
+      "https://tripsit.me/factsheets/2-fma"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: the sources differ on the common dose for oral: PsychonautWiki 15 mg, TripSit 25-35mg.",
+      "Cross-check: the sources differ on the light dose for oral: PsychonautWiki 5 mg, TripSit 15-25mg."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "25b-nbome",
@@ -1468,13 +1498,17 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/25B-NBOMe"
+      "https://psychonautwiki.org/wiki/25B-NBOMe",
+      "https://tripsit.me/factsheets/25b-nbome"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: the sources differ on the threshold dose for insufflated: PsychonautWiki 25 µg, TripSit 50ug.",
+      "Cross-check: the sources differ on the threshold dose for sublingual: PsychonautWiki 50 µg, TripSit 100ug."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "25c-nboh",
@@ -1550,13 +1584,15 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/25C-NBOH"
+      "https://psychonautwiki.org/wiki/25C-NBOH",
+      "https://tripsit.me/factsheets/25c-nboh"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for sublingual, and the timings overlap. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "25c-nbome",
@@ -1649,13 +1685,17 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/25C-NBOMe"
+      "https://psychonautwiki.org/wiki/25C-NBOMe",
+      "https://tripsit.me/factsheets/25c-nbome"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: the sources differ on the common dose for sublingual: PsychonautWiki 300 µg, TripSit 500-750ug.",
+      "Cross-check: the sources differ on the light dose for sublingual: PsychonautWiki 100 µg, TripSit 250-500ug."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "25d-nbome",
@@ -1741,13 +1781,16 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/25D-NBOMe"
+      "https://psychonautwiki.org/wiki/25D-NBOMe",
+      "https://tripsit.me/factsheets/25d-nbome"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower common dose for sublingual (500-1000ug) than PsychonautWiki (800 µg). Start with the lower figure."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "25e-nboh",
@@ -1830,7 +1873,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "25i-nboh",
@@ -1921,7 +1965,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "25i-nbome",
@@ -2067,13 +2112,15 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/25I-NBOMe"
+      "https://psychonautwiki.org/wiki/25I-NBOMe",
+      "https://tripsit.me/factsheets/25i-nbome"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for sublingual, and the timings overlap. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "25n-nbome",
@@ -2163,13 +2210,15 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/25N-NBOMe"
+      "https://psychonautwiki.org/wiki/25N-NBOMe",
+      "https://tripsit.me/factsheets/25n-nbome"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for sublingual, and the timings overlap. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "2c-b-fly",
@@ -2253,13 +2302,15 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/2C-B-FLY"
+      "https://psychonautwiki.org/wiki/2C-B-FLY",
+      "https://tripsit.me/factsheets/2c-b-fly"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral, and the timings overlap. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "2c-c",
@@ -2343,13 +2394,19 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/2C-C"
+      "https://psychonautwiki.org/wiki/2C-C",
+      "https://tripsit.me/factsheets/2c-c"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower common dose for oral (15-25mg) than PsychonautWiki (30 mg). Start with the lower figure.",
+      "Cross-check: TripSit lists a lower heavy dose for oral (30-40mg+) than PsychonautWiki (90 mg). Start with the lower figure.",
+      "Cross-check: TripSit lists a lower light dose for oral (5-15mg) than PsychonautWiki (15 mg). Start with the lower figure.",
+      "Cross-check: 1 more dose bands differ between PsychonautWiki and TripSit. Compare both pages."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "2c-d",
@@ -2435,13 +2492,16 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/2C-D"
+      "https://psychonautwiki.org/wiki/2C-D",
+      "https://tripsit.me/factsheets/2c-d"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower light dose for oral (5-15mg) than PsychonautWiki (10 mg). Start with the lower figure."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "2c-e",
@@ -2568,13 +2628,15 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/2C-E"
+      "https://psychonautwiki.org/wiki/2C-E",
+      "https://tripsit.me/factsheets/2c-e"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for insufflated, oral, and the timings overlap. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "2c-i",
@@ -2658,13 +2720,15 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/2C-I"
+      "https://psychonautwiki.org/wiki/2C-I",
+      "https://tripsit.me/factsheets/2c-i"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "2c-p",
@@ -2748,13 +2812,16 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/2C-P"
+      "https://psychonautwiki.org/wiki/2C-P",
+      "https://tripsit.me/factsheets/2c-p"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower strong dose for oral (6-10mg) than PsychonautWiki (10 mg). Start with the lower figure."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "2c-t",
@@ -2828,13 +2895,15 @@
     "uncertain_interactions": [],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/2C-T"
+      "https://psychonautwiki.org/wiki/2C-T",
+      "https://tripsit.me/factsheets/2c-t"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral, and the timings overlap. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "2c-t-2",
@@ -2954,13 +3023,16 @@
     "uncertain_interactions": [],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/2C-T-2"
+      "https://psychonautwiki.org/wiki/2C-T-2",
+      "https://tripsit.me/factsheets/2c-t-2"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: the sources differ on the threshold dose for oral: PsychonautWiki 3 mg, TripSit 5mg."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "2c-t-21",
@@ -3034,13 +3106,19 @@
     "uncertain_interactions": [],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/2C-T-21"
+      "https://psychonautwiki.org/wiki/2C-T-21",
+      "https://tripsit.me/factsheets/2c-t-21"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower common dose for oral (5-8mg) than PsychonautWiki (10 mg). Start with the lower figure.",
+      "Cross-check: TripSit lists a lower heavy dose for oral (8-12mg) than PsychonautWiki (15 mg). Start with the lower figure.",
+      "Cross-check: TripSit lists a lower light dose for oral (3-5mg) than PsychonautWiki (5 mg). Start with the lower figure.",
+      "Cross-check: 1 more dose bands differ between PsychonautWiki and TripSit. Compare both pages."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "2c-t-7",
@@ -3170,13 +3248,15 @@
     "uncertain_interactions": [],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/2C-T-7"
+      "https://psychonautwiki.org/wiki/2C-T-7",
+      "https://tripsit.me/factsheets/2c-t-7"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "2m2b",
@@ -3253,7 +3333,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "3_4-ctmp",
@@ -3331,13 +3412,16 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/3%2C4-CTMP"
+      "https://psychonautwiki.org/wiki/3%2C4-CTMP",
+      "https://tripsit.me/factsheets/3%2C4-ctmp"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower threshold dose for oral (1-2mg) than PsychonautWiki (2 mg). Start with the lower figure."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "3-fa",
@@ -3437,13 +3521,18 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/3-FA"
+      "https://psychonautwiki.org/wiki/3-FA",
+      "https://tripsit.me/factsheets/3-fa"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower common dose for oral (15-30mg) than PsychonautWiki (30 mg). Start with the lower figure.",
+      "Cross-check: TripSit lists a lower light dose for oral (5-15mg) than PsychonautWiki (20 mg). Start with the lower figure.",
+      "Cross-check: TripSit lists a lower strong dose for oral (30-60mg+) than PsychonautWiki (50 mg). Start with the lower figure."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "3-fea",
@@ -3592,13 +3681,16 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/3-FEA"
+      "https://psychonautwiki.org/wiki/3-FEA",
+      "https://tripsit.me/factsheets/3-fea"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower light dose for oral (10-30mg) than PsychonautWiki (20 mg). Start with the lower figure."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "3-fma",
@@ -3675,13 +3767,16 @@
     "uncertain_interactions": [],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/3-FMA"
+      "https://psychonautwiki.org/wiki/3-FMA",
+      "https://tripsit.me/factsheets/3-fma"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower light dose for oral (5-15mg) than PsychonautWiki (10 mg). Start with the lower figure."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "3-fpm",
@@ -3790,13 +3885,16 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/3-FPM"
+      "https://psychonautwiki.org/wiki/3-FPM",
+      "https://tripsit.me/factsheets/3-fpm"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower threshold dose for oral (5-10mg) than PsychonautWiki (10 mg). Start with the lower figure."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "3-ho-pce",
@@ -3857,13 +3955,17 @@
     "uncertain_interactions": [],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/3-HO-PCE"
+      "https://psychonautwiki.org/wiki/3-HO-PCE",
+      "https://tripsit.me/factsheets/3-ho-pce"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower common dose for oral (5-10mg) than PsychonautWiki (10 mg). Start with the lower figure.",
+      "Cross-check: TripSit lists a lower light dose for oral (2-5mg) than PsychonautWiki (5 mg). Start with the lower figure."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "3-ho-pcp",
@@ -3928,13 +4030,15 @@
     "uncertain_interactions": [],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/3-HO-PCP"
+      "https://psychonautwiki.org/wiki/3-HO-PCP",
+      "https://tripsit.me/factsheets/3-ho-pcp"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral, and the timings overlap. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "3-meo-pce",
@@ -4065,13 +4169,16 @@
     "uncertain_interactions": [],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/3-MeO-PCE"
+      "https://psychonautwiki.org/wiki/3-MeO-PCE",
+      "https://tripsit.me/factsheets/3-meo-pce"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower common dose for oral (5-10mg) than PsychonautWiki (8 mg). Start with the lower figure."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "3-meo-pcmo",
@@ -4145,13 +4252,18 @@
     "uncertain_interactions": [],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/3-MeO-PCMo"
+      "https://psychonautwiki.org/wiki/3-MeO-PCMo",
+      "https://tripsit.me/factsheets/3-meo-pcmo"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower common dose for oral (80-125mg) than PsychonautWiki (200 mg). Start with the lower figure.",
+      "Cross-check: TripSit lists a lower light dose for oral (50-80mg) than PsychonautWiki (100 mg). Start with the lower figure.",
+      "Cross-check: TripSit lists a lower strong dose for oral (125-150mg+) than PsychonautWiki (300 mg). Start with the lower figure."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "3-meo-pcp",
@@ -4312,13 +4424,16 @@
     "uncertain_interactions": [],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/3-MeO-PCP"
+      "https://psychonautwiki.org/wiki/3-MeO-PCP",
+      "https://tripsit.me/factsheets/3-meo-pcp"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower heavy dose for oral (15-18mg+) than PsychonautWiki (25 mg). Start with the lower figure."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "3-mmc",
@@ -4513,13 +4628,18 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/3-MMC"
+      "https://psychonautwiki.org/wiki/3-MMC",
+      "https://tripsit.me/factsheets/3-mmc"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower common dose for oral (75-150mg) than PsychonautWiki (150 mg). Start with the lower figure.",
+      "Cross-check: TripSit lists a lower light dose for oral (25-75mg) than PsychonautWiki (50 mg). Start with the lower figure.",
+      "Cross-check: TripSit lists a lower strong dose for oral (150mg-300mg+) than PsychonautWiki (250 mg). Start with the lower figure."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "3c-e",
@@ -4646,13 +4766,15 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/3C-E"
+      "https://psychonautwiki.org/wiki/3C-E",
+      "https://tripsit.me/factsheets/3c-e"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral, and the timings overlap. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "3c-p",
@@ -4727,7 +4849,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "4-aco-det",
@@ -4813,13 +4936,17 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/4-AcO-DET"
+      "https://psychonautwiki.org/wiki/4-AcO-DET",
+      "https://tripsit.me/factsheets/4-aco-det"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower light dose for oral (5-15mg) than PsychonautWiki (10 mg). Start with the lower figure.",
+      "Cross-check: TripSit lists a lower threshold dose for oral (2-5mg) than PsychonautWiki (5 mg). Start with the lower figure."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "4-aco-dipt",
@@ -4906,13 +5033,15 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/4-AcO-DiPT"
+      "https://psychonautwiki.org/wiki/4-AcO-DiPT",
+      "https://tripsit.me/factsheets/4-aco-dipt"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral, and the timings overlap. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "4-aco-dmt",
@@ -5050,13 +5179,16 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/4-AcO-DMT"
+      "https://psychonautwiki.org/wiki/4-AcO-DMT",
+      "https://tripsit.me/factsheets/4-aco-dmt"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower heavy dose for oral (25-40mg) than PsychonautWiki (45 mg). Start with the lower figure."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "4-aco-met",
@@ -5143,13 +5275,15 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/4-AcO-MET"
+      "https://psychonautwiki.org/wiki/4-AcO-MET",
+      "https://tripsit.me/factsheets/4-aco-met"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral, and the timings overlap. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "4-aco-mipt",
@@ -5235,13 +5369,16 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/4-AcO-MiPT"
+      "https://psychonautwiki.org/wiki/4-AcO-MiPT",
+      "https://tripsit.me/factsheets/4-aco-mipt"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower light dose for oral (5-10mg) than PsychonautWiki (10 mg). Start with the lower figure."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "4-fa",
@@ -5343,13 +5480,15 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/4-FA"
+      "https://psychonautwiki.org/wiki/4-FA",
+      "https://tripsit.me/factsheets/4-fa"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral, and the timings overlap. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "4-fma",
@@ -5448,13 +5587,16 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/4-FMA"
+      "https://psychonautwiki.org/wiki/4-FMA",
+      "https://tripsit.me/factsheets/4-fma"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: the sources differ on the light dose for oral: PsychonautWiki 25 mg, TripSit 50-75mg."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "4-ho-det",
@@ -5540,13 +5682,15 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/4-HO-DET"
+      "https://psychonautwiki.org/wiki/4-HO-DET",
+      "https://tripsit.me/factsheets/4-ho-det"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral, and the timings overlap. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "4-ho-dipt",
@@ -5627,13 +5771,16 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/4-HO-DiPT"
+      "https://psychonautwiki.org/wiki/4-HO-DiPT",
+      "https://tripsit.me/factsheets/4-ho-dipt"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: the sources differ on the light dose for oral: PsychonautWiki 3 mg, TripSit 5-10mg."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "4-ho-dpt",
@@ -5760,13 +5907,16 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/4-HO-DPT"
+      "https://psychonautwiki.org/wiki/4-HO-DPT",
+      "https://tripsit.me/factsheets/4-ho-dpt"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower light dose for oral (25-50mg) than PsychonautWiki (40 mg). Start with the lower figure."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "4-ho-ept",
@@ -5843,13 +5993,15 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/4-HO-EPT"
+      "https://psychonautwiki.org/wiki/4-HO-EPT",
+      "https://tripsit.me/factsheets/4-ho-ept"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral, and the timings overlap. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "4-ho-met",
@@ -5970,13 +6122,16 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/4-HO-MET"
+      "https://psychonautwiki.org/wiki/4-HO-MET",
+      "https://tripsit.me/factsheets/4-ho-met"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: the sources differ on the light dose for oral: PsychonautWiki 5 mg, TripSit 10mg."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "4-ho-mipt",
@@ -6061,13 +6216,15 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/4-HO-MiPT"
+      "https://psychonautwiki.org/wiki/4-HO-MiPT",
+      "https://tripsit.me/factsheets/4-ho-mipt"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral, and the timings overlap. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "4-ho-mpt",
@@ -6152,13 +6309,18 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/4-HO-MPT"
+      "https://psychonautwiki.org/wiki/4-HO-MPT",
+      "https://tripsit.me/factsheets/4-ho-mpt"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower common dose for oral (10-15mg) than PsychonautWiki (20 mg). Start with the lower figure.",
+      "Cross-check: TripSit lists a lower light dose for oral (5-10mg) than PsychonautWiki (10 mg). Start with the lower figure.",
+      "Cross-check: TripSit lists a lower strong dose for oral (15-25mg) than PsychonautWiki (30 mg). Start with the lower figure."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "4-meo-pcp",
@@ -6282,13 +6444,15 @@
     "uncertain_interactions": [],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/4-MeO-PCP"
+      "https://psychonautwiki.org/wiki/4-MeO-PCP",
+      "https://tripsit.me/factsheets/4-meo-pcp"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral, and the timings overlap. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "4f-eph",
@@ -6367,13 +6531,16 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/4F-EPH"
+      "https://psychonautwiki.org/wiki/4F-EPH",
+      "https://tripsit.me/factsheets/4-fluoroethylphenidate"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: the sources differ on the strong dose for oral: PsychonautWiki 15 mg, TripSit 30-50mg+."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "4f-mph",
@@ -6506,13 +6673,16 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/4F-MPH"
+      "https://psychonautwiki.org/wiki/4F-MPH",
+      "https://tripsit.me/factsheets/4-fluoromethylphenidate"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower threshold dose for oral (1-5mg) than PsychonautWiki (5 mg). Start with the lower figure."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "5-apb",
@@ -6606,13 +6776,15 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/5-APB"
+      "https://psychonautwiki.org/wiki/5-APB",
+      "https://tripsit.me/factsheets/5-apb"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral, and the timings overlap. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "5-hydroxytryptophan",
@@ -6680,13 +6852,15 @@
     "uncertain_interactions": [],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/5-Hydroxytryptophan"
+      "https://psychonautwiki.org/wiki/5-Hydroxytryptophan",
+      "https://tripsit.me/factsheets/5-htp"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "5-mapb",
@@ -6780,13 +6954,15 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/5-MAPB"
+      "https://psychonautwiki.org/wiki/5-MAPB",
+      "https://tripsit.me/factsheets/5-mapb"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral, and the timings overlap. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "5-meo-dalt",
@@ -6921,13 +7097,15 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/5-MeO-DALT"
+      "https://psychonautwiki.org/wiki/5-MeO-DALT",
+      "https://tripsit.me/factsheets/5-meo-dalt"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "5-meo-dibf",
@@ -6995,13 +7173,18 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/5-MeO-DiBF"
+      "https://psychonautwiki.org/wiki/5-MeO-DiBF",
+      "https://tripsit.me/factsheets/5-meo-dibf"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower common dose for oral (20-40mg) than PsychonautWiki (80 mg). Start with the lower figure.",
+      "Cross-check: TripSit lists a lower light dose for oral (10-20mg) than PsychonautWiki (50 mg). Start with the lower figure.",
+      "Cross-check: TripSit lists a lower strong dose for oral (40-60mg+) than PsychonautWiki (110 mg). Start with the lower figure."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "5-meo-dipt",
@@ -7085,13 +7268,16 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/5-MeO-DiPT"
+      "https://psychonautwiki.org/wiki/5-MeO-DiPT",
+      "https://tripsit.me/factsheets/5-meo-dipt"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: the sources differ on the light dose for oral: PsychonautWiki 3 mg, TripSit 5-10mg."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "5-meo-dmt",
@@ -7234,13 +7420,18 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/5-MeO-DMT"
+      "https://psychonautwiki.org/wiki/5-MeO-DMT",
+      "https://tripsit.me/factsheets/5-meo-dmt"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower common dose for insufflated (5-10mg) than PsychonautWiki (8 mg). Start with the lower figure.",
+      "Cross-check: TripSit lists a lower light dose for insufflated (3-5mg) than PsychonautWiki (5 mg). Start with the lower figure.",
+      "Cross-check: TripSit lists a lower strong dose for insufflated (8-15mg) than PsychonautWiki (15 mg). Start with the lower figure."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "5-meo-mipt",
@@ -7381,13 +7572,18 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/5-MeO-MiPT"
+      "https://psychonautwiki.org/wiki/5-MeO-MiPT",
+      "https://tripsit.me/factsheets/5-meo-mipt"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower common dose for oral (4-8mg) than PsychonautWiki (7 mg). Start with the lower figure.",
+      "Cross-check: TripSit lists a lower light dose for oral (1-3mg) than PsychonautWiki (3 mg). Start with the lower figure.",
+      "Cross-check: TripSit lists a lower threshold dose for oral (0.5mg-1mg) than PsychonautWiki (3 mg). Start with the lower figure."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "5f-akb48",
@@ -7482,7 +7678,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "5f-pb-22",
@@ -7578,13 +7775,13 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/5F-PB-22"
+      "https://psychonautwiki.org/wiki/5F-PB-22",
+      "https://tripsit.me/factsheets/5f-pb-22"
     ],
-    "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
-    ],
+    "safety_notes": [],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "6-apb",
@@ -7679,13 +7876,16 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/6-APB"
+      "https://psychonautwiki.org/wiki/6-APB",
+      "https://tripsit.me/factsheets/6-apb"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: the sources differ on the light dose for oral: PsychonautWiki 30 mg, TripSit 50-75mg."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "6-apdb",
@@ -7775,13 +7975,16 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/6-APDB"
+      "https://psychonautwiki.org/wiki/6-APDB",
+      "https://tripsit.me/factsheets/6-apdb"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower common dose for oral (40-75mg) than PsychonautWiki (70 mg). Start with the lower figure."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "a-php",
@@ -7965,13 +8168,15 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/A-PHP"
+      "https://psychonautwiki.org/wiki/A-PHP",
+      "https://tripsit.me/factsheets/alpha-php"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral, and the timings overlap. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "a-pvp",
@@ -8160,13 +8365,16 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/A-PVP"
+      "https://psychonautwiki.org/wiki/A-PVP",
+      "https://tripsit.me/factsheets/a-pvp"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower heavy dose for oral (25-50mg+) than PsychonautWiki (40 mg). Start with the lower figure."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "ab-fubinaca",
@@ -8260,7 +8468,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "acetylfentanyl",
@@ -8381,7 +8590,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "adrafinil",
@@ -8459,13 +8669,15 @@
     "uncertain_interactions": [],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Adrafinil"
+      "https://psychonautwiki.org/wiki/Adrafinil",
+      "https://tripsit.me/factsheets/adrafinil"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral, and the timings overlap. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "al-lad",
@@ -8550,13 +8762,13 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/AL-LAD"
+      "https://psychonautwiki.org/wiki/AL-LAD",
+      "https://tripsit.me/factsheets/al-lad"
     ],
-    "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
-    ],
+    "safety_notes": [],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "ald-52",
@@ -8644,13 +8856,15 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/ALD-52"
+      "https://psychonautwiki.org/wiki/ALD-52",
+      "https://tripsit.me/factsheets/ald-52"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral, and the timings overlap. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "allylescaline",
@@ -8712,13 +8926,15 @@
     "uncertain_interactions": [],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Allylescaline"
+      "https://psychonautwiki.org/wiki/Allylescaline",
+      "https://tripsit.me/factsheets/allylescaline"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral, and the timings overlap. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "alpha-gpc",
@@ -8787,7 +9003,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "alprazolam",
@@ -8917,13 +9134,15 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Alprazolam"
+      "https://psychonautwiki.org/wiki/Alprazolam",
+      "https://tripsit.me/factsheets/alprazolam"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral, and the timings overlap. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "amphetamine",
@@ -9121,13 +9340,19 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Amphetamine"
+      "https://psychonautwiki.org/wiki/Amphetamine",
+      "https://tripsit.me/factsheets/amphetamine"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: the sources differ on the common dose for insufflated: PsychonautWiki 15 mg, TripSit 25-40mg.",
+      "Cross-check: the sources differ on the light dose for insufflated: PsychonautWiki 6 mg, TripSit 15-25mg.",
+      "Cross-check: the sources differ on the common dose for oral: PsychonautWiki 10 mg, TripSit 20-50mg.",
+      "Cross-check: 2 more dose bands differ between PsychonautWiki and TripSit. Compare both pages."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "aniracetam",
@@ -9196,7 +9421,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "apica",
@@ -9277,7 +9503,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "armodafinil",
@@ -9373,13 +9600,16 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Armodafinil"
+      "https://psychonautwiki.org/wiki/Armodafinil",
+      "https://tripsit.me/factsheets/armodafinil"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower common dose for oral (50-150mg) than PsychonautWiki (100 mg). Start with the lower figure."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "ayahuasca",
@@ -9458,7 +9688,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "baclofen",
@@ -9547,13 +9778,13 @@
     "uncertain_interactions": [],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Baclofen"
+      "https://psychonautwiki.org/wiki/Baclofen",
+      "https://tripsit.me/factsheets/baclofen"
     ],
-    "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
-    ],
+    "safety_notes": [],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "benzydamine",
@@ -9627,13 +9858,15 @@
     "uncertain_interactions": [],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Benzydamine"
+      "https://psychonautwiki.org/wiki/Benzydamine",
+      "https://tripsit.me/factsheets/benzydamine"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral, and the timings overlap. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "blue_lotus",
@@ -9731,7 +9964,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "bromantane",
@@ -9798,13 +10032,18 @@
     "uncertain_interactions": [],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Bromantane"
+      "https://psychonautwiki.org/wiki/Bromantane",
+      "https://tripsit.me/factsheets/bromantane"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: the sources differ on the common dose for oral: PsychonautWiki 50 mg, TripSit 100-200mg.",
+      "Cross-check: the sources differ on the light dose for oral: PsychonautWiki 10 mg, TripSit 50-100mg.",
+      "Cross-check: the sources differ on the strong dose for oral: PsychonautWiki 100 mg, TripSit 200-400mg+."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "bromazepam",
@@ -9899,13 +10138,17 @@
     "uncertain_interactions": [],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Bromazepam"
+      "https://psychonautwiki.org/wiki/Bromazepam",
+      "https://tripsit.me/factsheets/bromazepam"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: the sources differ on the common dose for oral: PsychonautWiki 3 mg, TripSit 5-10mg.",
+      "Cross-check: the sources differ on the light dose for oral: PsychonautWiki 1.5 mg, TripSit 2.5-5mg."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "bromo-dragonfly",
@@ -9992,13 +10235,16 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Bromo-DragonFLY"
+      "https://psychonautwiki.org/wiki/Bromo-DragonFLY",
+      "https://tripsit.me/factsheets/bromo-dragonfly"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower common dose for oral (100-400ug) than PsychonautWiki (300 µg). Start with the lower figure."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "bufotenin",
@@ -10089,7 +10335,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "buprenorphine",
@@ -10226,7 +10473,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "butylone",
@@ -10318,13 +10566,15 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Butylone"
+      "https://psychonautwiki.org/wiki/Butylone",
+      "https://tripsit.me/factsheets/butylone"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral, and the timings overlap. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "caffeine",
@@ -10506,13 +10756,16 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Caffeine"
+      "https://psychonautwiki.org/wiki/Caffeine",
+      "https://tripsit.me/factsheets/caffeine"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: the sources differ on the strong dose for oral: PsychonautWiki 150 mg, TripSit 250-400mg."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "cake",
@@ -10573,7 +10826,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "cannabidiol",
@@ -10646,7 +10900,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "carisoprodol",
@@ -10717,13 +10972,16 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Carisoprodol"
+      "https://psychonautwiki.org/wiki/Carisoprodol",
+      "https://tripsit.me/factsheets/carisoprodol"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: the sources differ on the threshold dose for oral: PsychonautWiki 50 mg, TripSit 100mg."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "choline_bitartrate",
@@ -10806,7 +11064,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "citicoline",
@@ -10889,7 +11148,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "clonazepam",
@@ -10970,13 +11230,15 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Clonazepam"
+      "https://psychonautwiki.org/wiki/Clonazepam",
+      "https://tripsit.me/factsheets/clonazepam"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral, and the timings overlap. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "clonazolam",
@@ -11045,13 +11307,16 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Clonazolam"
+      "https://psychonautwiki.org/wiki/Clonazolam",
+      "https://tripsit.me/factsheets/clonazolam"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: the sources differ on the common dose for oral: PsychonautWiki 125 µg, TripSit 200-400ug."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "clonidine",
@@ -11128,13 +11393,16 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Clonidine"
+      "https://psychonautwiki.org/wiki/Clonidine",
+      "https://tripsit.me/factsheets/clonidine"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower light dose for oral (25-50ug) than PsychonautWiki (50 µg). Start with the lower figure."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "cocaine",
@@ -11384,13 +11652,19 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Cocaine"
+      "https://psychonautwiki.org/wiki/Cocaine",
+      "https://tripsit.me/factsheets/cocaine"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: the sources differ on the common dose for insufflated: PsychonautWiki 30 mg, TripSit 50-100mg.",
+      "Cross-check: the sources differ on the heavy dose for insufflated: PsychonautWiki 90 mg, TripSit 150mg+.",
+      "Cross-check: the sources differ on the light dose for insufflated: PsychonautWiki 10 mg, TripSit 20-50mg.",
+      "Cross-check: 1 more dose bands differ between PsychonautWiki and TripSit. Compare both pages."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "codeine",
@@ -11481,13 +11755,15 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Codeine"
+      "https://psychonautwiki.org/wiki/Codeine",
+      "https://tripsit.me/factsheets/codeine"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral, and the timings overlap. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "coluracetam",
@@ -11587,13 +11863,15 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Coluracetam"
+      "https://psychonautwiki.org/wiki/Coluracetam",
+      "https://tripsit.me/factsheets/coluracetam"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for insufflated, oral, and the timings overlap. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "creatine",
@@ -11662,7 +11940,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "cyclazodone",
@@ -11741,7 +12020,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "datura",
@@ -11800,7 +12080,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "deschloroetizolam",
@@ -11877,13 +12158,15 @@
     "uncertain_interactions": [],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Deschloroetizolam"
+      "https://psychonautwiki.org/wiki/Deschloroetizolam",
+      "https://tripsit.me/factsheets/deschloroetizolam"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral, and the timings overlap. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "deschloroketamine",
@@ -12046,13 +12329,16 @@
     "uncertain_interactions": [],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Deschloroketamine"
+      "https://psychonautwiki.org/wiki/Deschloroketamine",
+      "https://tripsit.me/factsheets/deschloroketamine"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower light dose for oral (5-15mg) than PsychonautWiki (10 mg). Start with the lower figure."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "desomorphine",
@@ -12117,7 +12403,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "desoxypipradrol",
@@ -12247,13 +12534,19 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Desoxypipradrol"
+      "https://psychonautwiki.org/wiki/Desoxypipradrol",
+      "https://tripsit.me/factsheets/2-dpmp"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: the sources differ on the common dose for insufflated: PsychonautWiki 1.5 mg, TripSit 3-4mg.",
+      "Cross-check: the sources differ on the light dose for insufflated: PsychonautWiki 0.5 mg, TripSit 2-3mg.",
+      "Cross-check: the sources differ on the threshold dose for insufflated: PsychonautWiki 0.25 mg, TripSit 1-2mg.",
+      "Cross-check: 3 more dose bands differ between PsychonautWiki and TripSit. Compare both pages."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "det",
@@ -12319,13 +12612,15 @@
     "uncertain_interactions": [],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/DET"
+      "https://psychonautwiki.org/wiki/DET",
+      "https://tripsit.me/factsheets/det"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "dextroamphetamine",
@@ -12479,13 +12774,15 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Dextroamphetamine"
+      "https://psychonautwiki.org/wiki/Dextroamphetamine",
+      "https://tripsit.me/factsheets/dexedrine"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral, and the timings overlap. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "dextromethorphan",
@@ -12598,7 +12895,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "dextropropoxyphene",
@@ -12685,13 +12983,15 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Dextropropoxyphene"
+      "https://psychonautwiki.org/wiki/Dextropropoxyphene",
+      "https://tripsit.me/factsheets/dextropropoxyphene"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "diazepam",
@@ -12767,13 +13067,13 @@
     "uncertain_interactions": [],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Diazepam"
+      "https://psychonautwiki.org/wiki/Diazepam",
+      "https://tripsit.me/factsheets/diazepam"
     ],
-    "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
-    ],
+    "safety_notes": [],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "dichloropane",
@@ -12895,13 +13195,17 @@
     "uncertain_interactions": [],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Dichloropane"
+      "https://psychonautwiki.org/wiki/Dichloropane",
+      "https://tripsit.me/factsheets/rti-111"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower common dose for insufflated (10-20mg) than PsychonautWiki (20 mg). Start with the lower figure.",
+      "Cross-check: TripSit lists a lower light dose for insufflated (5-10mg) than PsychonautWiki (10 mg). Start with the lower figure."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "diclazepam",
@@ -12962,13 +13266,16 @@
     "uncertain_interactions": [],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Diclazepam"
+      "https://psychonautwiki.org/wiki/Diclazepam",
+      "https://tripsit.me/factsheets/diclazepam"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower light dose for oral (0.25-1mg) than PsychonautWiki (0.5 mg). Start with the lower figure."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "dihydrocodeine",
@@ -13040,13 +13347,15 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Dihydrocodeine"
+      "https://psychonautwiki.org/wiki/Dihydrocodeine",
+      "https://tripsit.me/factsheets/dihydrocodeine"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral, and the timings overlap. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "diphenhydramine",
@@ -13128,13 +13437,15 @@
     "uncertain_interactions": [],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Diphenhydramine"
+      "https://psychonautwiki.org/wiki/Diphenhydramine",
+      "https://tripsit.me/factsheets/diphenhydramine"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral, and the timings overlap. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "diphenidine",
@@ -13282,13 +13593,17 @@
     "uncertain_interactions": [],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Diphenidine"
+      "https://psychonautwiki.org/wiki/Diphenidine",
+      "https://tripsit.me/factsheets/diphenidine"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: the sources differ on the light dose for oral: PsychonautWiki 40 mg, TripSit 70-85mg.",
+      "Cross-check: the sources differ on the threshold dose for oral: PsychonautWiki 30 mg, TripSit 50mg."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "dipt",
@@ -13387,13 +13702,16 @@
     "uncertain_interactions": [],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/DiPT"
+      "https://psychonautwiki.org/wiki/DiPT",
+      "https://tripsit.me/factsheets/dipt"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower heavy dose for oral (50mg+) than PsychonautWiki (150 mg). Start with the lower figure."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "dob",
@@ -13479,13 +13797,16 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/DOB"
+      "https://psychonautwiki.org/wiki/DOB",
+      "https://tripsit.me/factsheets/dob"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower heavy dose for oral (1100-1500ug) than PsychonautWiki (3 mg). Start with the lower figure."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "doc",
@@ -13615,13 +13936,16 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/DOC"
+      "https://psychonautwiki.org/wiki/DOC",
+      "https://tripsit.me/factsheets/doc"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower strong dose for oral (2-4mg) than PsychonautWiki (4 mg). Start with the lower figure."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "doi",
@@ -13699,7 +14023,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "dom",
@@ -13783,13 +14108,15 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/DOM"
+      "https://psychonautwiki.org/wiki/DOM",
+      "https://tripsit.me/factsheets/dom"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral, and the timings overlap. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "dpt",
@@ -13932,13 +14259,16 @@
     "uncertain_interactions": [],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/DPT"
+      "https://psychonautwiki.org/wiki/DPT",
+      "https://tripsit.me/factsheets/dpt"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower threshold dose for smoked (5-10mg) than PsychonautWiki (10 mg). Start with the lower figure."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "efavirenz",
@@ -14010,7 +14340,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "ephedrine",
@@ -14076,13 +14407,15 @@
     "uncertain_interactions": [],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Ephedrine"
+      "https://psychonautwiki.org/wiki/Ephedrine",
+      "https://tripsit.me/factsheets/ephedrine"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral, and the timings overlap. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "ephenidine",
@@ -14147,13 +14480,16 @@
     "uncertain_interactions": [],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Ephenidine"
+      "https://psychonautwiki.org/wiki/Ephenidine",
+      "https://tripsit.me/factsheets/ephenidine"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: the sources differ on the light dose for oral: PsychonautWiki 30 mg, TripSit 50-75mg."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "ephylone",
@@ -14244,7 +14580,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "ept",
@@ -14315,7 +14652,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "escaline",
@@ -14387,13 +14725,16 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Escaline"
+      "https://psychonautwiki.org/wiki/Escaline",
+      "https://tripsit.me/factsheets/escaline"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower strong dose for oral (60mg+) than PsychonautWiki (100 mg). Start with the lower figure."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "eszopiclone",
@@ -14459,13 +14800,18 @@
     "uncertain_interactions": [],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Eszopiclone"
+      "https://psychonautwiki.org/wiki/Eszopiclone",
+      "https://tripsit.me/factsheets/eszopiclone"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower common dose for oral (1-2mg) than PsychonautWiki (2 mg). Start with the lower figure.",
+      "Cross-check: TripSit lists a lower light dose for oral (0.5-1mg) than PsychonautWiki (1 mg). Start with the lower figure.",
+      "Cross-check: TripSit lists a lower strong dose for oral (2-4mg+) than PsychonautWiki (4 mg). Start with the lower figure."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "eth-cat",
@@ -14599,13 +14945,18 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/ETH-CAT"
+      "https://psychonautwiki.org/wiki/ETH-CAT",
+      "https://tripsit.me/factsheets/ethylcathinone"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower common dose for oral (80-150mg) than PsychonautWiki (150 mg). Start with the lower figure.",
+      "Cross-check: TripSit lists a lower light dose for oral (50-80mg) than PsychonautWiki (100 mg). Start with the lower figure.",
+      "Cross-check: TripSit lists a lower threshold dose for oral (30-50mg) than PsychonautWiki (60 mg). Start with the lower figure."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "eth-lad",
@@ -14689,13 +15040,15 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/ETH-LAD"
+      "https://psychonautwiki.org/wiki/ETH-LAD",
+      "https://tripsit.me/factsheets/eth-lad"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral, and the timings overlap. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "ethylmorphine",
@@ -14769,13 +15122,15 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Ethylmorphine"
+      "https://psychonautwiki.org/wiki/Ethylmorphine",
+      "https://tripsit.me/factsheets/ethylmorphine"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral, and the timings overlap. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "ethylone",
@@ -14867,13 +15222,16 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Ethylone"
+      "https://psychonautwiki.org/wiki/Ethylone",
+      "https://tripsit.me/factsheets/ethylone"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: the sources differ on the light dose for oral: PsychonautWiki 75 mg, TripSit 125-175mg."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "ethylphenidate",
@@ -14982,13 +15340,15 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Ethylphenidate"
+      "https://psychonautwiki.org/wiki/Ethylphenidate",
+      "https://tripsit.me/factsheets/ethylphenidate"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral, rectal. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "etizolam",
@@ -15068,13 +15428,15 @@
     "uncertain_interactions": [],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Etizolam"
+      "https://psychonautwiki.org/wiki/Etizolam",
+      "https://tripsit.me/factsheets/etizolam"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral, and the timings overlap. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "f-phenibut",
@@ -15142,13 +15504,17 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/F-Phenibut"
+      "https://psychonautwiki.org/wiki/F-Phenibut",
+      "https://tripsit.me/factsheets/fluorophenibut"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower light dose for oral (50-100mg) than PsychonautWiki (100 mg). Start with the lower figure.",
+      "Cross-check: TripSit lists a lower strong dose for oral (200-250mg+) than PsychonautWiki (400 mg). Start with the lower figure."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "fenethylline",
@@ -15238,7 +15604,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "fentanyl",
@@ -15399,13 +15766,15 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Fentanyl"
+      "https://psychonautwiki.org/wiki/Fentanyl",
+      "https://tripsit.me/factsheets/fentanyl"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for insufflated. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "flualprazolam",
@@ -15483,13 +15852,15 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Flualprazolam"
+      "https://psychonautwiki.org/wiki/Flualprazolam",
+      "https://tripsit.me/factsheets/flualprazolam"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral, and the timings overlap. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "flubromazepam",
@@ -15550,13 +15921,15 @@
     "uncertain_interactions": [],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Flubromazepam"
+      "https://psychonautwiki.org/wiki/Flubromazepam",
+      "https://tripsit.me/factsheets/flubromazepam"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral, and the timings overlap. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "flubromazolam",
@@ -15613,13 +15986,17 @@
     "uncertain_interactions": [],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Flubromazolam"
+      "https://psychonautwiki.org/wiki/Flubromazolam",
+      "https://tripsit.me/factsheets/flubromazolam"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: the sources differ on the strong dose for oral: PsychonautWiki 250 µg, TripSit 400-600ug+.",
+      "Cross-check: the sources differ on the threshold dose for oral: PsychonautWiki 50 µg, TripSit 80ug."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "flunitrazepam",
@@ -15697,13 +16074,16 @@
     "uncertain_interactions": [],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Flunitrazepam"
+      "https://psychonautwiki.org/wiki/Flunitrazepam",
+      "https://tripsit.me/factsheets/flunitrazepam"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower heavy dose for oral (2-4mg+) than PsychonautWiki (4 mg). Start with the lower figure."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "flunitrazolam",
@@ -15776,13 +16156,18 @@
     "uncertain_interactions": [],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Flunitrazolam"
+      "https://psychonautwiki.org/wiki/Flunitrazolam",
+      "https://tripsit.me/factsheets/flunitrazolam"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower common dose for oral (80-150ug) than PsychonautWiki (0.2 mg). Start with the lower figure.",
+      "Cross-check: TripSit lists a lower light dose for oral (40-80ug) than PsychonautWiki (0.1 mg). Start with the lower figure.",
+      "Cross-check: TripSit lists a lower threshold dose for oral (30-40ug) than PsychonautWiki (0.1 mg). Start with the lower figure."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "gabapentin",
@@ -15853,13 +16238,15 @@
     "uncertain_interactions": [],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Gabapentin"
+      "https://psychonautwiki.org/wiki/Gabapentin",
+      "https://tripsit.me/factsheets/gabapentin"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral, and the timings overlap. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "gaboxadol",
@@ -15936,7 +16323,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "galantamine",
@@ -16003,7 +16391,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "gbl",
@@ -16095,13 +16484,15 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/GBL"
+      "https://psychonautwiki.org/wiki/GBL",
+      "https://tripsit.me/factsheets/gbl"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral, and the timings overlap. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "ghb",
@@ -16195,13 +16586,15 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/GHB"
+      "https://psychonautwiki.org/wiki/GHB",
+      "https://tripsit.me/factsheets/ghb"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral, and the timings overlap. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "haloperidol",
@@ -16268,7 +16661,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "heroin",
@@ -16457,13 +16851,16 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Heroin"
+      "https://psychonautwiki.org/wiki/Heroin",
+      "https://tripsit.me/factsheets/heroin"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower heavy dose for smoked (30-50mg) than PsychonautWiki (50 mg). Start with the lower figure."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "hexedrone",
@@ -16528,13 +16925,15 @@
     "uncertain_interactions": [],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Hexedrone"
+      "https://psychonautwiki.org/wiki/Hexedrone",
+      "https://tripsit.me/factsheets/hexedrone"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral, and the timings overlap. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "hxe",
@@ -16717,7 +17116,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "hydrocodone",
@@ -16795,13 +17195,15 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Hydrocodone"
+      "https://psychonautwiki.org/wiki/Hydrocodone",
+      "https://tripsit.me/factsheets/hydrocodone"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral, and the timings overlap. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "hydromorphone",
@@ -16995,13 +17397,15 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Hydromorphone"
+      "https://psychonautwiki.org/wiki/Hydromorphone",
+      "https://tripsit.me/factsheets/hydromorphone"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for insufflated, intravenous, oral. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "ibogaine",
@@ -17068,7 +17472,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "isopropylphenidate",
@@ -17202,13 +17607,16 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Isopropylphenidate"
+      "https://psychonautwiki.org/wiki/Isopropylphenidate",
+      "https://tripsit.me/factsheets/isopropylphenidate"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower strong dose for oral (15-30mg+) than PsychonautWiki (25 mg). Start with the lower figure."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "jwh-018",
@@ -17300,7 +17708,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "jwh-073",
@@ -17395,7 +17804,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "kratom",
@@ -17483,13 +17893,18 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Kratom"
+      "https://psychonautwiki.org/wiki/Kratom",
+      "https://tripsit.me/factsheets/kratom"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower common dose for oral (1.5-3g) than PsychonautWiki (3 g). Start with the lower figure.",
+      "Cross-check: TripSit lists a lower light dose for oral (0.5-1.5g) than PsychonautWiki (2 g). Start with the lower figure.",
+      "Cross-check: TripSit lists a lower strong dose for oral (3-6g) than PsychonautWiki (5 g). Start with the lower figure."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "lae-32",
@@ -17550,7 +17965,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "lisdexamfetamine",
@@ -17651,13 +18067,15 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Lisdexamfetamine"
+      "https://psychonautwiki.org/wiki/Lisdexamfetamine",
+      "https://tripsit.me/factsheets/vyvanse"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "lorazepam",
@@ -17717,13 +18135,17 @@
     "uncertain_interactions": [],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Lorazepam"
+      "https://psychonautwiki.org/wiki/Lorazepam",
+      "https://tripsit.me/factsheets/lorazepam"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: the sources differ on the common dose for oral: PsychonautWiki 0.5 mg, TripSit 1-2mg.",
+      "Cross-check: the sources differ on the light dose for oral: PsychonautWiki 0.25 mg, TripSit 0.5mg-1mg."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "lsa",
@@ -17816,7 +18238,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "lsm-775",
@@ -17884,13 +18307,15 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/LSM-775"
+      "https://psychonautwiki.org/wiki/LSM-775",
+      "https://tripsit.me/factsheets/lsm-775"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral, and the timings overlap. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "lsz",
@@ -17977,13 +18402,16 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/LSZ"
+      "https://psychonautwiki.org/wiki/LSZ",
+      "https://tripsit.me/factsheets/lsz"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: the sources differ on the threshold dose for oral: PsychonautWiki 50 µg, TripSit 80ug."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "mcpp",
@@ -18076,7 +18504,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "mda",
@@ -18173,13 +18602,15 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/MDA"
+      "https://psychonautwiki.org/wiki/MDA",
+      "https://tripsit.me/factsheets/mda"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral, and the timings overlap. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "mdai",
@@ -18265,13 +18696,17 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/MDAI"
+      "https://psychonautwiki.org/wiki/MDAI",
+      "https://tripsit.me/factsheets/mdai"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower heavy dose for oral (150-300mg+) than PsychonautWiki (300 mg). Start with the lower figure.",
+      "Cross-check: TripSit lists a lower threshold dose for oral (20-40mg) than PsychonautWiki (40 mg). Start with the lower figure."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "mdea",
@@ -18369,13 +18804,15 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/MDEA"
+      "https://psychonautwiki.org/wiki/MDEA",
+      "https://tripsit.me/factsheets/mdea"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral, and the timings overlap. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "mdpv",
@@ -18463,13 +18900,15 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/MDPV"
+      "https://psychonautwiki.org/wiki/MDPV",
+      "https://tripsit.me/factsheets/mdpv"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "meclofenoxate",
@@ -18526,7 +18965,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "melatonin",
@@ -18599,13 +19039,16 @@
     "uncertain_interactions": [],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Melatonin"
+      "https://psychonautwiki.org/wiki/Melatonin",
+      "https://tripsit.me/factsheets/melatonin"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower common dose for oral (.3-1mg) than PsychonautWiki (1 mg). Start with the lower figure."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "memantine",
@@ -18691,13 +19134,18 @@
     "uncertain_interactions": [],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Memantine"
+      "https://psychonautwiki.org/wiki/Memantine",
+      "https://tripsit.me/factsheets/memantine"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower common dose for oral (20-40mg) than PsychonautWiki (70 mg). Start with the lower figure.",
+      "Cross-check: TripSit lists a lower heavy dose for oral (40-80mg+) than PsychonautWiki (170 mg). Start with the lower figure.",
+      "Cross-check: TripSit lists a lower light dose for oral (10-20mg) than PsychonautWiki (30 mg). Start with the lower figure."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "mephedrone",
@@ -18845,13 +19293,16 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Mephedrone"
+      "https://psychonautwiki.org/wiki/Mephedrone",
+      "https://tripsit.me/factsheets/mephedrone"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower common dose for insufflated (20-80mg) than PsychonautWiki (45 mg). Start with the lower figure."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "mephenaqualone",
@@ -18934,7 +19385,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "mescaline",
@@ -19025,13 +19477,16 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Mescaline"
+      "https://psychonautwiki.org/wiki/Mescaline",
+      "https://tripsit.me/factsheets/mescaline"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower heavy dose for oral (500-700mg+) than PsychonautWiki (800 mg). Start with the lower figure."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "met",
@@ -19205,13 +19660,18 @@
     "uncertain_interactions": [],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/MET"
+      "https://psychonautwiki.org/wiki/MET",
+      "https://tripsit.me/factsheets/met"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower common dose for oral (20-25mg) than PsychonautWiki (120 mg). Start with the lower figure.",
+      "Cross-check: TripSit lists a lower light dose for oral (10-20mg) than PsychonautWiki (60 mg). Start with the lower figure.",
+      "Cross-check: TripSit lists a lower strong dose for oral (25-30mg+) than PsychonautWiki (150 mg). Start with the lower figure."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "methadone",
@@ -19310,13 +19770,17 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Methadone"
+      "https://psychonautwiki.org/wiki/Methadone",
+      "https://tripsit.me/factsheets/methadone"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: the sources differ on the common dose for oral: PsychonautWiki 5 mg, TripSit 10-20mg.",
+      "Cross-check: the sources differ on the light dose for oral: PsychonautWiki 3 mg, TripSit 5-10mg."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "methallylescaline",
@@ -19394,13 +19858,16 @@
     "uncertain_interactions": [],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Methallylescaline"
+      "https://psychonautwiki.org/wiki/Methallylescaline",
+      "https://tripsit.me/factsheets/methallylescaline"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: the sources differ on the threshold dose for oral: PsychonautWiki 5 mg, TripSit 10-15mg."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "methamphetamine",
@@ -19713,13 +20180,15 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Methamphetamine"
+      "https://psychonautwiki.org/wiki/Methamphetamine",
+      "https://tripsit.me/factsheets/methamphetamine"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for insufflated, intravenous, oral, smoked. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "methaqualone",
@@ -19830,13 +20299,18 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Methaqualone"
+      "https://psychonautwiki.org/wiki/Methaqualone",
+      "https://tripsit.me/factsheets/methaqualone"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower common dose for oral (150-300mg) than PsychonautWiki (300 mg). Start with the lower figure.",
+      "Cross-check: TripSit lists a lower light dose for oral (75-150mg) than PsychonautWiki (150 mg). Start with the lower figure.",
+      "Cross-check: TripSit lists a lower strong dose for oral (300mg+) than PsychonautWiki (500 mg). Start with the lower figure."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "methcathinone",
@@ -19904,7 +20378,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "methiopropamine",
@@ -20016,13 +20491,17 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Methiopropamine"
+      "https://psychonautwiki.org/wiki/Methiopropamine",
+      "https://tripsit.me/factsheets/mpa"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower light dose for oral (5-15mg) than PsychonautWiki (20 mg). Start with the lower figure.",
+      "Cross-check: TripSit lists a lower threshold dose for oral (5mg) than PsychonautWiki (10 mg). Start with the lower figure."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "methoxetamine",
@@ -20170,13 +20649,16 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Methoxetamine"
+      "https://psychonautwiki.org/wiki/Methoxetamine",
+      "https://tripsit.me/factsheets/mxe"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: the sources differ on the threshold dose for oral: PsychonautWiki 5 mg, TripSit 10-15mg."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "methoxphenidine",
@@ -20248,13 +20730,15 @@
     "uncertain_interactions": [],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Methoxphenidine"
+      "https://psychonautwiki.org/wiki/Methoxphenidine",
+      "https://tripsit.me/factsheets/methoxphenidine"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral, and the timings overlap. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "methylnaphthidate",
@@ -20389,13 +20873,16 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Methylnaphthidate"
+      "https://psychonautwiki.org/wiki/Methylnaphthidate",
+      "https://tripsit.me/factsheets/hdmp-28"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: the sources differ on the threshold dose for oral: PsychonautWiki 4 mg, TripSit 8-10mg."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "methylone",
@@ -20492,13 +20979,15 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Methylone"
+      "https://psychonautwiki.org/wiki/Methylone",
+      "https://tripsit.me/factsheets/methylone"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral, and the timings overlap. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "methylphenidate",
@@ -20642,13 +21131,19 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Methylphenidate"
+      "https://psychonautwiki.org/wiki/Methylphenidate",
+      "https://tripsit.me/factsheets/methylphenidate"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower heavy dose for insufflated (30mg+) than PsychonautWiki (60 mg). Start with the lower figure.",
+      "Cross-check: TripSit lists a lower common dose for oral (10-20mg) than PsychonautWiki (20 mg). Start with the lower figure.",
+      "Cross-check: TripSit lists a lower light dose for oral (5-10mg) than PsychonautWiki (10 mg). Start with the lower figure.",
+      "Cross-check: 1 more dose bands differ between PsychonautWiki and TripSit. Compare both pages."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "metizolam",
@@ -20714,13 +21209,15 @@
     "uncertain_interactions": [],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Metizolam"
+      "https://psychonautwiki.org/wiki/Metizolam",
+      "https://tripsit.me/factsheets/metizolam"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral, and the timings overlap. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "mexedrone",
@@ -20795,13 +21292,13 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Mexedrone"
+      "https://psychonautwiki.org/wiki/Mexedrone",
+      "https://tripsit.me/factsheets/mexedrone"
     ],
-    "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
-    ],
+    "safety_notes": [],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "midazolam",
@@ -20917,13 +21414,19 @@
     "uncertain_interactions": [],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Midazolam"
+      "https://psychonautwiki.org/wiki/Midazolam",
+      "https://tripsit.me/factsheets/midazolam"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: the sources differ on the common dose for intravenous: PsychonautWiki 2 mg, TripSit 5-10mg.",
+      "Cross-check: the sources differ on the light dose for intravenous: PsychonautWiki 1 mg, TripSit 2.5-5mg.",
+      "Cross-check: the sources differ on the strong dose for intravenous: PsychonautWiki 4 mg, TripSit 10-20mg.",
+      "Cross-check: 2 more dose bands differ between PsychonautWiki and TripSit. Compare both pages."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "mipla",
@@ -21010,7 +21513,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "mipt",
@@ -21064,13 +21568,16 @@
     "uncertain_interactions": [],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/MiPT"
+      "https://psychonautwiki.org/wiki/MiPT",
+      "https://tripsit.me/factsheets/mipt"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower strong dose for oral (15-25mg+) than PsychonautWiki (25 mg). Start with the lower figure."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "mirtazapine",
@@ -21152,7 +21659,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "modafinil",
@@ -21255,7 +21763,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "morphine",
@@ -21394,13 +21903,16 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Morphine"
+      "https://psychonautwiki.org/wiki/Morphine",
+      "https://tripsit.me/factsheets/morphine"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower light dose for oral (5mg-10mg) than PsychonautWiki (10 mg). Start with the lower figure."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "mxipr",
@@ -21513,7 +22025,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "myristicin",
@@ -21607,7 +22120,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "n-acetylcysteine",
@@ -21674,7 +22188,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "n-ethylhexedrone",
@@ -21815,7 +22330,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "n-methylbisfluoromodafinil",
@@ -21887,13 +22403,15 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/N-Methylbisfluoromodafinil"
+      "https://psychonautwiki.org/wiki/N-Methylbisfluoromodafinil",
+      "https://tripsit.me/factsheets/dehydroxyfluorafinil"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral, and the timings overlap. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "naloxone",
@@ -22062,7 +22580,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "nep",
@@ -22224,7 +22743,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "nifoxipam",
@@ -22285,13 +22805,16 @@
     "uncertain_interactions": [],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Nifoxipam"
+      "https://psychonautwiki.org/wiki/Nifoxipam",
+      "https://tripsit.me/factsheets/nifoxipam"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower heavy dose for oral (1000ug-2000ug+) than PsychonautWiki (2 mg). Start with the lower figure."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "nitrous",
@@ -22387,7 +22910,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "nm-2-ai",
@@ -22459,13 +22983,15 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/NM-2-AI"
+      "https://psychonautwiki.org/wiki/NM-2-AI",
+      "https://tripsit.me/factsheets/nm-2-ai"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral, and the timings overlap. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "o-desmethyltramadol",
@@ -22654,13 +23180,15 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/O-Desmethyltramadol"
+      "https://psychonautwiki.org/wiki/O-Desmethyltramadol",
+      "https://tripsit.me/factsheets/o-desmethyltramadol"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral, and the timings overlap. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "o-pce",
@@ -22767,13 +23295,15 @@
     "uncertain_interactions": [],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/O-PCE"
+      "https://psychonautwiki.org/wiki/O-PCE",
+      "https://tripsit.me/factsheets/o-pce"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "omberacetam",
@@ -22875,13 +23405,16 @@
     "uncertain_interactions": [],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Omberacetam"
+      "https://psychonautwiki.org/wiki/Omberacetam",
+      "https://tripsit.me/factsheets/noopept"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower strong dose for oral (10-20mg+) than PsychonautWiki (20 mg). Start with the lower figure."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "oxiracetam",
@@ -22948,7 +23481,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "oxycodone",
@@ -23162,13 +23696,15 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Oxycodone"
+      "https://psychonautwiki.org/wiki/Oxycodone",
+      "https://tripsit.me/factsheets/oxycodone"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for insufflated, oral. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "oxymorphone",
@@ -23244,13 +23780,15 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Oxymorphone"
+      "https://psychonautwiki.org/wiki/Oxymorphone",
+      "https://tripsit.me/factsheets/oxymorphone"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "pargy-lad",
@@ -23324,7 +23862,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "pce",
@@ -23505,13 +24044,16 @@
     "uncertain_interactions": [],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/PCE"
+      "https://psychonautwiki.org/wiki/PCE",
+      "https://tripsit.me/factsheets/pce"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower light dose for insufflated (1-3mg) than PsychonautWiki (2 mg). Start with the lower figure."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "pcp",
@@ -23718,13 +24260,15 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/PCP"
+      "https://psychonautwiki.org/wiki/PCP",
+      "https://tripsit.me/factsheets/pcp"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for insufflated, oral, and the timings overlap. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "pentedrone",
@@ -23857,13 +24401,15 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Pentedrone"
+      "https://psychonautwiki.org/wiki/Pentedrone",
+      "https://tripsit.me/factsheets/pentedrone"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for insufflated, oral. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "pentobarbital",
@@ -23938,13 +24484,15 @@
     "uncertain_interactions": [],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Pentobarbital"
+      "https://psychonautwiki.org/wiki/Pentobarbital",
+      "https://tripsit.me/factsheets/pentobarbital"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "pethidine",
@@ -24033,13 +24581,15 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Pethidine"
+      "https://psychonautwiki.org/wiki/Pethidine",
+      "https://tripsit.me/factsheets/demerol"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "phenibut",
@@ -24119,13 +24669,18 @@
     "uncertain_interactions": [],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Phenibut"
+      "https://psychonautwiki.org/wiki/Phenibut",
+      "https://tripsit.me/factsheets/phenibut"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower common dose for oral (600-1200mg) than PsychonautWiki (1 g). Start with the lower figure.",
+      "Cross-check: TripSit lists a lower light dose for oral (300-600mg) than PsychonautWiki (0.5 g). Start with the lower figure.",
+      "Cross-check: TripSit lists a lower strong dose for oral (1200-1800mg+) than PsychonautWiki (2 g). Start with the lower figure."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "phenobarbital",
@@ -24205,13 +24760,15 @@
     "uncertain_interactions": [],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Phenobarbital"
+      "https://psychonautwiki.org/wiki/Phenobarbital",
+      "https://tripsit.me/factsheets/phenobarbital"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "phenylpiracetam",
@@ -24280,7 +24837,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "piracetam",
@@ -24341,13 +24899,16 @@
     "uncertain_interactions": [],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Piracetam"
+      "https://psychonautwiki.org/wiki/Piracetam",
+      "https://tripsit.me/factsheets/piracetam"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower common dose for oral (1200-4800mg) than PsychonautWiki (2 g). Start with the lower figure."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "pma",
@@ -24425,7 +24986,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "pmma",
@@ -24478,7 +25040,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "pramiracetam",
@@ -24545,7 +25108,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "pregabalin",
@@ -24678,13 +25242,16 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Pregabalin"
+      "https://psychonautwiki.org/wiki/Pregabalin",
+      "https://tripsit.me/factsheets/pregabalin"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: the sources differ on the light dose for oral: PsychonautWiki 50 mg, TripSit 150-300mg."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "pro-lad",
@@ -24752,13 +25319,15 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/PRO-LAD"
+      "https://psychonautwiki.org/wiki/PRO-LAD",
+      "https://tripsit.me/factsheets/pro-lad"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral, and the timings overlap. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "prochlorperazine",
@@ -24829,7 +25398,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "progesterone",
@@ -24932,7 +25502,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "prolintane",
@@ -25022,13 +25593,16 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Prolintane"
+      "https://psychonautwiki.org/wiki/Prolintane",
+      "https://tripsit.me/factsheets/prolintane"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower common dose for oral (15-30mg) than PsychonautWiki (25 mg). Start with the lower figure."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "promethazine",
@@ -25112,7 +25686,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "propylhexedrine",
@@ -25209,7 +25784,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "proscaline",
@@ -25266,13 +25842,15 @@
     "uncertain_interactions": [],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Proscaline"
+      "https://psychonautwiki.org/wiki/Proscaline",
+      "https://tripsit.me/factsheets/proscaline"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral, and the timings overlap. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "psilocin",
@@ -25354,13 +25932,17 @@
     "uncertain_interactions": [],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Psilocin"
+      "https://psychonautwiki.org/wiki/Psilocin",
+      "https://tripsit.me/factsheets/psilocin"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower light dose for oral (5-10mg) than PsychonautWiki (10 mg). Start with the lower figure.",
+      "Cross-check: TripSit lists a lower strong dose for oral (15-25mg) than PsychonautWiki (25 mg). Start with the lower figure."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "pyrazolam",
@@ -25421,13 +26003,18 @@
     "uncertain_interactions": [],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Pyrazolam"
+      "https://psychonautwiki.org/wiki/Pyrazolam",
+      "https://tripsit.me/factsheets/pyrazolam"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: the sources differ on the common dose for oral: PsychonautWiki 0.75 mg, TripSit 2-3mg.",
+      "Cross-check: the sources differ on the light dose for oral: PsychonautWiki 0.5 mg, TripSit 1-2mg.",
+      "Cross-check: the sources differ on the strong dose for oral: PsychonautWiki 1.5 mg, TripSit 3-4mg."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "quetiapine",
@@ -25506,13 +26093,15 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Quetiapine"
+      "https://psychonautwiki.org/wiki/Quetiapine",
+      "https://tripsit.me/factsheets/quetiapine"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral, and the timings overlap. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "risperidone",
@@ -25587,7 +26176,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "rolicyclidine",
@@ -25785,13 +26375,15 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Rolicyclidine"
+      "https://psychonautwiki.org/wiki/Rolicyclidine",
+      "https://tripsit.me/factsheets/rolicyclidine"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral, and the timings overlap. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "salvinorin_a",
@@ -25887,7 +26479,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "sam-e",
@@ -25952,7 +26545,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "secobarbital",
@@ -26027,13 +26621,15 @@
     "uncertain_interactions": [],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Secobarbital"
+      "https://psychonautwiki.org/wiki/Secobarbital",
+      "https://tripsit.me/factsheets/secobarbital"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral, and the timings overlap. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "sts-135",
@@ -26131,7 +26727,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "sufentanil",
@@ -26221,7 +26818,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "tapentadol",
@@ -26318,13 +26916,15 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Tapentadol"
+      "https://psychonautwiki.org/wiki/Tapentadol",
+      "https://tripsit.me/factsheets/tapentadol"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "temazepam",
@@ -26391,13 +26991,15 @@
     "uncertain_interactions": [],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Temazepam"
+      "https://psychonautwiki.org/wiki/Temazepam",
+      "https://tripsit.me/factsheets/temazepam"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral, and the timings overlap. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "theacrine",
@@ -26488,13 +27090,18 @@
     "uncertain_interactions": [],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Theacrine"
+      "https://psychonautwiki.org/wiki/Theacrine",
+      "https://tripsit.me/factsheets/theacrine"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower common dose for oral (25-50mg) than PsychonautWiki (100 mg). Start with the lower figure.",
+      "Cross-check: TripSit lists a lower light dose for oral (10-25mg) than PsychonautWiki (50 mg). Start with the lower figure.",
+      "Cross-check: TripSit lists a lower strong dose for oral (50-100mg+) than PsychonautWiki (150 mg). Start with the lower figure."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "theanine",
@@ -26567,7 +27174,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "thj-018",
@@ -26661,7 +27269,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "thj-2201",
@@ -26755,7 +27364,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "tianeptine",
@@ -26831,13 +27441,16 @@
     "uncertain_interactions": [],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Tianeptine"
+      "https://psychonautwiki.org/wiki/Tianeptine",
+      "https://tripsit.me/factsheets/tianeptine"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower strong dose for oral (17mg) than PsychonautWiki (35 mg). Start with the lower figure."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "tizanidine",
@@ -26911,7 +27524,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "tma-2",
@@ -26988,13 +27602,15 @@
     "uncertain_interactions": [],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/TMA-2"
+      "https://psychonautwiki.org/wiki/TMA-2",
+      "https://tripsit.me/factsheets/tma-2"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral, and the timings overlap. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "tma-6",
@@ -27077,13 +27693,17 @@
     "uncertain_interactions": [],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/TMA-6"
+      "https://psychonautwiki.org/wiki/TMA-6",
+      "https://tripsit.me/factsheets/tma-6"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: the sources differ on the light dose for oral: PsychonautWiki 10 mg, TripSit 20-30mg.",
+      "Cross-check: the sources differ on the threshold dose for oral: PsychonautWiki 5 mg, TripSit 15-20mg."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "tramadol",
@@ -27177,13 +27797,16 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Tramadol"
+      "https://psychonautwiki.org/wiki/Tramadol",
+      "https://tripsit.me/factsheets/tramadol"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: the sources differ on the light dose for oral: PsychonautWiki 25 mg, TripSit 50-100mg."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "tyrosine",
@@ -27273,7 +27896,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "u-47700",
@@ -27367,7 +27991,8 @@
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "zolpidem",
@@ -27447,13 +28072,19 @@
     "uncertain_interactions": [],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Zolpidem"
+      "https://psychonautwiki.org/wiki/Zolpidem",
+      "https://tripsit.me/factsheets/zolpidem"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: TripSit lists a lower common dose for oral (5-10mg) than PsychonautWiki (20 mg). Start with the lower figure.",
+      "Cross-check: TripSit lists a lower heavy dose for oral (20-30mg+) than PsychonautWiki (50 mg). Start with the lower figure.",
+      "Cross-check: TripSit lists a lower light dose for oral (2.5-5mg) than PsychonautWiki (10 mg). Start with the lower figure.",
+      "Cross-check: 1 more dose bands differ between PsychonautWiki and TripSit. Compare both pages."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "zopiclone",
@@ -27519,13 +28150,16 @@
     "uncertain_interactions": [],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/Zopiclone"
+      "https://psychonautwiki.org/wiki/Zopiclone",
+      "https://tripsit.me/factsheets/zopiclone"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
+      "Cross-check: the sources differ on the threshold dose for oral: PsychonautWiki 2 mg, TripSit 3.5mg."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": false
   },
   {
     "key": "mt",
@@ -27616,13 +28250,15 @@
     ],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/%CE%91MT"
+      "https://psychonautwiki.org/wiki/%CE%91MT",
+      "https://tripsit.me/factsheets/amt"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral, and the timings overlap. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   },
   {
     "key": "k-2c-b",
@@ -27685,12 +28321,14 @@
     "uncertain_interactions": [],
     "audited": false,
     "sources": [
-      "https://psychonautwiki.org/wiki/%CE%92k-2C-B"
+      "https://psychonautwiki.org/wiki/%CE%92k-2C-B",
+      "https://tripsit.me/factsheets/bk-2c-b"
     ],
     "safety_notes": [
-      "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it."
+      "Cross-check: TripSit's factsheet gives dose bands within 50% of PsychonautWiki's for oral, and the timings overlap. Two sources agreeing is reassuring but is not an independent audit."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
-    "fetched": "2026-10-25"
+    "fetched": "2026-10-25",
+    "cross_checked": true
   }
 ]

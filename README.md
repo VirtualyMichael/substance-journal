@@ -51,8 +51,10 @@ in `substance_journal/`.
 ## Reference data and credit
 
 Dose, duration and interaction data comes from [PsychonautWiki](https://psychonautwiki.org) (CC BY-SA 4.0)
-and [TripSit](https://tripsit.me)'s open combination dataset. Nine compounds are audited against
-sources; the other 272 are copied from PsychonautWiki and marked as not audited. See
+and [TripSit](https://tripsit.me)'s open combination dataset. Nine compounds are audited by hand against
+several sources. Of the other 272, those whose dose bands and timings agree with TripSit's open dataset are marked
+cross-checked, where they disagree the app says so and tells you to start with the lower figure, and the rest are
+copied from PsychonautWiki and marked as not checked (`scripts/crosscheck_tripsit.py`, report in `docs/data-audit/crosscheck.md`). See
 [docs/ATTRIBUTION.md](docs/ATTRIBUTION.md) and [docs/ROADMAP.md](docs/ROADMAP.md).
 
 ## License

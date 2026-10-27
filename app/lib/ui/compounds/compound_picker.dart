@@ -38,7 +38,7 @@ class _CompoundPickerState extends ConsumerState<CompoundPicker> {
     final db = ref.read(databaseProvider);
 
     final compounds = orderCompounds(
-      all: [for (final s in reference.substances) if (!_auditedOnly || s.audited) s],
+      all: [for (final s in reference.substances) if (!_auditedOnly || s.audited || s.crossChecked) s],
       usage: usage,
       query: _query,
       sort: _sort,
@@ -82,7 +82,7 @@ class _CompoundPickerState extends ConsumerState<CompoundPicker> {
               FilterChip(
                 key: const ValueKey('audited-only'),
                 avatar: const Icon(Icons.verified_outlined, size: 16),
-                label: const Text('Audited only'),
+                label: const Text('Checked only'),
                 selected: _auditedOnly,
                 onSelected: (v) => setState(() => _auditedOnly = v),
               ),
@@ -142,6 +142,14 @@ class _CompoundPickerState extends ConsumerState<CompoundPicker> {
                             child: Tooltip(
                               message: 'Doses and timing checked against several sources',
                               child: Icon(Icons.verified_outlined, size: 16),
+                            ),
+                          )
+                        else if (s.crossChecked)
+                          const Padding(
+                            padding: EdgeInsets.only(left: 6),
+                            child: Tooltip(
+                              message: 'Doses agree with a second source (TripSit)',
+                              child: Icon(Icons.fact_check_outlined, size: 16),
                             ),
                           ),
                       ]),
