@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="docs/logo.png" alt="Substance Journal logo" width="128">
+
 # Substance Journal
 
 **A private, offline harm-reduction journal for what you take: doses, timelines, risks and research, on your own devices.**

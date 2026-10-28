@@ -7,6 +7,7 @@
 [Setup]
 AppId={{6B2F0F4A-7C1E-4D55-9E3B-5B7C1C1B0A11}
 AppName=Substance Journal
+SetupIconFile=..\..\app\windows\runner\resources\app_icon.ico
 AppVersion={#AppVersion}
 AppPublisher=Substance Journal
 DefaultDirName={autopf}\Substance Journal
