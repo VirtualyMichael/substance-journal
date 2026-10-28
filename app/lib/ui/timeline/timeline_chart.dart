@@ -84,6 +84,7 @@ class _TimelineChartState extends State<TimelineChart> {
                 axisColor: scheme.outline,
                 gridColor: scheme.outlineVariant,
                 textColor: scheme.onSurfaceVariant,
+                fontFamily: Theme.of(context).textTheme.bodyMedium?.fontFamily,
                 nowColor: scheme.error,
                 reference: w.reference,
                 yMinimum: w.yMinimum,
@@ -111,6 +112,7 @@ class TimelinePainter extends CustomPainter {
     required this.axisColor,
     required this.gridColor,
     required this.textColor,
+    this.fontFamily,
     required this.nowColor,
     this.reference = const ReferenceLine(1.0, 'common dose'),
     this.yMinimum = 1.0,
@@ -135,6 +137,9 @@ class TimelinePainter extends CustomPainter {
   final Color axisColor;
   final Color gridColor;
   final Color textColor;
+
+  /// The app's text font, so chart labels match the rest of the screen.
+  final String? fontFamily;
   final Color nowColor;
   final ReferenceLine? reference;
   final double yMinimum;
@@ -378,7 +383,7 @@ class TimelinePainter extends CustomPainter {
     final painters = [
       for (final (text, color) in lines)
         TextPainter(
-          text: TextSpan(text: text, style: TextStyle(fontSize: 12, color: tipText, fontWeight: color == null ? null : FontWeight.w500)),
+          text: TextSpan(text: text, style: TextStyle(fontFamily: fontFamily, fontSize: 12, color: tipText, fontWeight: color == null ? null : FontWeight.w500)),
           textDirection: TextDirection.ltr,
           maxLines: 2,
           ellipsis: '...',
@@ -428,7 +433,7 @@ class TimelinePainter extends CustomPainter {
 
   void _text(Canvas canvas, String text, Offset at, {bool center = false, bool right = false, Color? color}) {
     final tp = TextPainter(
-      text: TextSpan(text: text, style: TextStyle(fontSize: 11, color: color ?? textColor)),
+      text: TextSpan(text: text, style: TextStyle(fontFamily: fontFamily, fontSize: 11, color: color ?? textColor)),
       textDirection: TextDirection.ltr,
     )..layout();
     final dx = center ? at.dx - tp.width / 2 : (right ? at.dx - tp.width : at.dx);
@@ -442,6 +447,7 @@ class TimelinePainter extends CustomPainter {
       old.markers != markers ||
       old.now != now ||
       old.textColor != textColor ||
+      old.fontFamily != fontFamily ||
       old.reference != reference ||
       old.yMinimum != yMinimum ||
       old.yBase != yBase;

@@ -45,6 +45,7 @@ class DailyBarsChart extends StatelessWidget {
                 axisColor: scheme.outline,
                 gridColor: scheme.outlineVariant,
                 textColor: scheme.onSurfaceVariant,
+                fontFamily: Theme.of(context).textTheme.bodyMedium?.fontFamily,
                 todayColor: scheme.primary,
                 fixedSlot: width > constraints.maxWidth ? slot : (width - leftAxis - 8) / max(days.length, 1),
               ),
@@ -66,6 +67,7 @@ class _BarsPainter extends CustomPainter {
     required this.axisColor,
     required this.gridColor,
     required this.textColor,
+    this.fontFamily,
     required this.todayColor,
     required this.fixedSlot,
   });
@@ -76,11 +78,14 @@ class _BarsPainter extends CustomPainter {
   final Color axisColor;
   final Color gridColor;
   final Color textColor;
+
+  /// The app's text font, so chart labels match the rest of the screen.
+  final String? fontFamily;
   final Color todayColor;
   final double fixedSlot;
 
   void _text(Canvas canvas, String s, Offset at, {bool right = false, bool center = false}) {
-    final tp = TextPainter(text: TextSpan(text: s, style: TextStyle(fontSize: 10, color: textColor)), textDirection: TextDirection.ltr)..layout();
+    final tp = TextPainter(text: TextSpan(text: s, style: TextStyle(fontFamily: fontFamily, fontSize: 10, color: textColor)), textDirection: TextDirection.ltr)..layout();
     canvas.drawRect(Rect.zero, Paint());
     final dx = right ? at.dx - tp.width : (center ? at.dx - tp.width / 2 : at.dx);
     tp.paint(canvas, Offset(dx, at.dy));
