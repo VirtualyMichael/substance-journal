@@ -27,10 +27,14 @@ void main() {
   late ReminderService service;
   late String personId;
 
+  // A fixed mid-afternoon "now", so nothing depends on the time of day the tests run (a drink 30 minutes
+  // ago is on yesterday's calendar date when a test runs just after midnight).
+  final fixedNow = DateTime(2026, 7, 1, 15);
+
   setUp(() async {
     db = AppDatabase.memory(deviceId: 'd');
     notifier = FakeNotifier();
-    service = ReminderService(db, notifier);
+    service = ReminderService(db, notifier, now: () => fixedNow);
     personId = (await db.ensureDefaultPerson()).id;
     await db.setLimits(personId, const DrinkLimits(daily: 4));
   });
@@ -39,7 +43,7 @@ void main() {
   Future<void> beer(DateTime at) => db.logDrink(personId: personId, at: at, volume: 12, volumeUnit: 'oz', abvPercent: 5);
 
   test('alerts when a drink takes you close to the daily limit, then over, once each', () async {
-    final now = DateTime.now();
+    final now = fixedNow;
     for (var i = 0; i < 3; i++) {
       await beer(now.subtract(Duration(minutes: 30 - i)));
     }
@@ -58,7 +62,7 @@ void main() {
   });
 
   test('history that is not being drunk right now causes no alert, and neither does switching alerts off', () async {
-    final old = DateTime.now().subtract(const Duration(days: 2));
+    final old = fixedNow.subtract(const Duration(days: 2));
     for (var i = 0; i < 6; i++) {
       await beer(old.add(Duration(minutes: i)));
     }
@@ -66,7 +70,7 @@ void main() {
     expect(notifier.shown, isEmpty);
 
     for (var i = 0; i < 6; i++) {
-      await beer(DateTime.now().subtract(Duration(minutes: i)));
+      await beer(fixedNow.subtract(Duration(minutes: i)));
     }
     await service.save(const ReminderPrefs(limitAlerts: false));
     await service.start();
