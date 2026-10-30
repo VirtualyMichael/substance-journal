@@ -39,7 +39,7 @@ void main() {
     await tapKey(tester, 'quick-log');
     expect(find.text('Usual tab'), findsOneWidget);
     expect(find.text('Broken'), findsNothing);
-    expect(find.textContaining('Ketamine 30'), findsOneWidget); // repeat a recent dose
+    expect(find.textContaining('Ketamine 30'), findsWidgets); // repeat a recent dose
 
     final tile = find.byWidgetPredicate((w) => w.key is ValueKey && (w.key as ValueKey).value.toString().startsWith('quick-preset-'));
     await tester.tap(tile);

@@ -59,8 +59,8 @@ List<QuickItem> presetItems(Iterable<Preset> presets, ReferenceRepository refere
 }
 
 /// The last few different doses, newest first, so a repeat is one tap. Alcohol has its drink presets instead.
-List<QuickItem> recentItems(Iterable<Ingestion> ingestions, ReferenceRepository reference, {int limit = 6}) {
-  final sorted = [for (final i in ingestions) if (!i.deleted && i.substanceKey != 'alcohol') i]..sort((a, b) => b.time.compareTo(a.time));
+List<QuickItem> recentItems(Iterable<Ingestion> ingestions, ReferenceRepository reference, {int limit = 6, bool includeAlcohol = false}) {
+  final sorted = [for (final i in ingestions) if (!i.deleted && (includeAlcohol || i.substanceKey != 'alcohol')) i]..sort((a, b) => b.time.compareTo(a.time));
   final seen = <String>{};
   final items = <QuickItem>[];
   for (final i in sorted) {
@@ -121,6 +121,74 @@ Future<(Ingestion, bool)> logQuickDose(AppDatabase db, {required String personId
   return (ingestion, created);
 }
 
+/// Asks "log this now?" (with a warning if the same compound is still working), then logs it with an undo.
+Future<void> confirmAndLogQuick(BuildContext context, WidgetRef ref, Person person, QuickItem item) async {
+  final now = ref.read(clockProvider)();
+  final active = activeNow(
+    ingestions: ref.read(personIngestionsProvider(person.id)).value ?? const <Ingestion>[],
+    reference: ref.read(catalogProvider),
+    now: now,
+  ).where((a) => a.substance.key == item.substance.key).firstOrNull;
+
+  final confirmed = await showModalBottomSheet<bool>(
+    context: context,
+    showDragHandle: true,
+    builder: (context) => SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(Gap.md, 0, Gap.md, Gap.md),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Log ${item.title} now?', style: Theme.of(context).textTheme.titleMedium),
+            const SizedBox(height: 4),
+            Text('${item.subtitle} · for ${person.name} at ${clockTime(now)}'),
+            if (active != null) ...[
+              const SizedBox(height: Gap.sm),
+              Container(
+                key: const ValueKey('quick-active-warning'),
+                padding: const EdgeInsets.all(Gap.sm),
+                decoration: BoxDecoration(color: Theme.of(context).colorScheme.errorContainer, borderRadius: BorderRadius.circular(8)),
+                child: Text(
+                  active.latest.fullEffectReached
+                      ? 'You already have ${item.substance.name} working (taken ${now.difference(active.latest.ingestion.time).inMinutes} min ago). This adds to it.'
+                      : 'Your last ${item.substance.name} dose has not fully arrived yet (expect about ${clockTime(active.latest.fullEffectAt)}). Taking more now is a common way to take too much.',
+                ),
+              ),
+            ],
+            const SizedBox(height: Gap.md),
+            Row(
+              children: [
+                Expanded(child: OutlinedButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel'))),
+                const SizedBox(width: Gap.sm),
+                Expanded(child: FilledButton(key: const ValueKey('quick-confirm'), onPressed: () => Navigator.pop(context, true), child: const Text('Log now'))),
+              ],
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
+  if (confirmed != true || !context.mounted) return;
+
+  final db = ref.read(databaseProvider);
+  final messenger = ScaffoldMessenger.of(context);
+  Future<void> Function() undo;
+  if (item.drink != null) {
+    final d = item.drink!;
+    final abv = ((jsonDecode(d.detailsJson) as Map<String, dynamic>)['abv'] as num?)?.toDouble() ?? 0;
+    final logged = await db.logDrink(personId: person.id, at: now, volume: d.amount, volumeUnit: d.unit, abvPercent: abv, name: d.name);
+    undo = () => db.undoLoggedDrink(logged);
+  } else {
+    final (ingestion, created) = await logQuickDose(db, personId: person.id, item: item, at: now);
+    undo = () async {
+      await db.setIngestionDeleted(ingestion.id, true);
+      if (created) await db.deleteExperience(ingestion.experienceId);
+    };
+  }
+  messenger.showSnackBar(SnackBar(content: Text('Logged ${item.title}'), action: SnackBarAction(label: 'Undo', onPressed: undo)));
+}
+
 /// Favourites and recent doses, each one tap (plus a confirm) away. Also opened from the app icon's
 /// long-press menu, the Quick Settings tile and the home-screen widget on Android.
 class QuickLogPage extends ConsumerWidget {
@@ -128,72 +196,7 @@ class QuickLogPage extends ConsumerWidget {
 
   final Person person;
 
-  Future<void> _log(BuildContext context, WidgetRef ref, QuickItem item) async {
-    final now = ref.read(clockProvider)();
-    final active = activeNow(
-      ingestions: ref.read(personIngestionsProvider(person.id)).value ?? const <Ingestion>[],
-      reference: ref.read(catalogProvider),
-      now: now,
-    ).where((a) => a.substance.key == item.substance.key).firstOrNull;
-
-    final confirmed = await showModalBottomSheet<bool>(
-      context: context,
-      showDragHandle: true,
-      builder: (context) => SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(Gap.md, 0, Gap.md, Gap.md),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Log ${item.title} now?', style: Theme.of(context).textTheme.titleMedium),
-              const SizedBox(height: 4),
-              Text('${item.subtitle} · for ${person.name} at ${clockTime(now)}'),
-              if (active != null) ...[
-                const SizedBox(height: Gap.sm),
-                Container(
-                  key: const ValueKey('quick-active-warning'),
-                  padding: const EdgeInsets.all(Gap.sm),
-                  decoration: BoxDecoration(color: Theme.of(context).colorScheme.errorContainer, borderRadius: BorderRadius.circular(8)),
-                  child: Text(
-                    active.latest.fullEffectReached
-                        ? 'You already have ${item.substance.name} working (taken ${now.difference(active.latest.ingestion.time).inMinutes} min ago). This adds to it.'
-                        : 'Your last ${item.substance.name} dose has not fully arrived yet (expect about ${clockTime(active.latest.fullEffectAt)}). Taking more now is a common way to take too much.',
-                  ),
-                ),
-              ],
-              const SizedBox(height: Gap.md),
-              Row(
-                children: [
-                  Expanded(child: OutlinedButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel'))),
-                  const SizedBox(width: Gap.sm),
-                  Expanded(child: FilledButton(key: const ValueKey('quick-confirm'), onPressed: () => Navigator.pop(context, true), child: const Text('Log now'))),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-    if (confirmed != true || !context.mounted) return;
-
-    final db = ref.read(databaseProvider);
-    final messenger = ScaffoldMessenger.of(context);
-    Future<void> Function() undo;
-    if (item.drink != null) {
-      final d = item.drink!;
-      final abv = ((jsonDecode(d.detailsJson) as Map<String, dynamic>)['abv'] as num?)?.toDouble() ?? 0;
-      final logged = await db.logDrink(personId: person.id, at: now, volume: d.amount, volumeUnit: d.unit, abvPercent: abv, name: d.name);
-      undo = () => db.undoLoggedDrink(logged);
-    } else {
-      final (ingestion, created) = await logQuickDose(db, personId: person.id, item: item, at: now);
-      undo = () async {
-        await db.setIngestionDeleted(ingestion.id, true);
-        if (created) await db.deleteExperience(ingestion.experienceId);
-      };
-    }
-    messenger.showSnackBar(SnackBar(content: Text('Logged ${item.title}'), action: SnackBarAction(label: 'Undo', onPressed: undo)));
-  }
+  Future<void> _log(BuildContext context, WidgetRef ref, QuickItem item) => confirmAndLogQuick(context, ref, person, item);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

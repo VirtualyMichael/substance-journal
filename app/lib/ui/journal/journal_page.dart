@@ -6,6 +6,7 @@ import '../../providers.dart';
 import '../add/add_ingestion_page.dart';
 import '../design.dart';
 import 'active_now_card.dart';
+import '../quicklog/quick_log_page.dart';
 import 'experience_page.dart';
 
 /// Opens the add flow and, once saved, the experience it went into.
@@ -61,7 +62,20 @@ class JournalPage extends ConsumerWidget {
       );
     }
 
-    final children = <Widget>[ActiveNowCard(personId: person.id, ingestions: ingestions)];
+    final last = recentItems(ingestions, reference, limit: 1, includeAlcohol: true).firstOrNull;
+    final children = <Widget>[
+      if (last != null)
+        Padding(
+          padding: const EdgeInsets.only(top: Gap.md),
+          child: FilledButton.tonalIcon(
+            key: const ValueKey('same-as-last'),
+            icon: const Icon(Icons.replay),
+            label: Align(alignment: Alignment.centerLeft, child: Text('Same as last time: ${last.title}')),
+            onPressed: () => confirmAndLogQuick(context, ref, person, last),
+          ),
+        ),
+      ActiveNowCard(personId: person.id, ingestions: ingestions),
+    ];
     String? lastMonth;
     const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
     for (final e in experiences) {

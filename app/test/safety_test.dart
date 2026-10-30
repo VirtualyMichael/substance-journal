@@ -42,7 +42,7 @@ void main() {
     await tester.enterText(find.byKey(const ValueKey('dose-field')), '600');
     await settle(tester, rounds: 2);
     expect(find.text('Heavy dose'), findsOneWidget);
-    expect(tester.widget<FilledButton>(find.byKey(const ValueKey('primary-action'))).onPressed, isNotNull);
+    expect(tester.widget<OutlinedButton>(find.byKey(const ValueKey('primary-action'))).onPressed, isNotNull);
     await disposeApp(tester, app);
   });
 

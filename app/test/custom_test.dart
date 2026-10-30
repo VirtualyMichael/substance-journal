@@ -336,7 +336,7 @@ void main() {
       expect(row.dose, 240);
       expect(row.customUnitId, unit.id);
       expect(row.detailsJson, contains('"unitCount":2'));
-      expect(find.textContaining('2 pills (240 mg)'), findsOneWidget);
+      expect(find.textContaining('2 pills (240 mg)'), findsWidgets);
       await disposeApp(tester, app);
     });
 
@@ -526,7 +526,7 @@ void main() {
       await startApp(tester, app);
       await tester.tap(find.text('Pills'));
       await settle(tester);
-      expect(find.textContaining('1 pill (120 mg)'), findsOneWidget);
+      expect(find.textContaining('1 pill (120 mg)'), findsWidgets);
 
       await tapKey(tester, 'ingestion-${ing.id}');
       await tester.enterText(find.byKey(const ValueKey('edit-unit-count')), '3');

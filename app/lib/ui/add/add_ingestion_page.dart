@@ -142,6 +142,24 @@ class _AddIngestionPageState extends ConsumerState<AddIngestionPage> {
     });
   }
 
+  /// Saves with the time set to now and the experience from the last 12 hours (or a new one), so a
+  /// plain dose is two taps: pick the compound, then Log now.
+  Future<void> _logNow() async {
+    final error = _dose.validate(_roa!);
+    if (error != null) {
+      setState(() => _error = error);
+      return;
+    }
+    final now = ref.read(clockProvider)();
+    final db = ref.read(databaseProvider);
+    final recent = await db.recentExperienceFor(widget.personId, now);
+    if (!mounted) return;
+    _time = now;
+    _endTime = null;
+    _experienceChoice = recent?.id;
+    await _save();
+  }
+
   Future<void> _save() async {
     final roa = _roa!;
     final substance = _substance!;
@@ -370,7 +388,19 @@ class _AddIngestionPageState extends ConsumerState<AddIngestionPage> {
             ],
           ),
         ),
-        _bottomBar(label: 'Next', onPressed: _toWhen),
+        SafeArea(
+          top: false,
+          child: Padding(
+            padding: const EdgeInsets.all(Gap.md),
+            child: Row(
+              children: [
+                Expanded(child: OutlinedButton(key: const ValueKey('primary-action'), onPressed: _toWhen, child: const Text('Time and notes'))),
+                const SizedBox(width: Gap.sm),
+                Expanded(child: FilledButton(key: const ValueKey('log-now'), onPressed: _saving ? null : _logNow, child: Text(_saving ? 'Saving...' : 'Log now'))),
+              ],
+            ),
+          ),
+        ),
       ],
     );
   }
