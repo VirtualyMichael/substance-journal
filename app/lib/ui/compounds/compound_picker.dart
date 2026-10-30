@@ -34,7 +34,7 @@ class _CompoundPickerState extends ConsumerState<CompoundPicker> {
     final reference = ref.watch(catalogProvider);
     final usage = ref.watch(usageProvider(widget.personId)).value ?? const <String, UsageStat>{};
     final prefs = ref.watch(compoundPrefsProvider(widget.personId)).value ?? const CompoundPrefs();
-    final now = ref.watch(clockProvider)();
+    final now = ref.watch(nowProvider);
     final db = ref.read(databaseProvider);
 
     final compounds = orderCompounds(

@@ -40,6 +40,70 @@ List<BuiltInPreset> builtInPresets(RouteOfAdministration roa) {
 
 String _amount(double v) => DoseInput.formatGrams(v);
 
+/// A dose you took before, ready to fill the form again.
+class RecentDose {
+  const RecentDose(this.label, this.input);
+  final String label;
+  final Map<String, Object?> input;
+}
+
+/// The last few distinct doses logged for a compound and route, newest first. Works from what was
+/// stored with each ingestion, so cannabis comes back as its product and grams, a drink as its
+/// volume and strength, and mushrooms as what was weighed.
+List<RecentDose> recentDoses(List<Ingestion> all, String substanceKey, String route, {int limit = 4}) {
+  final mine = [
+    for (final i in all)
+      if (!i.deleted && i.substanceKey == substanceKey && i.route == route && i.dose != null && i.customUnitId == null) i,
+  ]..sort((a, b) => b.time.compareTo(a.time));
+  final seen = <String>{};
+  final out = <RecentDose>[];
+  for (final i in mine) {
+    Map<String, dynamic> d;
+    try {
+      d = jsonDecode(i.detailsJson) as Map<String, dynamic>;
+    } on Object {
+      d = const {};
+    }
+    final unit = i.unit ?? '';
+    final amount = '${_amount(i.dose!)} $unit'.trim();
+    String label = amount;
+    final input = <String, Object?>{'text': _amount(i.dose!), 'isEstimate': i.doseIsEstimate};
+
+    if (substanceKey == 'cannabis') {
+      final product = d['product'] as String? ?? '';
+      input
+        ..['method'] = i.method
+        ..['mode'] = d['mode']
+        ..['gramsText'] = d['grams'] == null ? '' : _amount((d['grams'] as num).toDouble())
+        ..['thcText'] = d['thcPercent'] == null ? '' : _amount((d['thcPercent'] as num).toDouble())
+        ..['labelMgText'] = d['labelThcMg'] == null ? '' : _amount((d['labelThcMg'] as num).toDouble())
+        ..['cbdText'] = d['cbd'] ?? ''
+        ..['fraction'] = d['fractionUsed'] ?? 1.0
+        ..['productId'] = i.productId
+        ..['productName'] = product.isEmpty ? null : product;
+      final g = d['grams'] == null ? null : '${_amount((d['grams'] as num).toDouble())} g';
+      label = [if (product.isNotEmpty) product, g ?? amount].join(' ');
+    } else if (d['drink'] != null && d['volume'] is num && d['abv'] is num) {
+      input
+        ..['volumeText'] = _amount((d['volume'] as num).toDouble())
+        ..['volumeUnit'] = d['volumeUnit'] ?? 'oz'
+        ..['abvText'] = _amount((d['abv'] as num).toDouble());
+      label = '${_amount((d['volume'] as num).toDouble())} ${d['volumeUnit'] ?? 'oz'} at ${_amount((d['abv'] as num).toDouble())}%';
+    } else if (substanceKey == 'psilocybin_mushrooms' && d['entered'] is num) {
+      input
+        ..['mushroomForm'] = d['form'] ?? 'dried'
+        ..['mushroomText'] = _amount((d['entered'] as num).toDouble());
+      label = '${_amount((d['entered'] as num).toDouble())} ${d['form'] == 'mg' ? 'mg psilocybin' : '${d['form'] ?? 'dried'} g'}';
+    } else if (d['sample'] is String) {
+      input['productName'] = d['sample'];
+    }
+    if (!seen.add(label)) continue;
+    out.add(RecentDose(label, input));
+    if (out.length == limit) break;
+  }
+  return out;
+}
+
 /// Quick fills above the dose field: Low, Medium and High from the reference, plus presets you saved.
 class DosePresetBar extends ConsumerWidget {
   const DosePresetBar({super.key, required this.substance, required this.roa, required this.value, required this.onChanged});
@@ -83,8 +147,11 @@ class DosePresetBar extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final saved = ref.watch(dosePresetsProvider('${substance.key}|${roa.route}')).value ?? const <Preset>[];
     final builtIn = builtInPresets(roa);
+    final person = ref.watch(currentPersonProvider);
+    final history = person == null ? const <Ingestion>[] : ref.watch(personIngestionsProvider(person.id)).value ?? const <Ingestion>[];
+    final recent = recentDoses(history, substance.key, roa.route);
     final canSave = !value.unknown && value.unit == null && value.validate(roa) == null;
-    if (builtIn.isEmpty && saved.isEmpty && !canSave) return const SizedBox.shrink();
+    if (builtIn.isEmpty && saved.isEmpty && recent.isEmpty && !canSave) return const SizedBox.shrink();
     final text = Theme.of(context).textTheme;
 
     return Padding(
@@ -92,6 +159,25 @@ class DosePresetBar extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          if (recent.isNotEmpty) ...[
+            Text('Recent', style: text.titleSmall),
+            const SizedBox(height: 4),
+            Wrap(
+              spacing: Gap.sm,
+              runSpacing: 4,
+              children: [
+                for (var n = 0; n < recent.length; n++)
+                  ActionChip(
+                    key: ValueKey('recent-$n'),
+                    avatar: const Icon(Icons.history, size: 16),
+                    label: Text(recent[n].label),
+                    tooltip: 'Fill the form with a dose you took before',
+                    onPressed: () => onChanged(value.withPreset(recent[n].input)),
+                  ),
+              ],
+            ),
+            const SizedBox(height: Gap.md),
+          ],
           Text('Presets', style: text.titleSmall),
           const SizedBox(height: 4),
           Wrap(

@@ -69,7 +69,7 @@ class _AlcoholAnalyticsPageState extends ConsumerState<AlcoholAnalyticsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final now = ref.watch(clockProvider)();
+    final now = ref.watch(nowProvider);
     final settings = ref.watch(estimateSettingsProvider(widget.person.id)).value ?? const EstimateSettings();
     final drinks = ref.watch(alcoholDrinksProvider(widget.person.id));
     final today = dateOnly(now);

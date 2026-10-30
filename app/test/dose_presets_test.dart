@@ -5,6 +5,7 @@ import 'package:substance_journal_app/ui/add/dose_presets.dart';
 import 'helpers.dart';
 
 void main() {
+  recentTests();
   test('low, medium and high are the middle of the light, common and strong ranges; cannabis has none', () {
     final ref = loadReference();
     final lsd = ref.byKey['lsd']!.roas.first;
@@ -94,6 +95,31 @@ void main() {
     await settle(tester);
     expect(find.widgetWithText(TextFormField, '0.2'), findsOneWidget);
     expect(find.widgetWithText(TextFormField, '18'), findsOneWidget);
+    await disposeApp(tester, app);
+  });
+}
+
+void recentTests() {
+  testWidgets('doses you took before come back as Recent chips for any compound, and tapping one fills the form', (tester) async {
+    final app = await buildTestApp(tester);
+    await startApp(tester, app);
+    for (final dose in ['50', '95']) {
+      await tapKey(tester, 'journal-add');
+      await tapKey(tester, 'compound-lsd');
+      expect(find.byKey(const ValueKey('recent-0')), dose == '50' ? findsNothing : findsOneWidget);
+      await tester.enterText(find.byKey(const ValueKey('dose-field')), dose);
+      await tester.pumpAndSettle();
+      await tapKey(tester, 'primary-action');
+      await tapKey(tester, 'primary-action');
+      tester.state<NavigatorState>(find.byType(Navigator).first).popUntil((r) => r.isFirst);
+      await tester.pumpAndSettle();
+    }
+    await tapKey(tester, 'journal-add');
+    await tapKey(tester, 'compound-lsd');
+    expect(find.byKey(const ValueKey('recent-1')), findsOneWidget);
+    await tester.tap(find.ancestor(of: find.textContaining('95 '), matching: find.byType(ActionChip)));
+    await tester.pumpAndSettle();
+    expect(find.widgetWithText(TextField, '95'), findsOneWidget);
     await disposeApp(tester, app);
   });
 }

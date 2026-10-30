@@ -16,7 +16,7 @@ class AlcoholHistoryPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final now = ref.watch(clockProvider)();
+    final now = ref.watch(nowProvider);
     final settings = ref.watch(estimateSettingsProvider(person.id)).value ?? const EstimateSettings();
     final drinks = ref.watch(alcoholDrinksProvider(person.id));
     final days = drinkingDays(drinks, settings);

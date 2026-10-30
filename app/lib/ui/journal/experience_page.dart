@@ -168,7 +168,7 @@ class _ExperiencePageState extends ConsumerState<ExperiencePage> {
     }
 
     final reference = ref.watch(catalogProvider);
-    final now = ref.watch(clockProvider)();
+    final now = ref.watch(nowProvider);
     final ingestions = ref.watch(experienceIngestionsProvider(widget.experienceId)).value ?? const <Ingestion>[];
     final timedNotes = ref.watch(timedNotesProvider(widget.experienceId)).value ?? const <TimedNote>[];
     final ratings = ref.watch(ratingsProvider(widget.experienceId)).value ?? const <Rating>[];

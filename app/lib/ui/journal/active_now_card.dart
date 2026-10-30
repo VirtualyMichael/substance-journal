@@ -55,7 +55,7 @@ class _ActiveNowCardState extends ConsumerState<ActiveNowCard> {
 
   @override
   Widget build(BuildContext context) {
-    final now = ref.read(clockProvider)();
+    final now = ref.watch(nowProvider);
     final active = activeNow(ingestions: widget.ingestions, reference: ref.watch(catalogProvider), now: now);
 
     // Alcohol has its own estimate (blood alcohol), so it gets a line of its own rather than a timing phase.

@@ -56,7 +56,7 @@ class AlcoholDayView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final now = ref.watch(clockProvider)();
+    final now = ref.watch(nowProvider);
     final settings = ref.watch(estimateSettingsProvider(person.id)).value ?? const EstimateSettings();
     final drinks = ref.watch(alcoholDrinksProvider(person.id));
     final isToday = day == null || dateOnly(day!) == dateOnly(now);
@@ -261,7 +261,7 @@ class _QuickAddBarState extends ConsumerState<QuickAddBar> {
   Widget build(BuildContext context) {
     final presets = ref.watch(drinkPresetsProvider).value ?? const <Preset>[];
     final drinks = ref.watch(alcoholDrinksProvider(widget.person.id));
-    final now = ref.watch(clockProvider)();
+    final now = ref.watch(nowProvider);
     final top = topPresets(presets, drinks, now);
     final selected = presets.where((p) => p.id == _selected).firstOrNull ?? presets.firstOrNull;
     final text = Theme.of(context).textTheme;

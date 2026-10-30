@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
@@ -27,6 +28,37 @@ final interactionPairsProvider = Provider<List<TripSitPair>>((ref) => const []);
 
 /// The time "now", overridable in tests.
 final clockProvider = Provider<DateTime Function()>((ref) => DateTime.now);
+
+/// Bumps every 30 seconds and whenever the app returns to the foreground, so anything showing
+/// "now" (curves, Now markers, active timers) moves on instead of freezing at the last rebuild.
+class ClockTick extends Notifier<int> with WidgetsBindingObserver {
+  Timer? _timer;
+
+  @override
+  int build() {
+    _timer = Timer.periodic(const Duration(seconds: 30), (_) => state++);
+    WidgetsBinding.instance.addObserver(this);
+    ref.onDispose(() {
+      _timer?.cancel();
+      WidgetsBinding.instance.removeObserver(this);
+    });
+    return 0;
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state_) {
+    if (state_ == AppLifecycleState.resumed) state++;
+  }
+}
+
+final clockTickProvider = NotifierProvider<ClockTick, int>(ClockTick.new);
+
+/// The current time, refreshed by [clockTickProvider]. Watch this (not [clockProvider]) in any
+/// widget that draws something relative to now.
+final nowProvider = Provider<DateTime>((ref) {
+  ref.watch(clockTickProvider);
+  return ref.watch(clockProvider)();
+});
 
 // ---- compounds: reference data plus the user's own ----
 

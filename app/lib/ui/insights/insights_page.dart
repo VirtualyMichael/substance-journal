@@ -26,7 +26,7 @@ class _InsightsPageState extends ConsumerState<InsightsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final now = ref.watch(clockProvider)();
+    final now = ref.watch(nowProvider);
     final month = _month ?? DateTime(now.year, now.month);
     final isCurrent = month.year == now.year && month.month == now.month;
     final catalog = ref.watch(catalogProvider);

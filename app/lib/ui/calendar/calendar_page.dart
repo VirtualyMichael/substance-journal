@@ -32,7 +32,7 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
 
   @override
   Widget build(BuildContext context) {
-    final now = ref.watch(clockProvider)();
+    final now = ref.watch(nowProvider);
     final people = ref.watch(peopleProvider).value ?? const <Person>[];
     final experiences = ref.watch(allExperiencesProvider).value ?? const <Experience>[];
     final ingestions = ref.watch(allIngestionsProvider).value ?? const <Ingestion>[];

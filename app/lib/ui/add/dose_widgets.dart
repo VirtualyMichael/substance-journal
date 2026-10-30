@@ -510,13 +510,11 @@ class DoseEditor extends StatelessWidget {
     final form = substance.key == 'cannabis'
         ? _CannabisForm(roa: roa, value: value, onChanged: onChanged)
         : _GenericForm(substance: substance, roa: roa, value: value, onChanged: onChanged);
-    // Alcohol has its own drink presets and quick add; every other substance gets dose presets.
-    if (substance.key == 'alcohol') return form;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         DosePresetBar(substance: substance, roa: roa, value: value, onChanged: onChanged),
-        if (substance.key != 'cannabis') DoseSampleBar(substance: substance, value: value, onChanged: onChanged),
+        if (substance.key != 'cannabis' && substance.key != 'alcohol') DoseSampleBar(substance: substance, value: value, onChanged: onChanged),
         KeyedSubtree(key: ValueKey('dose-form-${value.presetNonce}'), child: form),
       ],
     );

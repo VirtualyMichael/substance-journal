@@ -17,7 +17,7 @@ class TolerancePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final text = Theme.of(context).textTheme;
-    final now = ref.watch(clockProvider)();
+    final now = ref.watch(nowProvider);
     final catalog = ref.watch(catalogProvider);
     final rows = ref.watch(personIngestionsProvider(personId)).value ?? const [];
     final tracks = toleranceTracks(
