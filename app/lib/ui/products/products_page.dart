@@ -52,6 +52,7 @@ class ProductsPage extends ConsumerWidget {
                   padding: const EdgeInsets.fromLTRB(Gap.md, Gap.md, Gap.md, 96),
                   children: [
                     _BestCard(outcomes: outcomes),
+                    _TypeCard(outcomes: outcomes),
                     for (final p in products) _ProductCard(product: p, usage: ProductUsage.of(p, ingestions), outcomes: outcomes[p]!),
                   ],
                 ),
@@ -74,7 +75,8 @@ class _ProductCard extends ConsumerWidget {
       if (product.thcPercent != null) 'THC ${_n(product.thcPercent!)}%',
       if (d.thcMgPerUnit != null) 'THC ${_n(d.thcMgPerUnit!)} mg each',
       if (product.cbdPercent != null) 'CBD ${_n(product.cbdPercent!)}%',
-      d.kind,
+      d.strainType.isEmpty ? d.kind : '${d.strainType} ${d.kind}',
+      if (d.batch.isNotEmpty) 'batch ${d.batch}',
     ];
     final used = usage.doses == 0
         ? 'Not used yet'
@@ -154,6 +156,46 @@ class _BestCard extends StatelessWidget {
   }
 }
 
+/// How the strain types you have saved compare, once at least two have ratings behind them.
+class _TypeCard extends StatelessWidget {
+  const _TypeCard({required this.outcomes});
+  final Map<Product, ProductOutcomes> outcomes;
+
+  @override
+  Widget build(BuildContext context) {
+    final types = outcomesByType(outcomes);
+    if (types.length < 2) return const SizedBox.shrink();
+    return Card(
+      key: const ValueKey('type-outcomes'),
+      child: Padding(
+        padding: const EdgeInsets.all(Gap.md),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('By strain type', style: Theme.of(context).textTheme.titleSmall),
+            const SizedBox(height: 4),
+            for (final t in types)
+              Text([
+                '${t.type[0].toUpperCase()}${t.type.substring(1)}: ',
+                [
+                  for (final (key, label) in scoreFields)
+                    if (t.averages[key] != null) '${label.toLowerCase()} ${_n(double.parse(t.averages[key]!.toStringAsFixed(1)))}',
+                ].join(', '),
+                ' (${t.products} ${t.products == 1 ? 'product' : 'products'})',
+              ].join()),
+            const SizedBox(height: 4),
+            Text(
+              "Indica, sativa and hybrid are market labels and often do not match a strain's chemistry, so treat this as a curiosity. "
+              'Whole-session ratings, other substances included.',
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 /// Opens the add/edit sheet. Returns the saved product, or null if cancelled.
 Future<Product?> showProductEditor(BuildContext context, WidgetRef ref, {Product? existing}) {
   return showDialog<Product>(context: context, builder: (_) => _ProductEditor(existing: existing));
@@ -168,8 +210,9 @@ class _ProductEditor extends ConsumerStatefulWidget {
 }
 
 class _ProductEditorState extends ConsumerState<_ProductEditor> {
-  late final TextEditingController _name, _thc, _cbd, _terpenes, _source, _cost, _labelMg, _notes;
+  late final TextEditingController _name, _thc, _cbd, _batch, _terpenes, _source, _cost, _labelMg, _notes;
   late String _kind;
+  late String _strainType;
   String? _error;
 
   @override
@@ -181,17 +224,19 @@ class _ProductEditorState extends ConsumerState<_ProductEditor> {
     _name = TextEditingController(text: p?.name ?? '');
     _thc = TextEditingController(text: num(p?.thcPercent));
     _cbd = TextEditingController(text: num(p?.cbdPercent));
+    _batch = TextEditingController(text: d.batch);
     _terpenes = TextEditingController(text: d.terpenes);
     _source = TextEditingController(text: d.source);
     _cost = TextEditingController(text: num(d.costPerGram));
     _labelMg = TextEditingController(text: num(d.thcMgPerUnit));
     _notes = TextEditingController(text: d.notes);
     _kind = d.kind;
+    _strainType = d.strainType;
   }
 
   @override
   void dispose() {
-    for (final c in [_name, _thc, _cbd, _terpenes, _source, _cost, _labelMg, _notes]) {
+    for (final c in [_name, _thc, _cbd, _batch, _terpenes, _source, _cost, _labelMg, _notes]) {
       c.dispose();
     }
     super.dispose();
@@ -208,6 +253,8 @@ class _ProductEditorState extends ConsumerState<_ProductEditor> {
     }
     final details = ProductDetails(
       kind: _kind,
+      strainType: _strainType,
+      batch: _batch.text.trim(),
       terpenes: _terpenes.text.trim(),
       source: _source.text.trim(),
       costPerGram: _parse(_cost),
@@ -259,6 +306,20 @@ class _ProductEditorState extends ConsumerState<_ProductEditor> {
                   onChanged: (v) => setState(() => _kind = v ?? _kind),
                 ),
               ),
+              if (_kind == 'flower' || _kind == 'concentrate' || _kind == 'vape')
+                Padding(
+                  padding: const EdgeInsets.only(bottom: Gap.sm),
+                  child: DropdownButtonFormField<String>(
+                    key: const ValueKey('product-strain-type'),
+                    initialValue: _strainType,
+                    decoration: const InputDecoration(labelText: 'Strain type (optional)'),
+                    items: [
+                      const DropdownMenuItem(value: '', child: Text('Not sure')),
+                      for (final t in ProductDetails.strainTypes) DropdownMenuItem(value: t, child: Text(t)),
+                    ],
+                    onChanged: (v) => setState(() => _strainType = v ?? ''),
+                  ),
+                ),
               Row(children: [
                 Expanded(child: _field('product-thc', 'THC', _thc, suffix: '%', number: true)),
                 const SizedBox(width: Gap.sm),
@@ -266,6 +327,25 @@ class _ProductEditorState extends ConsumerState<_ProductEditor> {
               ]),
               if (edible) _field('product-label-mg', 'THC per piece or dose', _labelMg, suffix: 'mg', number: true),
               _field('product-terpenes', 'Terpenes (optional)', _terpenes),
+              Padding(
+                padding: const EdgeInsets.only(bottom: Gap.sm),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Wrap(spacing: 6, children: [
+                    for (final t in ProductDetails.commonTerpenes)
+                      ActionChip(
+                        key: ValueKey('terpene-${t.toLowerCase()}'),
+                        label: Text(t),
+                        visualDensity: VisualDensity.compact,
+                        onPressed: () {
+                          if (_terpenes.text.toLowerCase().contains(t.toLowerCase())) return;
+                          setState(() => _terpenes.text = _terpenes.text.trim().isEmpty ? t : '${_terpenes.text.trim()}, $t');
+                        },
+                      ),
+                  ]),
+                ),
+              ),
+              _field('product-batch', 'Batch or lot (optional)', _batch),
               _field('product-source', 'Where from (optional)', _source),
               _field('product-cost', 'Cost per gram (optional)', _cost, suffix: '\$', number: true),
               _field('product-notes', 'Notes', _notes, lines: 2),

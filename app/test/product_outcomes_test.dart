@@ -51,4 +51,30 @@ void main() {
     final ratings = await db.watchRatingsForPerson(me.id).first;
     expect(ratings, isEmpty);
   });
+
+  test('strain type, batch and terpenes are kept, and outcomes group by type', () async {
+    final me = await db.ensureDefaultPerson();
+    final indica = await db.addProduct(
+      substanceKey: 'cannabis',
+      name: 'Kush',
+      details: const ProductDetails(strainType: 'indica', batch: 'B-12', terpenes: 'Myrcene').toJson(),
+    );
+    final sativa = await db.addProduct(substanceKey: 'cannabis', name: 'Haze', details: const ProductDetails(strainType: 'sativa').toJson());
+    final unknown = await db.addProduct(substanceKey: 'cannabis', name: 'Mystery');
+    expect(ProductDetails.of(indica).strainType, 'indica');
+    expect(ProductDetails.of(indica).batch, 'B-12');
+    expect(ProductDetails.of(unknown).strainType, '');
+
+    for (var i = 0; i < 2; i++) {
+      await session(me.id, indica, DateTime(2026, 7, 1 + i, 20), scores: {'sleep': 8});
+      await session(me.id, sativa, DateTime(2026, 7, 5 + i, 20), scores: {'sleep': 4});
+      await session(me.id, unknown, DateTime(2026, 7, 9 + i, 20), scores: {'sleep': 1});
+    }
+    final ingestions = await db.ingestionsForPerson(me.id);
+    final ratings = await db.watchRatingsForPerson(me.id).first;
+    final byType = outcomesByType({for (final p in [indica, sativa, unknown]) p: ProductOutcomes.of(p, ingestions, ratings)});
+    expect(byType.map((t) => t.type), ['indica', 'sativa']); // products with no type are left out
+    expect(byType.first.averages['sleep'], 8);
+    expect(byType.last.averages['sleep'], 4);
+  });
 }

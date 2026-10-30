@@ -46,6 +46,7 @@ class ClockTick extends Notifier<int> with WidgetsBindingObserver {
   }
 
   @override
+  // ignore: avoid_renaming_method_parameters
   void didChangeAppLifecycleState(AppLifecycleState state_) {
     if (state_ == AppLifecycleState.resumed) state++;
   }

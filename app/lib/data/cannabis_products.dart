@@ -5,10 +5,17 @@ import 'database.dart';
 /// What a saved cannabis product adds beyond its name and THC/CBD percent. Lives in the product's
 /// details JSON so older copies of the app keep syncing it untouched.
 class ProductDetails {
-  const ProductDetails({this.kind = 'flower', this.terpenes = '', this.source = '', this.costPerGram, this.thcMgPerUnit, this.notes = ''});
+  const ProductDetails({this.kind = 'flower', this.strainType = '', this.batch = '', this.terpenes = '', this.source = '', this.costPerGram, this.thcMgPerUnit, this.notes = ''});
 
   /// flower, concentrate, vape, edible, tincture or other.
   final String kind;
+
+  /// indica, sativa or hybrid, or empty when unknown. A market label that says little about the
+  /// effect on its own, kept so you can see whether it matches what you rate.
+  final String strainType;
+
+  /// Batch or lot number, for comparing one purchase with the next.
+  final String batch;
   final String terpenes;
   final String source;
   final double? costPerGram;
@@ -18,9 +25,13 @@ class ProductDetails {
   final String notes;
 
   static const kinds = ['flower', 'concentrate', 'vape', 'edible', 'tincture', 'other'];
+  static const strainTypes = ['indica', 'sativa', 'hybrid'];
+  static const commonTerpenes = ['Myrcene', 'Limonene', 'Caryophyllene', 'Pinene', 'Linalool', 'Humulene', 'Terpinolene', 'Ocimene'];
 
   Map<String, Object?> toJson() => {
         'kind': kind,
+        if (strainType.isNotEmpty) 'strainType': strainType,
+        if (batch.isNotEmpty) 'batch': batch,
         if (terpenes.isNotEmpty) 'terpenes': terpenes,
         if (source.isNotEmpty) 'source': source,
         'costPerGram': ?costPerGram,
@@ -34,6 +45,8 @@ class ProductDetails {
       final kind = j['kind'];
       return ProductDetails(
         kind: kind is String && kinds.contains(kind) ? kind : 'flower',
+        strainType: strainTypes.contains(j['strainType']) ? j['strainType'] as String : '',
+        batch: '${j['batch'] ?? ''}',
         terpenes: '${j['terpenes'] ?? ''}',
         source: '${j['source'] ?? ''}',
         costPerGram: (j['costPerGram'] as num?)?.toDouble(),
@@ -144,4 +157,36 @@ const lowerIsBetter = {'pain', 'anxiety'};
     if (better) best = (product: p, average: avg, count: n);
   });
   return best;
+}
+
+/// Average scores for one strain type across every rated product of that type.
+class TypeOutcomes {
+  const TypeOutcomes({required this.type, required this.products, required this.averages, required this.counts});
+  final String type;
+  final int products;
+  final Map<String, double> averages;
+  final Map<String, int> counts;
+}
+
+/// Groups product outcomes by indica, sativa or hybrid. A product's average counts as many times
+/// as it has ratings, so a type is not swung by one product with a single rating.
+List<TypeOutcomes> outcomesByType(Map<Product, ProductOutcomes> outcomes) {
+  final out = <TypeOutcomes>[];
+  for (final type in ProductDetails.strainTypes) {
+    final sums = <String, double>{};
+    final counts = <String, int>{};
+    var products = 0;
+    outcomes.forEach((p, o) {
+      if (ProductDetails.of(p).strainType != type || o.rated == 0) return;
+      products++;
+      o.averages.forEach((k, avg) {
+        final n = o.counts[k] ?? 0;
+        sums[k] = (sums[k] ?? 0) + avg * n;
+        counts[k] = (counts[k] ?? 0) + n;
+      });
+    });
+    if (products == 0) continue;
+    out.add(TypeOutcomes(type: type, products: products, averages: {for (final k in sums.keys) k: sums[k]! / counts[k]!}, counts: counts));
+  }
+  return out;
 }
