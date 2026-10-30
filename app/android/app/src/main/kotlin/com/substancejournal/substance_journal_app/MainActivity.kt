@@ -1,13 +1,13 @@
 package com.substancejournal.substance_journal_app
 
 import android.content.Intent
-import io.flutter.embedding.android.FlutterActivity
+import io.flutter.embedding.android.FlutterFragmentActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 
 // Opens the app, and tells it where to go when it was started from the icon's long-press menu, the
 // Quick Settings tile or the home-screen widget (all send the extra "sj_route").
-class MainActivity : FlutterActivity() {
+class MainActivity : FlutterFragmentActivity() {
     private var channel: MethodChannel? = null
     private var initialRoute: String? = null
 

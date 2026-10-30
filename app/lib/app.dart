@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'providers.dart';
 import 'ui/design.dart';
+import 'ui/lock/lock_gate.dart';
 import 'ui/shell.dart';
 
 class SubstanceJournalApp extends ConsumerStatefulWidget {
@@ -51,6 +52,7 @@ class _SubstanceJournalAppState extends ConsumerState<SubstanceJournalApp> {
       darkTheme: buildTheme(Brightness.dark, seed: seed),
       themeMode: themeMode,
       themeAnimationDuration: rainbow ? _step : kThemeAnimationDuration,
+      builder: (context, child) => LockGate(child: child ?? const SizedBox.shrink()),
       home: const AppShell(),
     );
   }

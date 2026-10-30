@@ -6,6 +6,8 @@
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>Unlock Substance Journal with Face ID.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>The camera scans the QR codes that pair and sync your devices. Nothing is recorded.</string>
 	<key>NSLocalNetworkUsageDescription</key>

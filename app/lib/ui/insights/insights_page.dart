@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sj_core/sj_core.dart';
 
 import '../../data/database.dart';
+import '../../data/weekly_summary.dart';
 import '../../providers.dart';
 import '../alcohol/analytics_charts.dart';
 import '../design.dart';
@@ -36,6 +37,8 @@ class _InsightsPageState extends ConsumerState<InsightsPage> {
       month.year,
       month.month,
     );
+    final products = ref.watch(cannabisProductsProvider).value ?? const <Product>[];
+    final week = weekSummary(ingestions: rows, products: products, now: now);
     final text = Theme.of(context).textTheme;
     final scheme = Theme.of(context).colorScheme;
 
@@ -48,6 +51,8 @@ class _InsightsPageState extends ConsumerState<InsightsPage> {
         child: ListView(
           padding: const EdgeInsets.all(Gap.md),
           children: [
+            _WeekCard(summary: week, names: {for (final k in week.bySubstance) k.key: catalog.byKey[k.key]?.name ?? k.key}),
+            const SizedBox(height: Gap.md),
             Row(children: [
               IconButton(
                 key: const ValueKey('insights-prev'),
@@ -168,6 +173,61 @@ class _Stat extends StatelessWidget {
             const SizedBox(height: 2),
             Text(value, key: ValueKey(statKey), style: text.headlineSmall),
             if (note.isNotEmpty) Text(note, style: text.bodySmall),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// The last seven days: how many doses, how many days without use, and what was spent.
+class _WeekCard extends StatelessWidget {
+  const _WeekCard({required this.summary, required this.names});
+
+  final WeekSummary summary;
+  final Map<String, String> names;
+
+  @override
+  Widget build(BuildContext context) {
+    final text = Theme.of(context).textTheme;
+    String vs(int now, int before, String what) {
+      final d = now - before;
+      return d == 0 ? 'same $what as the week before' : '${d > 0 ? '+' : ''}$d $what vs the week before';
+    }
+
+    return Card(
+      key: const ValueKey('week-card'),
+      child: Padding(
+        padding: const EdgeInsets.all(Gap.md),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Last 7 days', style: text.titleMedium),
+            const SizedBox(height: Gap.sm),
+            Row(children: [
+              Expanded(child: _Stat(label: 'Doses', value: '${summary.doses}', note: vs(summary.doses, summary.previousDoses, 'doses'), statKey: 'week-doses')),
+              const SizedBox(width: Gap.sm),
+              Expanded(
+                child: _Stat(
+                  label: 'Days without use',
+                  value: '${summary.daysWithout} of 7',
+                  note: vs(summary.daysWithout, summary.previousDaysWithout, 'days'),
+                  statKey: 'week-days-off',
+                ),
+              ),
+            ]),
+            if (summary.spend != null) ...[
+              const SizedBox(height: Gap.sm),
+              Text('Spent about \$${summary.spend!.toStringAsFixed(2)} on products with a saved cost', key: const ValueKey('week-spend'), style: text.bodyMedium),
+            ],
+            if (summary.bySubstance.isNotEmpty) ...[
+              const SizedBox(height: 4),
+              Text(
+                [for (final e in summary.bySubstance) '${names[e.key] ?? e.key} ${e.value}'].join('  |  '),
+                key: const ValueKey('week-breakdown'),
+                style: text.bodySmall,
+              ),
+            ],
           ],
         ),
       ),

@@ -86,6 +86,7 @@ DanceSafe, NUAA and Wikipedia instead of baking colours in.
 
 - **Dose bands** (threshold, light, common, strong, heavy) per route, with the dose class shown as you type.
 - **Presets.** Low, Medium and High filled from each route's reference ranges, plus your own saved presets (even a whole cannabis calculator setup).
+- **Same as last time** on the journal repeats your latest dose after one confirm, and **Log now** on the dose step saves a dose in two taps. Every compound also lists your **recent doses** and presets right where you enter the dose.
 - **Quick log** (the bolt in the app bar): one tap, then a confirm, logs a preset, repeats a recent dose or logs a drink, and warns if that substance is still active. On Android it also opens from the app icon's long-press menu, a Quick Settings tile and a home-screen widget.
 - **Psilocybin mushrooms** are weighed in grams, dried or fresh (fresh counts as a tenth), with a pure-psilocybin option that converts for you.
 
@@ -118,7 +119,9 @@ the references worth reading before taking something, and a searchable **glossar
 ### Sync, backup and import
 
 - **Sync with no server.** Pair once with a QR code or pasted code. After that, paired devices on the same Wi-Fi sync automatically, or you can pass encrypted packages as QR codes, a file or text when there is no connection. Edits and deletes merge, and re-importing never overwrites, resurrects or duplicates anything.
-- **Encrypted backup** with a passphrase, restore that never undoes newer edits, CSV and JSON export, and automatic daily and before-upgrade copies.
+- **Encrypted backup** with a passphrase, restore that never undoes newer edits, and automatic daily and before-upgrade copies.
+- **CSV export** of every dose for a spreadsheet, and a **last 7 days** summary in Insights: doses, days without use and spend on products with a saved cost.
+- **App lock** with a PIN (stored only as a salted hash) and optional fingerprint, face or device unlock. It keeps people out of the app; it does not encrypt the journal on the device.
 - **Duplicate clean-up** that keeps whatever extra one copy had, can combine nearby experiences into a day, and can be undone.
 - **Imports** from PsychonautWiki Journal (with a review screen to choose what to keep and map compounds and routes) and from Alcohol Tracker.
 

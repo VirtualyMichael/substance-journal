@@ -9,6 +9,8 @@ import '../units/custom_units_page.dart';
 import '../sync/sync_page.dart';
 import 'backup_section.dart';
 import 'clinician_report_section.dart';
+import 'csv_export_section.dart';
+import 'lock_section.dart';
 import '../products/products_page.dart';
 import '../safety/glossary_page.dart';
 import '../safety/research_page.dart';
@@ -264,9 +266,13 @@ class SettingsPage extends ConsumerWidget {
               onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const SyncPage())),
             ),
             const SizedBox(height: Gap.lg),
+            const LockSection(),
+            const SizedBox(height: Gap.lg),
             const BackupSection(),
             const SizedBox(height: Gap.lg),
             ClinicianReportSection(person: person),
+            const SizedBox(height: Gap.lg),
+            CsvExportSection(person: person),
             const SizedBox(height: Gap.lg),
             Text('Import from PsychonautWiki Journal', style: text.titleMedium),
             const SizedBox(height: 4),
