@@ -17,6 +17,7 @@ import '../alcohol/alcohol_day_view.dart' show alcoholReadout;
 import '../dose_text.dart';
 import 'dialogs.dart';
 import 'edit_ingestion_dialog.dart';
+import '../toast.dart';
 
 class ExperiencePage extends ConsumerStatefulWidget {
   const ExperiencePage({super.key, required this.experienceId});
@@ -102,7 +103,7 @@ class _ExperiencePageState extends ConsumerState<ExperiencePage> {
     if (confirmed != true) return;
     await _db.deleteExperience(experience.id);
     navigator.pop();
-    messenger.showSnackBar(SnackBar(
+    messenger.showToast(SnackBar(
       content: const Text('Experience deleted'),
       action: SnackBarAction(label: 'Undo', onPressed: () => _db.setExperienceDeleted(experience.id, false)),
     ));
@@ -403,7 +404,7 @@ class _IngestionTile extends ConsumerWidget {
               icon: const Icon(Icons.delete_outline),
               onPressed: () {
                 db.setIngestionDeleted(ingestion.id, true);
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                ScaffoldMessenger.of(context).showToast(SnackBar(
                   content: Text('${substance?.name ?? 'Ingestion'} deleted'),
                   action: SnackBarAction(label: 'Undo', onPressed: () => db.setIngestionDeleted(ingestion.id, false)),
                 ));

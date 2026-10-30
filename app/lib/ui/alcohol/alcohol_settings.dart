@@ -7,6 +7,7 @@ import '../../providers.dart';
 import '../design.dart';
 import 'drink_dialogs.dart';
 import 'import_flow.dart';
+import '../toast.dart';
 
 /// Alcohol mode switch, the body and model settings behind the estimates, and drink presets.
 class AlcoholSettingsSection extends ConsumerWidget {
@@ -100,7 +101,7 @@ class AlcoholSettingsSection extends ConsumerWidget {
                 db.setDrinkPresetDeleted(p.id, true);
                 ScaffoldMessenger.of(context)
                   ..hideCurrentSnackBar()
-                  ..showSnackBar(SnackBar(
+                  ..showToast(SnackBar(
                     content: Text('${p.name} deleted'),
                     action: SnackBarAction(label: 'Undo', onPressed: () => db.setDrinkPresetDeleted(p.id, false)),
                   ));

@@ -6,6 +6,7 @@ import '../../data/reagent_tests.dart';
 import '../../providers.dart';
 import '../design.dart';
 import '../link_tile.dart';
+import '../toast.dart';
 
 const _months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 String _date(DateTime d) => '${_months[d.month - 1]} ${d.day}';
@@ -152,7 +153,7 @@ class _SampleCard extends ConsumerWidget {
                     final db = ref.read(databaseProvider);
                     await db.setReagentTestDeleted(t.id, true);
                     if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      ScaffoldMessenger.of(context).showToast(SnackBar(
                         content: const Text('Test removed'),
                         action: SnackBarAction(label: 'Undo', onPressed: () => db.setReagentTestDeleted(t.id, false)),
                       ));

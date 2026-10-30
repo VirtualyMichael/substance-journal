@@ -15,6 +15,7 @@ import '../journal/journal_page.dart';
 import 'compound_picker.dart';
 import 'tolerance_page.dart';
 import 'custom_substance_dialog.dart';
+import '../toast.dart';
 
 /// Browse compounds; tap one for its reference page.
 class CompoundsPage extends ConsumerWidget {
@@ -122,7 +123,7 @@ class CompoundDetailPage extends ConsumerWidget {
                   final messenger = ScaffoldMessenger.of(context);
                   await db.setCustomSubstanceDeleted(customRow.id, true);
                   navigator.pop();
-                  messenger.showSnackBar(SnackBar(
+                  messenger.showToast(SnackBar(
                     content: Text('${customRow.name} removed'),
                     action: SnackBarAction(label: 'Undo', onPressed: () => db.setCustomSubstanceDeleted(customRow.id, false)),
                   ));

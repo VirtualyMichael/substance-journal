@@ -12,6 +12,7 @@ import '../add/dose_widgets.dart';
 import '../design.dart';
 import '../dose_text.dart';
 import '../journal/active_now_card.dart';
+import '../toast.dart';
 
 /// One thing that can be logged with a tap.
 class QuickItem {
@@ -186,7 +187,7 @@ Future<void> confirmAndLogQuick(BuildContext context, WidgetRef ref, Person pers
       if (created) await db.deleteExperience(ingestion.experienceId);
     };
   }
-  messenger.showSnackBar(SnackBar(content: Text('Logged ${item.title}'), action: SnackBarAction(label: 'Undo', onPressed: undo)));
+  messenger.showToast(SnackBar(content: Text('Logged ${item.title}'), action: SnackBarAction(label: 'Undo', onPressed: undo)));
 }
 
 /// Favourites and recent doses, each one tap (plus a confirm) away. Also opened from the app icon's

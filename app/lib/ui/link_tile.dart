@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../providers.dart';
+import 'toast.dart';
 
 /// A source reference. Web links open in the browser (long press copies the address); anything
 /// that is not a link is shown as plain selectable text.
@@ -43,13 +44,13 @@ class LinkTile extends ConsumerWidget {
         if (!opened && context.mounted) {
           await Clipboard.setData(ClipboardData(text: uri.toString()));
           if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Could not open a browser, so the link was copied.')));
+            ScaffoldMessenger.of(context).showToast(const SnackBar(content: Text('Could not open a browser, so the link was copied.')));
           }
         }
       },
       onLongPress: () async {
         await Clipboard.setData(ClipboardData(text: uri.toString()));
-        if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Link copied')));
+        if (context.mounted) ScaffoldMessenger.of(context).showToast(const SnackBar(content: Text('Link copied')));
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 6),

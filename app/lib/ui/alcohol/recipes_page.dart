@@ -8,6 +8,7 @@ import 'package:sj_core/sj_core.dart';
 import '../../data/database.dart';
 import '../../providers.dart';
 import '../design.dart';
+import '../toast.dart';
 
 final recipesProvider = StreamProvider<List<RecipeRow>>((ref) => ref.watch(databaseProvider).watchRecipes());
 
@@ -45,11 +46,11 @@ class _RecipesPageState extends ConsumerState<RecipesPage> {
       final (added, skipped) = await ref.read(databaseProvider).importRecipes(parseRecipes(text));
       messenger
         ..hideCurrentSnackBar()
-        ..showSnackBar(SnackBar(content: Text('$added recipes added${skipped > 0 ? ', $skipped already here' : ''}.')));
+        ..showToast(SnackBar(content: Text('$added recipes added${skipped > 0 ? ', $skipped already here' : ''}.')));
     } on RecipeFormatException catch (e) {
       messenger
         ..hideCurrentSnackBar()
-        ..showSnackBar(SnackBar(content: Text(e.message)));
+        ..showToast(SnackBar(content: Text(e.message)));
     }
   }
 
@@ -216,15 +217,15 @@ class RecipeDetailPage extends ConsumerWidget {
               case 'copy':
                 final copy = recipe.copyWith(name: '${recipe.name} (copy)');
                 await db.addRecipe(copy);
-                messenger.showSnackBar(const SnackBar(content: Text('Copied. Find "(copy)" in the list to edit it.')));
+                messenger.showToast(const SnackBar(content: Text('Copied. Find "(copy)" in the list to edit it.')));
               case 'share':
                 await Clipboard.setData(ClipboardData(text: recipe.shareText));
-                messenger.showSnackBar(const SnackBar(content: Text('Share code copied. Paste it anywhere; Import reads it back.')));
+                messenger.showToast(const SnackBar(content: Text('Share code copied. Paste it anywhere; Import reads it back.')));
               case 'delete':
                 final nav = Navigator.of(context);
                 await db.setRecipeDeleted(row.id, true);
                 nav.pop();
-                messenger.showSnackBar(SnackBar(
+                messenger.showToast(SnackBar(
                   content: Text('${recipe.name} deleted'),
                   action: SnackBarAction(label: 'Undo', onPressed: () => db.setRecipeDeleted(row.id, false)),
                 ));

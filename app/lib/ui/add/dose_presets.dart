@@ -8,6 +8,7 @@ import '../../data/database.dart';
 import '../../providers.dart';
 import '../design.dart';
 import 'dose_widgets.dart';
+import '../toast.dart';
 
 /// A ready-made dose taken from the reference bands: the middle of the light, common and strong ranges.
 class BuiltInPreset {
@@ -208,7 +209,7 @@ class DosePresetBar extends ConsumerWidget {
                     final db = ref.read(databaseProvider);
                     await db.setPresetDeleted(p.id, true);
                     if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      ScaffoldMessenger.of(context).showToast(SnackBar(
                         content: Text('${p.name} removed'),
                         action: SnackBarAction(label: 'Undo', onPressed: () => db.setPresetDeleted(p.id, false)),
                       ));

@@ -6,6 +6,7 @@ import '../../data/database.dart';
 import '../../providers.dart';
 import '../design.dart';
 import '../journal/dialogs.dart' show scoreFields;
+import '../toast.dart';
 
 const _months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
@@ -99,7 +100,7 @@ class _ProductCard extends ConsumerWidget {
             final db = ref.read(databaseProvider);
             await db.setProductDeleted(product.id, true);
             if (context.mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              ScaffoldMessenger.of(context).showToast(SnackBar(
                 content: Text('${product.name} removed. Past doses keep their record.'),
                 action: SnackBarAction(label: 'Undo', onPressed: () => db.setProductDeleted(product.id, false)),
               ));

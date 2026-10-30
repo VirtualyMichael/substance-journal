@@ -5,6 +5,7 @@ import '../../data/database.dart';
 import '../../providers.dart';
 import '../design.dart';
 import 'custom_unit_dialog.dart';
+import '../toast.dart';
 
 /// Manage custom units ("1 pill = 120 mg"): edit, archive and delete. New units are created
 /// from the dose step, where the compound and route are known.
@@ -68,7 +69,7 @@ class CustomUnitsPage extends ConsumerWidget {
                               } else if (v == 'delete') {
                                 await db.setCustomUnitDeleted(u.id, true);
                                 if (context.mounted) {
-                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                  ScaffoldMessenger.of(context).showToast(SnackBar(
                                     content: Text('${u.name} deleted'),
                                     action: SnackBarAction(label: 'Undo', onPressed: () => db.setCustomUnitDeleted(u.id, false)),
                                   ));

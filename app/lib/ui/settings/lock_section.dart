@@ -6,6 +6,7 @@ import '../../data/app_lock.dart';
 import '../../providers.dart';
 import '../design.dart';
 import '../lock/lock_gate.dart';
+import '../toast.dart';
 
 /// Turns the app lock on and off, and sets how it behaves.
 class LockSection extends ConsumerStatefulWidget {
@@ -41,7 +42,7 @@ class _LockSectionState extends ConsumerState<LockSection> {
     final pin = await _askPin('Enter your PIN to turn the lock off');
     if (pin == null) return;
     if (!await pinMatches(current, pin)) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('That is not your PIN.')));
+      if (mounted) ScaffoldMessenger.of(context).showToast(const SnackBar(content: Text('That is not your PIN.')));
       return;
     }
     await ref.read(databaseProvider).clearLockConfig();

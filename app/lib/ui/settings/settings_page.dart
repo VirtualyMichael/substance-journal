@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/database.dart';
 import '../../providers.dart';
 import '../design.dart';
+import '../toast.dart';
 import '../alcohol/alcohol_settings.dart';
 import '../units/custom_units_page.dart';
 import '../sync/sync_page.dart';
@@ -258,6 +259,13 @@ class SettingsPage extends ConsumerWidget {
             Text('Sync', style: text.titleMedium),
             const SizedBox(height: 4),
             Text('Keep your phone and computer in step with QR codes, a file, or text. No account or server.', style: text.bodySmall),
+            const SizedBox(height: Gap.sm),
+            OutlinedButton.icon(
+              key: const ValueKey('open-activity'),
+              icon: const Icon(Icons.history),
+              label: const Text('Recent messages'),
+              onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ActivityPage())),
+            ),
             const SizedBox(height: Gap.sm),
             OutlinedButton.icon(
               key: const ValueKey('open-sync'),

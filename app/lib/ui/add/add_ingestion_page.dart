@@ -48,6 +48,10 @@ class _AddIngestionPageState extends ConsumerState<AddIngestionPage> {
   void initState() {
     super.initState();
     _time = ref.read(clockProvider)();
+    // A message from before would sit over the buttons at the bottom of this flow.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) ScaffoldMessenger.of(context).clearSnackBars();
+    });
     _experienceChoice = widget.experienceId;
     _experienceChosenByUser = widget.experienceId != null;
     final key = widget.initialSubstanceKey;

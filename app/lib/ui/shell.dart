@@ -12,6 +12,7 @@ import 'alcohol/recipes_page.dart';
 import 'calendar/calendar_page.dart';
 import 'compounds/compounds_page.dart';
 import 'design.dart';
+import 'toast.dart';
 import 'insights/insights_page.dart';
 import 'journal/journal_page.dart';
 import 'quicklog/quick_log_page.dart';
@@ -55,6 +56,7 @@ class _AppShellState extends ConsumerState<AppShell> {
   @override
   void initState() {
     super.initState();
+    activitySink = (m) => ref.read(databaseProvider).logActivity(m, ref.read(clockProvider)());
     final launch = ref.read(launchRoutesProvider);
     _routes = launch.stream.listen(_openRoute);
     launch.initial().then((route) {

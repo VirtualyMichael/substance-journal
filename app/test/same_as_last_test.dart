@@ -22,7 +22,7 @@ void main() {
     expect(rows, hasLength(2));
     expect(rows.where((r) => r.dose == 30), hasLength(2));
 
-    tester.state<ScaffoldMessengerState>(find.byType(ScaffoldMessenger).first).clearSnackBars(); // it would cover the buttons
+    // The Add flow clears any old message itself, so the buttons are never covered.
     await tester.pumpAndSettle();
     await tapKey(tester, 'journal-add');
     await tapKey(tester, 'compound-lsd');

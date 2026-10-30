@@ -10,6 +10,7 @@ import '../../data/database.dart';
 import '../../data/sync.dart';
 import '../../providers.dart';
 import '../design.dart';
+import '../toast.dart';
 
 final backupServiceProvider = Provider<BackupService>(
   (ref) => BackupService(ref.watch(databaseProvider), ref.watch(syncServiceProvider)),
@@ -219,7 +220,7 @@ class BackupSection extends ConsumerWidget {
                   onPressed: () async {
                     final saved = await ref.read(packageSaverProvider)(fileName, content);
                     if (saved != null && context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Saved $saved')));
+                      ScaffoldMessenger.of(context).showToast(SnackBar(content: Text('Saved $saved')));
                     }
                   },
                 ),
@@ -235,7 +236,7 @@ class BackupSection extends ConsumerWidget {
                   label: const Text('Copy'),
                   onPressed: () async {
                     await Clipboard.setData(ClipboardData(text: content));
-                    if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Copied')));
+                    if (context.mounted) ScaffoldMessenger.of(context).showToast(const SnackBar(content: Text('Copied')));
                   },
                 ),
               ]),

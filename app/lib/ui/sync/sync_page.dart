@@ -9,6 +9,7 @@ import '../../data/sync.dart';
 import '../../providers.dart';
 import '../design.dart';
 import 'qr_widgets.dart';
+import '../toast.dart';
 
 /// Sync with your other devices without any server or connection.
 ///
@@ -137,7 +138,7 @@ class _SyncPageState extends ConsumerState<SyncPage> {
   void _message(String text) {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text(text)));
+      ..showToast(SnackBar(content: Text(text)));
   }
 
   Future<void> _showMyCode() async {
@@ -526,7 +527,7 @@ class _PairingCodeDialog extends StatelessWidget {
               onPressed: () async {
                 await Clipboard.setData(ClipboardData(text: code));
                 if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Copied. Keep it private: it is the key to your journal.')));
+                  ScaffoldMessenger.of(context).showToast(const SnackBar(content: Text('Copied. Keep it private: it is the key to your journal.')));
                 }
               },
             ),
@@ -581,7 +582,7 @@ class _SendSheetState extends ConsumerState<_SendSheet> {
 
   String get _fileName => 'journal-${widget.peer.name.replaceAll(RegExp(r'[^A-Za-z0-9]+'), '-')}.sjsync';
 
-  void _note(String text) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(text)));
+  void _note(String text) => ScaffoldMessenger.of(context).showToast(SnackBar(content: Text(text)));
 
   @override
   Widget build(BuildContext context) {

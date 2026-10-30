@@ -10,6 +10,7 @@ import '../timeline/timeline_chart.dart';
 import '../timeline/timeline_data.dart';
 import 'alcohol_view_model.dart';
 import 'drink_dialogs.dart';
+import '../toast.dart';
 
 const _alcoholColor = Color(0xFFE0A100);
 
@@ -251,7 +252,7 @@ class _QuickAddBarState extends ConsumerState<QuickAddBar> {
     );
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(
+      ..showToast(SnackBar(
         content: Text('Added ${preset.name}${status.warning == null ? '' : '. ${status.warning}'}'),
         action: SnackBarAction(label: 'Undo', onPressed: () => db.undoLoggedDrink(logged)),
       ));
@@ -332,7 +333,7 @@ class _QuickAddBarState extends ConsumerState<QuickAddBar> {
                   if (logged != null) {
                     messenger
                       ..hideCurrentSnackBar()
-                      ..showSnackBar(SnackBar(
+                      ..showToast(SnackBar(
                         content: const Text('Drink added'),
                         action: SnackBarAction(label: 'Undo', onPressed: () => db.undoLoggedDrink(logged)),
                       ));
@@ -383,7 +384,7 @@ class DrinkTile extends ConsumerWidget {
             db.setIngestionDeleted(drink.id, true);
             ScaffoldMessenger.of(context)
               ..hideCurrentSnackBar()
-              ..showSnackBar(SnackBar(
+              ..showToast(SnackBar(
                 content: const Text('Drink deleted'),
                 action: SnackBarAction(label: 'Undo', onPressed: () => db.setIngestionDeleted(drink.id, false)),
               ));
