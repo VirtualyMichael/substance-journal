@@ -88,7 +88,11 @@ AlcoholDaySummary summarizeAlcoholDay({
   if (isToday) {
     bacNow = estimateBac(estimateActiveStandardDrinks(relevant, now, settings), settings);
     inBody = estimateAlcoholInBody(relevant, now, settings);
-    if (inBody > 0.05) clear = estimatedClearTime(pool);
+    if (inBody > 0.05) {
+      clear = estimatedClearTime(pool);
+      // The chart window is a guess at how long the drinks last; if it ended first, look further ahead.
+      clear ??= estimatedClearTime(effectSeries(relevant, anchor, settings, null, now.add(const Duration(days: 3))));
+    }
   }
   return AlcoholDaySummary(
     drinksOfDay: drinksOfDay,
