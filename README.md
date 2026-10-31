@@ -87,6 +87,9 @@ DanceSafe, NUAA and Wikipedia instead of baking colours in.
 - **Dose bands** (threshold, light, common, strong, heavy) per route, with the dose class shown as you type.
 - **Presets.** Low, Medium and High filled from each route's reference ranges, plus your own saved presets (even a whole cannabis calculator setup).
 - **Same as last time** on the journal repeats your latest dose after one confirm, and **Log now** on the dose step saves a dose in two taps. Every compound also lists your **recent doses** and presets right where you enter the dose.
+- **Per-dose colours.** Each dose of a compound gets its own curve and colour on the graph (change it when you edit the dose), under the combined curve.
+- **Tolerance on the experience page.** Where tolerance stands for what you took, whether it is rising or falling, how long since you last used it, and when it should be back to baseline.
+- **Voice assistant logging.** The MCP server logs doses, drinks, presets and timed notes by voice, with a read-back and a yes before anything is saved, and explains how to phrase requests the first time (see `mcp/substance-journal`).
 - **Quick log** (the bolt in the app bar): one tap, then a confirm, logs a preset, repeats a recent dose or logs a drink, and warns if that substance is still active. On Android it also opens from the app icon's long-press menu, a Quick Settings tile and a home-screen widget.
 - **Psilocybin mushrooms** are weighed in grams, dried or fresh (fresh counts as a tenth), with a pure-psilocybin option that converts for you.
 

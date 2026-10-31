@@ -95,12 +95,24 @@ class _AddIngestionPageState extends ConsumerState<AddIngestionPage> {
   void _chooseSubstance(Substance s) {
     setState(() {
       _substance = s;
-      _roa = s.roas.length == 1 ? s.roas.first : null;
+      _roa = s.roas.length == 1 ? s.roas.first : _lastRouteFor(s);
       _acknowledged = false;
       _dose = const DoseInput.empty();
       _error = null;
       _step = _roa == null ? AddStep.route : _afterRoute();
     });
+  }
+
+  /// The route this person used most recently for the compound, so the route question is skipped
+  /// when they always take it the same way. The dose step has a "Change route" link.
+  RouteOfAdministration? _lastRouteFor(Substance s) {
+    final rows = ref.read(personIngestionsProvider(widget.personId)).value ?? const <Ingestion>[];
+    Ingestion? latest;
+    for (final i in rows) {
+      if (i.deleted || i.substanceKey != s.key || s.roas.every((r) => r.route != i.route)) continue;
+      if (latest == null || i.time.isAfter(latest.time)) latest = i;
+    }
+    return latest == null ? null : s.roas.firstWhere((r) => r.route == latest!.route);
   }
 
   AddStep _afterRoute() => _warnings().isEmpty ? AddStep.dose : AddStep.warnings;
@@ -376,7 +388,17 @@ class _AddIngestionPageState extends ConsumerState<AddIngestionPage> {
           child: ListView(
             padding: const EdgeInsets.all(Gap.md),
             children: [
-              Text('${titleCase(roa.route)}  |  ${describeRoute(roa)}', style: Theme.of(context).textTheme.bodySmall),
+              Row(
+                children: [
+                  Expanded(child: Text('${titleCase(roa.route)}  |  ${describeRoute(roa)}', style: Theme.of(context).textTheme.bodySmall)),
+                  if ((_substance?.roas.length ?? 0) > 1)
+                    TextButton(
+                      key: const ValueKey('change-route'),
+                      onPressed: () => setState(() => _step = AddStep.route),
+                      child: const Text('Change route'),
+                    ),
+                ],
+              ),
               const SizedBox(height: Gap.md),
               DoseEditor(
                 substance: _substance!,
