@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:sj_core/sj_core.dart';
 
@@ -15,6 +17,7 @@ class TimelineSeries {
     required this.ingestionId,
     this.doses = const [],
     this.substanceKey,
+    this.parts = const [],
   });
 
   /// The substance this curve belongs to (null for charts that are not per substance).
@@ -27,9 +30,65 @@ class TimelineSeries {
   /// When each dose of this substance was taken, so the chart can mark them on the curve.
   final List<DateTime> doses;
 
+  /// Each dose's own curve and colour, when there is more than one dose (the combined curve is their sum).
+  final List<DosePart> parts;
+
   DateTime get start => points.first.$1;
   DateTime get end => points.last.$1;
   double get peak => points.fold(0.0, (m, p) => p.$2 > m ? p.$2 : m);
+}
+
+/// One dose of a substance: when, in what colour, and its curve on its own.
+class DosePart {
+  const DosePart({required this.time, required this.color, required this.points});
+  final DateTime time;
+  final Color color;
+  final List<(DateTime, double)> points;
+}
+
+/// Colours a person can give a dose (the first entry, null, means automatic).
+const dosePalette = <Color>[
+  Color(0xFFE53935),
+  Color(0xFFFB8C00),
+  Color(0xFFFDD835),
+  Color(0xFF43A047),
+  Color(0xFF00ACC1),
+  Color(0xFF1E88E5),
+  Color(0xFF5E35B1),
+  Color(0xFFD81B60),
+  Color(0xFF6D4C41),
+  Color(0xFF757575),
+];
+
+/// The colour a dose is drawn in: the one chosen for it, else the compound's colour shifted a little
+/// for each extra dose of the same compound so doses can be told apart.
+Color doseColor(Ingestion i, int indexAmongSame, Color base) {
+  try {
+    final c = (jsonDecode(i.detailsJson) as Map<String, dynamic>)['color'];
+    if (c is num) return Color(c.toInt());
+  } on Object {
+    // Details written by another version: fall back to the automatic colour.
+  }
+  if (indexAmongSame == 0) return base;
+  final hsl = HSLColor.fromColor(base);
+  final shifted = hsl.withHue((hsl.hue + 34.0 * indexAmongSame) % 360).withLightness((hsl.lightness + (indexAmongSame.isOdd ? 0.08 : -0.06)).clamp(0.3, 0.7));
+  return shifted.toColor();
+}
+
+/// The colour of every dose in a list, by ingestion id (doses of one compound are told apart in time order).
+Map<String, Color> doseColors(Iterable<Ingestion> ingestions) {
+  final byKey = <String, List<Ingestion>>{};
+  for (final i in ingestions) {
+    byKey.putIfAbsent(i.substanceKey, () => []).add(i);
+  }
+  final out = <String, Color>{};
+  byKey.forEach((key, list) {
+    list.sort((a, b) => a.time.compareTo(b.time));
+    for (var n = 0; n < list.length; n++) {
+      out[list[n].id] = doseColor(list[n], n, substanceColor(key));
+    }
+  });
+  return out;
 }
 
 /// A note or rating pinned to a moment on the timeline.
@@ -76,9 +135,27 @@ List<TimelineSeries> buildTimelineSeries({
     final points = sessionEffectSeries(curveIngestions, reference.byKey, now: now);
     if (points.isEmpty) continue;
     used.sort((a, b) => a.time.compareTo(b.time));
+    final base = substanceColor(substance.key);
+    final colors = [for (var n = 0; n < used.length; n++) doseColor(used[n], n, base)];
+    final parts = <DosePart>[];
+    if (used.length > 1) {
+      for (var n = 0; n < used.length; n++) {
+        final roa = substance.nearestRoute(used[n].route)!;
+        final own = sessionEffectSeries([
+          CurveIngestion(
+            substanceKey: substance.key,
+            roaId: roa.id,
+            amount: used[n].dose ?? roa.doseCommon?.min ?? 1.0,
+            occurredAt: used[n].time,
+          ),
+        ], reference.byKey, now: now);
+        if (own.isNotEmpty) parts.add(DosePart(time: used[n].time, color: colors[n], points: own));
+      }
+    }
     result.add(TimelineSeries(
       label: _seriesLabel(substance.name, used),
-      color: substanceColor(substance.key),
+      color: used.length == 1 ? colors.first : base,
+      parts: parts,
       points: points,
       ingestionId: used.first.id,
       doses: [for (final i in used) i.time],

@@ -10,6 +10,7 @@ import '../../providers.dart';
 import '../add/add_ingestion_page.dart';
 import '../add/dose_widgets.dart';
 import '../design.dart';
+import 'tolerance_card.dart';
 import '../timeline/timeline_chart.dart';
 import '../timeline/timeline_data.dart';
 import '../../data/alcohol_data.dart';
@@ -175,6 +176,7 @@ class _ExperiencePageState extends ConsumerState<ExperiencePage> {
     final ratings = ref.watch(ratingsProvider(widget.experienceId)).value ?? const <Rating>[];
 
     final series = buildTimelineSeries(ingestions: ingestions, reference: reference, now: now);
+    final dotColors = doseColors(ingestions);
 
     // Alcohol in a mixed journal still gets a blood-alcohol estimate when hovering the chart.
     final drinks = [for (final i in ingestions) if (i.substanceKey == 'alcohol') i];
@@ -298,10 +300,11 @@ class _ExperiencePageState extends ConsumerState<ExperiencePage> {
                   ),
                 ),
               ),
+              if (ingestions.isNotEmpty) ToleranceCard(personId: experience.personId, experience: experience, sessionIngestions: ingestions),
               const SizedBox(height: Gap.md),
               _sectionTitle('Ingestions'),
               if (ingestions.isEmpty) const Padding(padding: EdgeInsets.all(Gap.md), child: Text('Nothing logged yet.')),
-              for (final ingestion in ingestions) _IngestionTile(ingestion: ingestion, db: _db),
+              for (final ingestion in ingestions) _IngestionTile(ingestion: ingestion, db: _db, color: dotColors[ingestion.id]),
               const SizedBox(height: Gap.md),
               if (timedNotes.isNotEmpty) ...[
                 _sectionTitle('Notes during the experience'),
@@ -347,10 +350,13 @@ class _ExperiencePageState extends ConsumerState<ExperiencePage> {
 }
 
 class _IngestionTile extends ConsumerWidget {
-  const _IngestionTile({required this.ingestion, required this.db});
+  const _IngestionTile({required this.ingestion, required this.db, this.color});
 
   final Ingestion ingestion;
   final AppDatabase db;
+
+  /// This dose's colour on the graph.
+  final Color? color;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -381,7 +387,7 @@ class _IngestionTile extends ConsumerWidget {
       margin: const EdgeInsets.only(bottom: Gap.sm),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: substanceColor(ingestion.substanceKey),
+          backgroundColor: color ?? substanceColor(ingestion.substanceKey),
           radius: 14,
           child: Text((substance?.name ?? '?').characters.first, style: const TextStyle(color: Colors.white, fontSize: 13)),
         ),

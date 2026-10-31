@@ -10,6 +10,7 @@ import '../../data/alcohol_data.dart';
 import '../../data/database.dart';
 import '../../providers.dart';
 import '../design.dart';
+import '../timeline/timeline_data.dart';
 
 /// Edit an ingestion: when, how much, the compound and the route.
 ///
@@ -32,6 +33,7 @@ class _EditIngestionDialogState extends ConsumerState<EditIngestionDialog> {
     text: widget.ingestion.dose == null ? '' : formatDose(widget.ingestion.dose, null),
   );
   late final TextEditingController _notes = TextEditingController(text: widget.ingestion.notes);
+  late int? _color = ((jsonDecode(widget.ingestion.detailsJson) as Map<String, dynamic>)['color'] as num?)?.toInt();
   late final Map<String, dynamic> _details = jsonDecode(widget.ingestion.detailsJson) as Map<String, dynamic>;
   late final TextEditingController _unitCount = TextEditingController(
     text: _details['unitCount'] == null ? '' : formatDose((_details['unitCount'] as num).toDouble(), null),
@@ -103,6 +105,10 @@ class _EditIngestionDialogState extends ConsumerState<EditIngestionDialog> {
         detailsJson = '{}';
       }
     }
+
+    final withColor = jsonDecode(detailsJson) as Map<String, dynamic>;
+    _color == null ? withColor.remove('color') : withColor['color'] = _color;
+    detailsJson = jsonEncode(withColor);
 
     await db.updateIngestion(
       widget.ingestion.id,
@@ -259,6 +265,36 @@ class _EditIngestionDialogState extends ConsumerState<EditIngestionDialog> {
               ),
               const SizedBox(height: Gap.sm),
               TextField(controller: _notes, maxLines: 2, decoration: const InputDecoration(labelText: 'Notes')),
+              const SizedBox(height: Gap.sm),
+              Align(alignment: Alignment.centerLeft, child: Text('Colour on the graph', style: Theme.of(context).textTheme.labelLarge)),
+              const SizedBox(height: 4),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  ChoiceChip(
+                    key: const ValueKey('dose-color-auto'),
+                    label: const Text('Auto'),
+                    selected: _color == null,
+                    onSelected: (_) => setState(() => _color = null),
+                  ),
+                  for (final c in dosePalette)
+                    InkWell(
+                      key: ValueKey('dose-color-${c.toARGB32()}'),
+                      customBorder: const CircleBorder(),
+                      onTap: () => setState(() => _color = c.toARGB32()),
+                      child: Container(
+                        width: 30,
+                        height: 30,
+                        decoration: BoxDecoration(
+                          color: c,
+                          shape: BoxShape.circle,
+                          border: Border.all(color: _color == c.toARGB32() ? Theme.of(context).colorScheme.onSurface : Colors.transparent, width: 3),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
               if (_error != null)
                 Padding(
                   padding: const EdgeInsets.only(top: Gap.sm),

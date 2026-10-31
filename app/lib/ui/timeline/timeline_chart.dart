@@ -265,6 +265,26 @@ class TimelinePainter extends CustomPainter {
       _text(canvas, ref.label, Offset(plot.left + 4, y(ref.value) - 13));
     }
 
+    // Each dose's own curve, in its own colour, under the combined one.
+    for (final s in series) {
+      for (final part in s.parts) {
+        final p = Path();
+        for (var n = 0; n < part.points.length; n++) {
+          final (t, v) = part.points[n];
+          final o = Offset(x(t), y(v));
+          n == 0 ? p.moveTo(o.dx, o.dy) : p.lineTo(o.dx, o.dy);
+        }
+        canvas.drawPath(
+          p,
+          Paint()
+            ..color = part.color.withValues(alpha: 0.85)
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = 1.6
+            ..strokeJoin = StrokeJoin.round,
+        );
+      }
+    }
+
     // Curves
     for (final s in series) {
       final path = Path();
@@ -297,15 +317,16 @@ class TimelinePainter extends CustomPainter {
     for (final s in series) {
       for (final t in s.doses) {
         if (t.isBefore(start) || t.isAfter(end)) continue;
+        final dotColor = s.parts.where((p) => p.time == t).firstOrNull?.color ?? s.color;
         final dx = x(t);
         final dy = y(_valueAt(s, t));
         final line = Paint()
-          ..color = s.color.withValues(alpha: 0.7)
+          ..color = dotColor.withValues(alpha: 0.7)
           ..strokeWidth = 1.2;
         for (var yy = plot.bottom; yy > dy; yy -= 5) {
           canvas.drawLine(Offset(dx, yy), Offset(dx, max(yy - 2.5, dy)), line);
         }
-        canvas.drawCircle(Offset(dx, dy), 4.5, Paint()..color = s.color);
+        canvas.drawCircle(Offset(dx, dy), 4.5, Paint()..color = dotColor);
       }
     }
 
