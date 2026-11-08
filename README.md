@@ -89,6 +89,7 @@ DanceSafe, NUAA and Wikipedia instead of baking colours in.
 - **Same as last time** on the journal repeats your latest dose after one confirm, and **Log now** on the dose step saves a dose in two taps. Every compound also lists your **recent doses** and presets right where you enter the dose.
 - **Tolerance on the experience page.** Where tolerance stands for what you took, whether it is rising or falling, how long since you last used it, and when it should be back to baseline.
 - **Voice assistant logging.** The MCP server logs doses, drinks, presets and timed notes by voice, with a read-back and a yes before anything is saved, and explains how to phrase requests the first time (see `mcp/substance-journal`).
+- **Summary for an AI.** Settings > Summary for an AI copies a text summary (small, medium or large, with names, notes and places left out by default) or keeps a folder of small pre-calculated files up to date on a computer. A read-only MCP server and a portable skill let a local or cloud AI read the profile, a month or one experience at a time, with potency, estimated curves, tolerance, notes and ratings, so even a short context window is enough (see `mcp/substance-journal-reader`).
 - **Quick log** (the bolt in the app bar): one tap, then a confirm, logs a preset, repeats a recent dose or logs a drink, and warns if that substance is still active. On Android it also opens from the app icon's long-press menu, a Quick Settings tile and a home-screen widget.
 - **Psilocybin mushrooms** are weighed in grams, dried or fresh (fresh counts as a tenth), with a pure-psilocybin option that converts for you.
 
@@ -211,6 +212,7 @@ app/                          Flutter app (Windows, Android, Linux, iOS)
   packages/sj_core/           pure-Dart logic: reference data, dosing, curves, alcohol, sync format
   test/                       widget and unit tests, README screenshot generator
 mcp/substance-journal/        MCP server for AI and voice access
+mcp/substance-journal-reader/ read-only MCP server and skill for AI summaries
 data/                         reference data (audited nine, broad catalogue, TripSit cross-check)
 scripts/                      data sync, cross-check, Windows installer, Android key
 docs/                         roadmap, attribution, data-audit reports, screenshots

@@ -16,6 +16,7 @@ import 'data/custom_substances.dart';
 import 'data/database.dart';
 import 'data/reference_repository.dart';
 import 'data/auto_sync.dart';
+import 'data/digest_service.dart';
 import 'data/lan_sync.dart';
 import 'data/reminders.dart';
 import 'ui/quicklog/launch_route.dart';
@@ -268,6 +269,15 @@ final autoSyncProvider = Provider<AutoSync?>((ref) {
   ref.onDispose(auto.stop);
   auto.start();
   return auto;
+});
+
+/// Keeps the digest folder for a local AI up to date on a computer, when turned on in Settings.
+final digestAutoWriterProvider = Provider<DigestAutoWriter?>((ref) {
+  if (Platform.environment.containsKey('FLUTTER_TEST') || Platform.isAndroid || Platform.isIOS) return null;
+  final writer = DigestAutoWriter(ref.watch(databaseProvider), ref.watch(catalogProvider).byKey, ref.watch(clockProvider));
+  ref.onDispose(writer.stop);
+  writer.start();
+  return writer;
 });
 
 /// How notifications are delivered. Replaced in tests.
