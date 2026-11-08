@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/title"
+        style="@android:style/TextAppearance.Material.Notification.Title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:singleLine="true" />
+
+    <TextView
+        android:id="@+id/text"
+        style="@android:style/TextAppearance.Material.Notification.Line2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:singleLine="true" />
+
+    <ImageView
+        android:id="@+id/graph"
+        android:layout_width="match_parent"
+        android:layout_height="32dp"
+        android:layout_marginTop="2dp"
+        android:contentDescription="Estimated curve graph"
+        android:scaleType="fitXY" />
+</LinearLayout>

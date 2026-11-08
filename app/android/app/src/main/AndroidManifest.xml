@@ -7,6 +7,9 @@
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <!-- The optional live-curve notification keeps a service running while something is active. -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE"/>
     <uses-feature android:name="android.hardware.camera" android:required="false"/>
     <application
         android:label="Substance Journal"
@@ -36,6 +39,15 @@
             <!-- Long-press the app icon for Quick log. -->
             <meta-data android:name="android.app.shortcuts" android:resource="@xml/shortcuts"/>
         </activity>
+        <!-- Live curve: the persistent graph notification, only while the person has it switched on. -->
+        <service
+            android:name=".LiveCurveService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Keeps an ongoing notification with the current estimated curve of active substances up to date, when the user turns it on" />
+        </service>
         <!-- Quick Settings tile: add it from the tile editor. -->
         <service
             android:name=".QuickLogTileService"

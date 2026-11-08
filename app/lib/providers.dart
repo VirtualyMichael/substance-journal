@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -17,6 +17,7 @@ import 'data/database.dart';
 import 'data/reference_repository.dart';
 import 'data/auto_sync.dart';
 import 'data/digest_service.dart';
+import 'data/live_curve.dart';
 import 'data/lan_sync.dart';
 import 'data/reminders.dart';
 import 'ui/quicklog/launch_route.dart';
@@ -278,6 +279,63 @@ final digestAutoWriterProvider = Provider<DigestAutoWriter?>((ref) {
   ref.onDispose(writer.stop);
   writer.start();
   return writer;
+});
+
+// ---- live curve notification (Android) ----
+
+const _liveChannel = MethodChannel('sj/live');
+
+/// Asks Android for permission to show notifications; false when refused.
+Future<bool> requestLiveCurvePermission() async {
+  try {
+    return await _liveChannel.invokeMethod<bool>('permission') ?? false;
+  } on MissingPluginException {
+    return false;
+  } on PlatformException {
+    return false;
+  }
+}
+
+final liveCurveEnabledProvider = StreamProvider<bool>(
+  (ref) => ref.watch(databaseProvider).watchSetting('liveCurve').map((v) => v == 'true'),
+);
+
+bool _liveShown = false;
+
+/// Feeds the live-curve notification: what is active now, as JSON for the Android service, which
+/// redraws it every minute on its own. Nothing is sent unless the person turned it on. Watched by
+/// the app shell; does nothing off Android and in tests.
+final liveCurveProvider = Provider<void>((ref) {
+  if (Platform.environment.containsKey('FLUTTER_TEST') || !Platform.isAndroid) return;
+  final enabled = ref.watch(liveCurveEnabledProvider).value ?? false;
+  final person = ref.watch(currentPersonProvider);
+  final now = ref.watch(nowProvider);
+  final ingestions = person == null ? null : ref.watch(personIngestionsProvider(person.id)).value;
+  final settings = person == null ? null : ref.watch(estimateSettingsProvider(person.id)).value;
+  final reference = ref.watch(catalogProvider);
+
+  Future<void> send(String method, [Object? args]) async {
+    try {
+      await _liveChannel.invokeMethod<bool>(method, args);
+    } on MissingPluginException {
+      // Not running on Android with the service built in.
+    } on PlatformException {
+      // The notification is a convenience; the app carries on without it.
+    }
+  }
+
+  final payload = enabled && ingestions != null && settings != null
+      ? buildLiveCurve(ingestions: ingestions, reference: reference, alcoholSettings: settings, now: now)
+      : null;
+  if (payload == null) {
+    if (_liveShown) {
+      _liveShown = false;
+      send('stop');
+    }
+    return;
+  }
+  _liveShown = true;
+  send('update', jsonEncode(payload));
 });
 
 /// How notifications are delivered. Replaced in tests.

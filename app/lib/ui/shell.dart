@@ -14,6 +14,9 @@ import 'compounds/compounds_page.dart';
 import 'design.dart';
 import 'toast.dart';
 import 'insights/insights_page.dart';
+import 'add/add_ingestion_page.dart';
+import 'journal/dialogs.dart';
+import 'journal/experience_page.dart';
 import 'journal/journal_page.dart';
 import 'quicklog/quick_log_page.dart';
 import 'settings/settings_page.dart';
@@ -81,6 +84,38 @@ class _AppShellState extends ConsumerState<AppShell> {
     }
     if (route == 'quicklog' && mounted) {
       Navigator.of(context).push(MaterialPageRoute(builder: (_) => QuickLogPage(person: person)));
+    } else if (route.startsWith('live-')) {
+      unawaited(_openLive(route, person));
+    }
+  }
+
+  /// The live-curve notification's tap and buttons. Android asks for the unlock before any of them runs.
+  Future<void> _openLive(String route, Person person) async {
+    final db = ref.read(databaseProvider);
+    final now = ref.read(clockProvider)();
+    final experience = await db.recentExperienceFor(person.id, now);
+    if (!mounted) return;
+    final navigator = Navigator.of(context);
+    switch (route) {
+      case 'live-open':
+        if (experience != null) navigator.push(MaterialPageRoute(builder: (_) => ExperiencePage(experienceId: experience.id)));
+      case 'live-add':
+        navigator.push(MaterialPageRoute(builder: (_) => AddIngestionPage(personId: person.id, experienceId: experience?.id)));
+      case 'live-note':
+        if (experience == null) {
+          ScaffoldMessenger.of(context).showToast(const SnackBar(content: Text('Nothing logged recently to add a note to.')));
+        } else {
+          await showAddNoteDialog(context, db: db, experienceId: experience.id, now: now);
+        }
+      case 'live-same':
+        final all = await db.ingestionsForPerson(person.id);
+        final item = recentItems(all, ref.read(catalogProvider), limit: 1, includeAlcohol: true).firstOrNull;
+        if (!mounted) return;
+        if (item == null) {
+          ScaffoldMessenger.of(context).showToast(const SnackBar(content: Text('Nothing to repeat yet.')));
+        } else {
+          await confirmAndLogQuick(context, ref, person, item);
+        }
     }
   }
 
@@ -97,6 +132,7 @@ class _AppShellState extends ConsumerState<AppShell> {
     ref.watch(lanServerProvider);
     ref.watch(autoSyncProvider);
     ref.watch(digestAutoWriterProvider);
+    ref.watch(liveCurveProvider);
     ref.watch(reminderServiceProvider);
     final person = ref.watch(currentPersonProvider);
     if (person == null) return const Scaffold(body: Center(child: CircularProgressIndicator()));

@@ -12,6 +12,7 @@ import 'backup_section.dart';
 import 'clinician_report_section.dart';
 import 'csv_export_section.dart';
 import 'digest_section.dart';
+import 'live_curve_section.dart';
 import 'lock_section.dart';
 import '../products/products_page.dart';
 import '../safety/glossary_page.dart';
@@ -284,6 +285,8 @@ class SettingsPage extends ConsumerWidget {
             CsvExportSection(person: person),
             const SizedBox(height: Gap.lg),
             DigestSection(person: person),
+            const SizedBox(height: Gap.lg),
+            const LiveCurveSection(),
             const SizedBox(height: Gap.lg),
             Text('Import from PsychonautWiki Journal', style: text.titleMedium),
             const SizedBox(height: 4),
