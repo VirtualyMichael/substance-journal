@@ -55,7 +55,9 @@ def root() -> Path:
     env = os.environ.get("SUBSTANCE_JOURNAL_DIGEST")
     if env:
         return Path(env)
-    return Path.home() / "Documents" / "Substance Journal digest"
+    base = Path(os.environ.get("APPDATA", Path.home() / ".local/share")) / "com.substancejournal"
+    found = sorted(base.glob("*/digest"), key=lambda p: p.stat().st_mtime, reverse=True)
+    return found[0] if found else base / "digest"
 
 
 def _missing() -> str:

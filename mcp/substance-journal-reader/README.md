@@ -8,7 +8,7 @@ touches the database and never writes anything: it reads small text files the ap
 The app does the maths (potency, estimated curve, tolerance, overlaps) and writes a folder:
 
 ```
-Substance Journal digest/
+digest/
   me/
     README.md        how to read it
     profile.md       one page: what is used, how often, last use, tolerance and direction, last 7 days
@@ -26,7 +26,7 @@ open the profile, a month and several experiences in one conversation.
 ## Turn it on
 
 1. In the app (computer): **Settings > Summary for an AI > Keep the folder up to date**.
-   The folder is plain text, including names and notes as written; the default is `Documents/Substance Journal digest`.
+   The folder is plain text, including names and notes as written; the default is a `digest` folder beside the journal database (in `%APPDATA%/com.substancejournal/...`), not in Documents, because OneDrive and other backups copy Documents to the cloud.
    The app rewrites it a little after every change (it syncs from your phone like everything else).
 2. Add the server to your AI tool (LM Studio, Bionic, Claude Desktop or any MCP client):
 

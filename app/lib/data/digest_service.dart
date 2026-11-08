@@ -9,9 +9,9 @@ import 'package:sj_core/sj_core.dart';
 import 'database.dart';
 import 'digest.dart';
 
-/// Where the digest is written unless the person picked a folder: next to their documents, so a
-/// local AI tool can be pointed at it.
-Future<Directory> defaultDigestFolder() async => Directory(p.join((await getApplicationDocumentsDirectory()).path, 'Substance Journal digest'));
+/// Where the digest is written unless the person picked a folder: beside the journal database, in
+/// the app's own data folder. Not Documents, which OneDrive and other backups often copy to the cloud.
+Future<Directory> defaultDigestFolder() async => Directory(p.join((await getApplicationSupportDirectory()).path, 'digest'));
 
 String _slug(String name) {
   final s = name.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]+'), '-').replaceAll(RegExp(r'^-+|-+$'), '');
