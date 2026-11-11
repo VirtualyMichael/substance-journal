@@ -29,19 +29,35 @@ Future<Digest> buildDigestForPerson(AppDatabase db, Person person, Map<String, S
   final products = await db.select(db.products).get();
   final settings = await db.getEstimateSettings(person.id);
   // The calculation takes a second or more on a long journal: keep it off the screen's thread.
-  return offMain(() => buildDigest(
-        person: person,
-        experiences: experiences,
-        ingestions: ingestions,
-        notes: notes,
-        ratings: ratings,
-        products: products,
-        byKey: byKey,
-        now: now,
-        alcoholSettings: settings,
-        options: options,
-      ));
+  return _buildDigestInBackground(person, experiences, ingestions, notes, ratings, products, byKey, now, settings, options);
 }
+
+/// A plain (not async) top-level function, so the closure sent to the isolate captures only these
+/// arguments, never the database or an async function's state.
+Future<Digest> _buildDigestInBackground(
+  Person person,
+  List<Experience> experiences,
+  List<Ingestion> ingestions,
+  List<TimedNote> notes,
+  List<Rating> ratings,
+  List<Product> products,
+  Map<String, Substance> byKey,
+  DateTime now,
+  EstimateSettings settings,
+  DigestOptions options,
+) =>
+    offMain(() => buildDigest(
+          person: person,
+          experiences: experiences,
+          ingestions: ingestions,
+          notes: notes,
+          ratings: ratings,
+          products: products,
+          byKey: byKey,
+          now: now,
+          alcoholSettings: settings,
+          options: options,
+        ));
 
 /// Writes every person's digest under `root/person/` (replacing the previous one) and returns how
 /// many files were written. A small `people.json` lists the people.

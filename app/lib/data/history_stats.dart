@@ -5,6 +5,7 @@ import 'package:sj_core/sj_core.dart';
 import '../ui/journal/tolerance_card.dart' show ToleranceTrend;
 import 'alcohol_data.dart';
 import 'database.dart';
+import 'off_main.dart';
 import 'tolerance_events.dart';
 
 /// Grams of ethanol in one standard drink (US), the unit alcohol amounts are shown in here.
@@ -427,3 +428,13 @@ List<SubstanceHistory> buildHistories({
   result.sort((a, b) => b.doses.compareTo(a.doses));
   return result;
 }
+
+/// [buildHistories] on a background isolate. A top-level function on purpose: a closure made inside
+/// a widget would capture the widget, which cannot be sent to another isolate.
+Future<List<SubstanceHistory>> buildHistoriesInBackground({
+  required List<Ingestion> ingestions,
+  required Map<String, Substance> byKey,
+  required EstimateSettings settings,
+  required DateTime now,
+}) =>
+    offMain(() => buildHistories(ingestions: ingestions, byKey: byKey, settings: settings, now: now));
