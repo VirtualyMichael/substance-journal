@@ -11,10 +11,10 @@ REPO="${1:?pass the repository path as seen from WSL}"
 USER_NAME=builder
 
 if [ "$(id -u)" = 0 ]; then
-  if ! command -v cmake >/dev/null || ! dpkg -s libgtk-3-dev >/dev/null 2>&1; then
+  if ! command -v cmake >/dev/null || ! dpkg -s libgtk-3-dev libjsoncpp-dev libsecret-1-dev >/dev/null 2>&1; then
     apt-get update
     DEBIAN_FRONTEND=noninteractive apt-get install -y \
-      clang cmake ninja-build pkg-config libgtk-3-dev libsqlite3-dev libsecret-1-dev \
+      clang cmake ninja-build pkg-config libgtk-3-dev libsqlite3-dev libsecret-1-dev libjsoncpp-dev \
       curl git unzip xz-utils zip rsync libglu1-mesa ca-certificates
   fi
   id "$USER_NAME" >/dev/null 2>&1 || useradd -m -s /bin/bash "$USER_NAME"
