@@ -25,6 +25,33 @@ const List<int> _magic = [0x53, 0x4a, 0x53, 0x31]; // "SJS1"
 
 final AesGcm _aes = AesGcm.with256bits();
 
+/// The most a package may expand to when opened. A real journal is a few megabytes; this stops a
+/// tiny hostile package from filling memory.
+const int maxPackageBytes = 256 * 1024 * 1024;
+
+List<int> _gunzipLimited(List<int> data) {
+  final out = BytesBuilder(copy: false);
+  final decoder = gzip.decoder.startChunkedConversion(_LimitSink(out, maxPackageBytes));
+  decoder.add(data);
+  decoder.close();
+  return out.takeBytes();
+}
+
+class _LimitSink implements Sink<List<int>> {
+  _LimitSink(this._out, this._limit);
+  final BytesBuilder _out;
+  final int _limit;
+
+  @override
+  void add(List<int> data) {
+    _out.add(data);
+    if (_out.length > _limit) throw const SyncCryptoException('This package is too large to open.');
+  }
+
+  @override
+  void close() {}
+}
+
 /// A fresh random 256-bit key for a pairing.
 Uint8List generateSyncKey() {
   final random = Random.secure();
@@ -81,7 +108,7 @@ Future<Uint8List> openSyncPackage(String text, Uint8List key) async {
     final cipher = bytes.sublist(headerLength + 12, bytes.length - 16);
     final mac = bytes.sublist(bytes.length - 16);
     final clear = await _aes.decrypt(SecretBox(cipher, nonce: nonce, mac: Mac(mac)), secretKey: SecretKey(key), aad: header);
-    return Uint8List.fromList(gzip.decode(clear));
+    return Uint8List.fromList(_gunzipLimited(clear));
   } on SyncCryptoException {
     rethrow;
   } on Object {

@@ -44,6 +44,11 @@ class SyncPeer {
 
 const _pendingPrefix = 'pending:';
 
+/// The only settings a paired device may change on this one. Anything else (the app lock, folders,
+/// remembered addresses, the pairing keys themselves) stays private to the device that owns it.
+bool isSyncableSetting(String key) =>
+    key == 'recipesSeeded' || key.startsWith('estimate:') || key.startsWith('limits:') || key.startsWith('compoundPrefs:');
+
 String _b64(List<int> bytes) => base64Url.encode(bytes).replaceAll('=', '');
 Uint8List _unb64(String text) => Uint8List.fromList(base64Url.decode(text.padRight((text.length + 3) ~/ 4 * 4, '=')));
 
@@ -106,6 +111,18 @@ class SyncService {
         ));
     return code.deviceName;
   }
+
+  /// The key shared with [peerId], or null when not paired.
+  Future<Uint8List?> keyFor(String peerId) async {
+    final row = await (db.select(db.peers)..where((t) => t.deviceId.equals(peerId))).getSingleOrNull();
+    return row == null || row.sharedKey.isEmpty ? null : _unb64(row.sharedKey);
+  }
+
+  /// Every pairing key this device holds, including a pairing nobody has claimed yet.
+  Future<List<Uint8List>> allKeys() async => [
+        for (final r in await db.select(db.peers).get())
+          if (r.sharedKey.isNotEmpty) _unb64(r.sharedKey),
+      ];
 
   Future<List<SyncPeer>> peers() async {
     final rows = await (db.select(db.peers)..orderBy([(t) => OrderingTerm.asc(t.pairedAt)])).get();
@@ -265,7 +282,7 @@ class SyncService {
     final settingRows = (tables['settings'] as List?)?.cast<Map<String, dynamic>>() ?? const [];
     for (final json in settingRows) {
       final row = Setting.fromJson(json);
-      if (!row.shared) continue;
+      if (!row.shared || !isSyncableSetting(row.key)) continue; // a peer cannot write device-private settings
       if (row.hlc.compareTo(maxHlc) > 0) maxHlc = row.hlc;
       final local = await (db.select(db.settings)..where((s) => s.key.equals(row.key))).getSingleOrNull();
       if (local == null || _newer(row.hlc, local.hlc)) {
