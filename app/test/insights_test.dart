@@ -59,4 +59,45 @@ void main() {
     expect(find.text('July 2026'), findsOneWidget);
     await disposeApp(tester, app);
   });
+
+  testWidgets('tolerance: a card per substance opens its history, and the chart reads out by drag', (tester) async {
+    final app = await buildTestApp(tester);
+    final me = await dbRun(tester, app.db.ensureDefaultPerson);
+    await dbRun(tester, () async {
+      final e = await app.db.addExperience(personId: me.id, sortDate: DateTime(2026, 7, 1, 20));
+      for (var n = 0; n < 3; n++) {
+        await app.db.addIngestion(experience: e, substanceKey: 'cannabis', route: 'smoked', time: DateTime(2026, 7, 1, 20, 30 * n), dose: 2.7, unit: 'mg');
+      }
+      await app.db.addIngestion(
+        experience: e,
+        substanceKey: 'alcohol',
+        route: 'oral',
+        time: DateTime(2026, 7, 1, 20, 10),
+        dose: 28,
+        unit: 'g',
+        details: {'drink': 'Two beers', 'volume': 24.0, 'volumeUnit': 'oz', 'abv': 5.0},
+      );
+    });
+    await startApp(tester, app);
+    await openInsights(tester);
+
+    await tester.scrollUntilVisible(find.byKey(const ValueKey('overview-chart')), 300, scrollable: find.byType(Scrollable).first);
+    await tester.pump();
+    final chart = tester.getRect(find.byKey(const ValueKey('overview-chart')));
+    await tester.dragFrom(chart.centerLeft + const Offset(80, 0), const Offset(100, 0));
+    await tester.pump();
+    expect(find.byKey(const ValueKey('chart-readout')), findsOneWidget);
+
+    await tester.scrollUntilVisible(find.byKey(const ValueKey('substance-card-cannabis')), 300, scrollable: find.byType(Scrollable).first);
+    expect(find.byKey(const ValueKey('substance-card-alcohol')), findsOneWidget);
+    await tapKey(tester, 'substance-card-cannabis');
+    expect(find.byKey(const ValueKey('detail-tolerance')), findsOneWidget);
+    expect(find.byKey(const ValueKey('detail-halving')), findsOneWidget);
+    expect(find.textContaining('Half of today\'s tolerance by'), findsOneWidget);
+    await tester.scrollUntilVisible(find.byKey(const ValueKey('detail-records')), 300, scrollable: find.byType(Scrollable).last);
+    expect(find.textContaining('Largest single dose (smoked)'), findsOneWidget);
+    await tester.scrollUntilVisible(find.byKey(const ValueKey('detail-gains')), 300, scrollable: find.byType(Scrollable).last);
+    expect(find.textContaining('(from none)'), findsOneWidget);
+    await disposeApp(tester, app);
+  });
 }

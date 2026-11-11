@@ -7,11 +7,13 @@ import '../../data/weekly_summary.dart';
 import '../../providers.dart';
 import '../alcohol/analytics_charts.dart';
 import '../design.dart';
+import 'tolerance_overview.dart';
 
 const _months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 const _weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
-/// A month at a glance for one person: how much, how often, of what, and how it compares with
+/// Tolerance and history for one person: the last week, tolerance over time for everything used
+/// in the last year (each substance opens its full history), and a month at a glance compared with
 /// the month before. Only this person's doses are counted.
 class InsightsPage extends ConsumerStatefulWidget {
   const InsightsPage({super.key, required this.person});
@@ -143,6 +145,8 @@ class _InsightsPageState extends ConsumerState<InsightsPage> {
                   ),
                 ),
             ],
+            const SizedBox(height: Gap.lg),
+            ToleranceOverview(person: widget.person),
             const SizedBox(height: Gap.md),
             Text('Counts only ${widget.person.name}\'s own use. Totals add up the amounts you logged and skip doses with none.', style: text.bodySmall),
           ],
