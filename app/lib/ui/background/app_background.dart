@@ -109,6 +109,7 @@ class _FlowLayerState extends State<_FlowLayer> with SingleTickerProviderStateMi
     super.initState();
     _ticker = createTicker((elapsed) {
       // A slow flow needs far fewer frames than the screen can draw; the level sets how many.
+      if (elapsed < _last) _last = Duration.zero; // the ticker started over
       if (elapsed - _last < Duration(microseconds: 1000000 ~/ widget.quality.fps - 1500)) return;
       _last = elapsed;
       _time.value = _stillTime + elapsed.inMicroseconds / Duration.microsecondsPerSecond;
@@ -127,6 +128,8 @@ class _FlowLayerState extends State<_FlowLayer> with SingleTickerProviderStateMi
 
   void _syncTicker() {
     if (widget.animate && !_ticker.isActive) {
+      // A restarted ticker counts from zero again, so forget how far the last run got.
+      _last = Duration.zero;
       _ticker.start();
     } else if (!widget.animate && _ticker.isActive) {
       _ticker.stop();

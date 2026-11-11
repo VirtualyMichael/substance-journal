@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:ui' as ui;
 
@@ -56,4 +57,39 @@ void main() {
       }
     });
   }
+
+  testWidgets('switching from still back to flow makes it move again', (tester) async {
+    resetFlowShader();
+    final changes = StreamController<BackgroundConfig>.broadcast();
+    addTearDown(changes.close);
+    var current = const BackgroundConfig(mode: BackgroundMode.flow, dim: 0.1);
+    await tester.pumpWidget(ProviderScope(
+      overrides: [backgroundProvider.overrideWith((ref) async* { yield current; yield* changes.stream; })],
+      child: const MaterialApp(home: AppBackground(style: FlowStyle.noise)),
+    ));
+    await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 300)));
+    await tester.pump(const Duration(milliseconds: 100));
+
+    Future<void> choose(BackgroundMode mode) async {
+      current = current.copyWith(mode: mode);
+      changes.add(current);
+      await tester.pump(const Duration(milliseconds: 50));
+      await tester.pump(const Duration(milliseconds: 50));
+    }
+
+    // Run for a while, so the ticker's clock is well past where a restart begins.
+    for (var i = 0; i < 30; i++) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+    await choose(BackgroundMode.still);
+    await choose(BackgroundMode.flow);
+
+    final painter = tester.widgetList<CustomPaint>(find.byType(CustomPaint)).map((c) => c.painter).whereType<CustomPainter>().firstWhere((p) => p.runtimeType.toString() == '_FlowPainter');
+    var repaints = 0;
+    painter.addListener(() => repaints++);
+    for (var i = 0; i < 10; i++) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+    expect(repaints, greaterThan(5), reason: 'the flow should be moving again');
+  });
 }
