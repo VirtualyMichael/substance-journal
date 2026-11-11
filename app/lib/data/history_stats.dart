@@ -25,7 +25,15 @@ class AmountAt {
 
 /// One experience's change in tolerance for one substance.
 class SessionGainRow {
-  const SessionGainRow({required this.experienceId, required this.start, required this.end, required this.before, required this.after, required this.alcohol, required this.settings});
+  const SessionGainRow({
+    required this.experienceId,
+    required this.start,
+    required this.end,
+    required this.before,
+    required this.after,
+    required this.alcohol,
+    required this.settings,
+  });
   final String experienceId;
   final DateTime start;
   final DateTime end;
@@ -161,7 +169,10 @@ String _unit(Ingestion i) => i.substanceKey == 'alcohol' ? 'std drinks' : (i.uni
 /// tick, so the last answer is kept until the drinks or settings change.
 Map<DateTime, double> alcoholLoads(List<Ingestion> drinks, EstimateSettings settings) {
   // Sorted, so callers that list the same drinks in a different order share the cached answer.
-  final live = [for (final d in drinks) if (!d.deleted) d]..sort((a, b) => a.time != b.time ? a.time.compareTo(b.time) : a.id.compareTo(b.id));
+  final live = [
+    for (final d in drinks)
+      if (!d.deleted) d,
+  ]..sort((a, b) => a.time != b.time ? a.time.compareTo(b.time) : a.id.compareTo(b.id));
   final key = Object.hashAll([for (final d in live) Object.hash(d.id, d.time, d.endTime, d.dose, d.detailsJson)]);
   final cached = _loadsCache;
   if (cached != null && cached.$1 == key && identical(cached.$2, settings)) return cached.$3;
@@ -198,12 +209,25 @@ ToleranceView toleranceView({
 }) {
   final span = to.difference(from);
   final st = step ?? Duration(minutes: max(30, span.inMinutes ~/ 240));
-  final live = [for (final i in ingestions) if (!i.deleted) i];
+  final live = [
+    for (final i in ingestions)
+      if (!i.deleted) i,
+  ];
 
   if (substance.key == 'alcohol') {
-    final loads = alcoholLoads([for (final i in live) if (i.substanceKey == 'alcohol') i], settings);
+    final loads = alcoholLoads([
+      for (final i in live)
+        if (i.substanceKey == 'alcohol') i,
+    ], settings);
     final line = alcoholToleranceTimeline(loads, from, to, step: st, settings: settings);
-    final score = alcoholToleranceScoreAt({for (final e in loads.entries) if (!e.key.isAfter(now)) e.key: e.value}, now, settings);
+    final score = alcoholToleranceScoreAt(
+      {
+        for (final e in loads.entries)
+          if (!e.key.isAfter(now)) e.key: e.value,
+      },
+      now,
+      settings,
+    );
     final weekAgo = alcoholToleranceScoreAt(loads, now.subtract(const Duration(days: 7)), settings);
     final multiplier = toleranceMultiplier(score, settings);
     return ToleranceView(
@@ -214,12 +238,15 @@ ToleranceView toleranceView({
       multiplierNow: multiplier,
       word: '${multiplier.toStringAsFixed(2)}x',
       trend: _trend(score, weekAgo),
-      plan: BreakPlan(
-        from: now,
-        half: alcoholTimeToScore(loads, now, score / 2, settings),
-        quarter: alcoholTimeToScore(loads, now, score / 4, settings),
-        baseline: alcoholTimeToScore(loads, now, alcoholBaselineScore(settings), settings),
-      ),
+      // At baseline there is nothing to halve.
+      plan: score < alcoholBaselineScore(settings)
+          ? BreakPlan(from: now)
+          : BreakPlan(
+              from: now,
+              half: alcoholTimeToScore(loads, now, score / 2, settings),
+              quarter: alcoholTimeToScore(loads, now, score / 4, settings),
+              baseline: alcoholTimeToScore(loads, now, alcoholBaselineScore(settings), settings),
+            ),
       sharedWith: const [],
     );
   }
@@ -231,8 +258,7 @@ ToleranceView toleranceView({
   final shared = <String>{
     for (final s in byKey.values)
       if (s.key != substance.key && s.hasTolerance && toleranceTrackKey(s) == track && live.any((i) => i.substanceKey == s.key)) s.name,
-  }.toList()
-    ..sort();
+  }.toList()..sort();
   return ToleranceView(
     trackKey: track,
     alcohol: false,
@@ -240,13 +266,15 @@ ToleranceView toleranceView({
     now: level,
     word: toleranceWord(level),
     trend: _trend(level, weekAgo),
-    plan: BreakPlan(
-      from: now,
-      half: timeToFraction(events, byKey, track, now, 0.5),
-      quarter: timeToFraction(events, byKey, track, now, 0.25),
-      low: timeToLevel(events, byKey, track, now, 0.5),
-      baseline: timeToLevel(events, byKey, track, now, baselineLevel),
-    ),
+    plan: level < baselineLevel
+        ? BreakPlan(from: now)
+        : BreakPlan(
+            from: now,
+            half: timeToFraction(events, byKey, track, now, 0.5),
+            quarter: timeToFraction(events, byKey, track, now, 0.25),
+            low: timeToLevel(events, byKey, track, now, 0.5),
+            baseline: timeToLevel(events, byKey, track, now, baselineLevel),
+          ),
     sharedWith: shared,
   );
 }
@@ -259,19 +287,28 @@ List<SubstanceHistory> buildHistories({
   required EstimateSettings settings,
   required DateTime now,
 }) {
-  final live = [for (final i in ingestions) if (!i.deleted) i]..sort((a, b) => a.time.compareTo(b.time));
+  final live = [
+    for (final i in ingestions)
+      if (!i.deleted) i,
+  ]..sort((a, b) => a.time.compareTo(b.time));
   final byExperience = <String, List<Ingestion>>{};
   for (final i in live) {
     byExperience.putIfAbsent(i.experienceId, () => []).add(i);
   }
   final events = useEventsFor(live, byKey);
-  final drinksAll = [for (final i in live) if (i.substanceKey == 'alcohol') i];
+  final drinksAll = [
+    for (final i in live)
+      if (i.substanceKey == 'alcohol') i,
+  ];
   final loads = drinksAll.isEmpty ? const <DateTime, double>{} : alcoholLoads(drinksAll, settings);
 
   final result = <SubstanceHistory>[];
   final keys = {for (final i in live) i.substanceKey};
   for (final key in keys) {
-    final mine = [for (final i in live) if (i.substanceKey == key) i];
+    final mine = [
+      for (final i in live)
+        if (i.substanceKey == key) i,
+    ];
     final s = byKey[key];
     final name = s?.name ?? key;
 
@@ -283,7 +320,10 @@ List<SubstanceHistory> buildHistories({
       totals[_unit(i)] = (totals[_unit(i)] ?? 0) + _amount(i);
     }
     final mainUnit = units.isEmpty ? '' : (units.entries.toList()..sort((a, b) => b.value.compareTo(a.value))).first.key;
-    final inMain = [for (final i in mine) if (i.dose != null && _unit(i) == mainUnit) i];
+    final inMain = [
+      for (final i in mine)
+        if (i.dose != null && _unit(i) == mainUnit) i,
+    ];
 
     // Days, breaks and the current run.
     final days = {for (final i in mine) _day(i.time)}.toList()..sort();
@@ -317,7 +357,10 @@ List<SubstanceHistory> buildHistories({
     final sessionTotals = <(DateTime, double)>[];
     final expIds = <String>{for (final i in mine) i.experienceId};
     for (final id in expIds) {
-      final doses = [for (final i in byExperience[id]!) if (i.substanceKey == key && i.dose != null && _unit(i) == mainUnit) i];
+      final doses = [
+        for (final i in byExperience[id]!)
+          if (i.substanceKey == key && i.dose != null && _unit(i) == mainUnit) i,
+      ];
       if (doses.isEmpty) continue;
       final sum = doses.fold<double>(0, (a, i) => a + _amount(i));
       sessionTotals.add((doses.first.time, sum));
@@ -342,7 +385,10 @@ List<SubstanceHistory> buildHistories({
     if (key == 'alcohol') {
       peakUnit = '% BAC';
       for (final id in expIds) {
-        final drinks = [for (final i in byExperience[id]!) if (i.substanceKey == 'alcohol') alcoholDrinkFrom(i, settings)];
+        final drinks = [
+          for (final i in byExperience[id]!)
+            if (i.substanceKey == 'alcohol') alcoholDrinkFrom(i, settings),
+        ];
         if (drinks.isEmpty) continue;
         final e = sessionExposure(drinks, settings);
         if (peak == null || e.peakBac > peak.amount) peak = AmountAt(e.peakBac, peakUnit, e.peakAt ?? e.start, id);
@@ -375,7 +421,10 @@ List<SubstanceHistory> buildHistories({
     }
     final combos = <String, int>{};
     for (final id in expIds) {
-      for (final other in {for (final i in byExperience[id]!) if (i.substanceKey != key) i.substanceKey}) {
+      for (final other in {
+        for (final i in byExperience[id]!)
+          if (i.substanceKey != key) i.substanceKey,
+      }) {
         final n = byKey[other]?.name ?? other;
         combos[n] = (combos[n] ?? 0) + 1;
       }
@@ -384,12 +433,29 @@ List<SubstanceHistory> buildHistories({
     // Tolerance added by each experience.
     final gains = <SessionGainRow>[];
     for (final id in expIds) {
-      final doses = [for (final i in byExperience[id]!) if (i.substanceKey == key) i];
+      final doses = [
+        for (final i in byExperience[id]!)
+          if (i.substanceKey == key) i,
+      ];
       final start = doses.first.time;
       final end = doses.last.endTime ?? doses.last.time;
       if (key == 'alcohol') {
-        final before = alcoholToleranceScoreAt({for (final e in loads.entries) if (e.key.isBefore(start)) e.key: e.value}, start, settings);
-        final after = alcoholToleranceScoreAt({for (final e in loads.entries) if (!e.key.isAfter(end)) e.key: e.value}, end, settings);
+        final before = alcoholToleranceScoreAt(
+          {
+            for (final e in loads.entries)
+              if (e.key.isBefore(start)) e.key: e.value,
+          },
+          start,
+          settings,
+        );
+        final after = alcoholToleranceScoreAt(
+          {
+            for (final e in loads.entries)
+              if (!e.key.isAfter(end)) e.key: e.value,
+          },
+          end,
+          settings,
+        );
         gains.add(SessionGainRow(experienceId: id, start: start, end: end, before: before, after: after, alcohol: true, settings: settings));
       } else if (s != null && s.hasTolerance) {
         final g = sessionGain(events, byKey, toleranceTrackKey(s), start, end);
@@ -398,32 +464,34 @@ List<SubstanceHistory> buildHistories({
     }
     gains.sort((a, b) => b.start.compareTo(a.start));
 
-    result.add(SubstanceHistory(
-      key: key,
-      name: name,
-      doses: mine.length,
-      mainUnit: mainUnit,
-      totalByUnit: totals,
-      first: mine.first.time,
-      last: mine.last.time,
-      averageDose: inMain.isEmpty ? null : inMain.fold<double>(0, (a, i) => a + _amount(i)) / inMain.length,
-      daysUsed: days.length,
-      longestBreakDays: longest,
-      longestBreakFrom: longestFrom,
-      currentRunDays: run,
-      largestByRoute: largestByRoute,
-      largestSession: largestSession,
-      most24h: most24h,
-      highestPeak: peak,
-      peakUnit: peakUnit,
-      sessionTotals: sessionTotals,
-      byWeekday: weekday,
-      byHour: hour,
-      routes: routes,
-      combos: combos.entries.toList()..sort((a, b) => b.value.compareTo(a.value)),
-      gains: gains,
-      experiences: expIds.length,
-    ));
+    result.add(
+      SubstanceHistory(
+        key: key,
+        name: name,
+        doses: mine.length,
+        mainUnit: mainUnit,
+        totalByUnit: totals,
+        first: mine.first.time,
+        last: mine.last.time,
+        averageDose: inMain.isEmpty ? null : inMain.fold<double>(0, (a, i) => a + _amount(i)) / inMain.length,
+        daysUsed: days.length,
+        longestBreakDays: longest,
+        longestBreakFrom: longestFrom,
+        currentRunDays: run,
+        largestByRoute: largestByRoute,
+        largestSession: largestSession,
+        most24h: most24h,
+        highestPeak: peak,
+        peakUnit: peakUnit,
+        sessionTotals: sessionTotals,
+        byWeekday: weekday,
+        byHour: hour,
+        routes: routes,
+        combos: combos.entries.toList()..sort((a, b) => b.value.compareTo(a.value)),
+        gains: gains,
+        experiences: expIds.length,
+      ),
+    );
   }
   result.sort((a, b) => b.doses.compareTo(a.doses));
   return result;
@@ -436,5 +504,4 @@ Future<List<SubstanceHistory>> buildHistoriesInBackground({
   required Map<String, Substance> byKey,
   required EstimateSettings settings,
   required DateTime now,
-}) =>
-    offMain(() => buildHistories(ingestions: ingestions, byKey: byKey, settings: settings, now: now));
+}) => offMain(() => buildHistories(ingestions: ingestions, byKey: byKey, settings: settings, now: now));
