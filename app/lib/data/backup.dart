@@ -7,6 +7,7 @@ import 'package:sj_core/sj_core.dart';
 import 'package:sqlite3/sqlite3.dart' as sql;
 
 import 'database.dart';
+import 'db_security.dart';
 import 'sync.dart';
 
 /// Backups and exports.
@@ -94,7 +95,7 @@ class BackupService {
   /// Copies the database file when it is about to be upgraded to [targetVersion], and once a day.
   /// Keeps the newest [keepDaily] daily copies; upgrade copies are never deleted automatically.
   /// Call before the database is opened. Never throws: a backup problem must not stop the app.
-  static Future<void> autoBackup(File databaseFile, {required int targetVersion, DateTime? now, int keepDaily = 14}) async {
+  static Future<void> autoBackup(File databaseFile, {required int targetVersion, DateTime? now, int keepDaily = 14, String? hexKey}) async {
     try {
       if (!databaseFile.existsSync() || databaseFile.lengthSync() == 0) return;
       final folder = folderFor(databaseFile);
@@ -103,7 +104,7 @@ class BackupService {
       String two(int n) => n.toString().padLeft(2, '0');
       final day = '${stamp.year}-${two(stamp.month)}-${two(stamp.day)}';
 
-      final current = _userVersion(databaseFile);
+      final current = _userVersion(databaseFile, hexKey);
       if (current != null && current < targetVersion) {
         final upgrade = File(p.join(folder.path, 'before-upgrade-from-v$current.db'));
         if (!upgrade.existsSync()) await databaseFile.copy(upgrade.path);
@@ -124,10 +125,11 @@ class BackupService {
     }
   }
 
-  static int? _userVersion(File file) {
+  static int? _userVersion(File file, String? hexKey) {
     try {
       final raw = sql.sqlite3.open(file.path, mode: sql.OpenMode.readOnly);
       try {
+        if (hexKey != null && !isPlainSqlite(file)) applyKey(raw, hexKey);
         return raw.select('PRAGMA user_version').first.values.first as int;
       } finally {
         raw.close();

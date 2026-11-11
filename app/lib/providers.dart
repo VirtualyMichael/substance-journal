@@ -24,6 +24,9 @@ import 'ui/quicklog/launch_route.dart';
 import 'data/sync.dart';
 
 /// Overridden at startup (and in tests) with real instances.
+/// Whether the journal file is encrypted on disk (false only if encrypting it failed at start).
+final databaseEncryptedProvider = Provider<bool>((ref) => true);
+
 final databaseProvider = Provider<AppDatabase>((ref) => throw UnimplementedError('databaseProvider'));
 final referenceProvider = Provider<ReferenceRepository>((ref) => throw UnimplementedError('referenceProvider'));
 final interactionPairsProvider = Provider<List<TripSitPair>>((ref) => const []);

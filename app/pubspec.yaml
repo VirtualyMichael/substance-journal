@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 2.0.0+32
+version: 2.0.0+33
 
 environment:
   sdk: ^3.13.7
@@ -52,6 +52,7 @@ dependencies:
   pdf: ^3.13.1
   local_auth: ^3.0.2
   cryptography: ^2.9.0
+  flutter_secure_storage: ^11.2.0
 
 dev_dependencies:
   flutter_test:
@@ -70,6 +71,12 @@ dev_dependencies:
 # following page: https://dart.dev/tools/pub/pubspec
 
 # The following section is specific to Flutter packages.
+# Bundle SQLite3 Multiple Ciphers (not plain SQLite) so the journal can be encrypted.
+hooks:
+  user_defines:
+    sqlite3:
+      source: sqlite3mc
+
 flutter:
 
   # The following line ensures that the Material Icons font is
