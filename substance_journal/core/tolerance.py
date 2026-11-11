@@ -44,20 +44,72 @@ class TolerancePoint:
     value: float
 
 
+# Mirrors app/packages/sj_core/lib/src/tolerance.dart (the golden tests compare the two).
+# Doses of one track less than this apart are one session.
+_CLUSTER_GAP = timedelta(hours=6)
+# The most one session adds (in common doses), and the ceiling tolerance can approach.
+_MAX_SESSION_CONTRIBUTION = 3.0
+_TOLERANCE_CEILING = 3.0
+
+
 def current_tolerance_level(
     ingestions: list[Ingestion], substances_by_key: dict[str, Substance], track_key: str, at: datetime
 ) -> float:
-    score = 0.0
+    """Pooled tolerance score for track_key at `at`.
+
+    Doses less than six hours apart form one session, which adds sqrt(number of doses) (capped at 3),
+    scaled by the room left under the ceiling of 3 when it started, halving every half-life from its
+    first dose. Each dose counts as one common dose here; the app also weights doses by size."""
+    mine = []
     for ingestion in ingestions:
         substance = substances_by_key.get(ingestion.substance_key)
-        if substance is None or not substance.has_tolerance:
+        if substance is None or not substance.has_tolerance or tolerance_track_key(substance) != track_key:
             continue
-        if tolerance_track_key(substance) != track_key:
+        mine.append((ingestion.occurred_at, half_life_days(substance)))
+    mine.sort(key=lambda x: x[0])
+
+    sessions: list[dict] = []
+    last = None
+    for occurred_at, half_life in mine:
+        if last is None or occurred_at - last >= _CLUSTER_GAP:
+            sessions.append({"start": occurred_at, "doses": [], "weight": 0.0, "hl_weighted": 0.0, "headroom": 1.0})
+        session = sessions[-1]
+        session["weight"] += 1.0
+        session["hl_weighted"] += half_life
+        session["doses"].append((occurred_at, session["weight"]))
+        last = occurred_at
+
+    def days(delta: timedelta) -> float:
+        return delta.total_seconds() / 86400.0
+
+    for i, session in enumerate(sessions):
+        before = 0.0
+        for previous in sessions[:i]:
+            half_life = previous["hl_weighted"] / previous["weight"]
+            before += (
+                min(previous["weight"] ** 0.5, _MAX_SESSION_CONTRIBUTION)
+                * previous["headroom"]
+                * 2 ** (-days(session["start"] - previous["start"]) / half_life)
+            )
+        session["headroom"] = max(0.0, 1.0 - before / _TOLERANCE_CEILING)
+
+    score = 0.0
+    for session in sessions:
+        if session["start"] > at:
+            break
+        weight = 0.0
+        for occurred_at, cumulative in session["doses"]:
+            if occurred_at > at:
+                break
+            weight = cumulative
+        if weight <= 0:
             continue
-        if ingestion.occurred_at > at:
-            continue
-        elapsed_days = (at - ingestion.occurred_at).total_seconds() / 86400.0
-        score += 2 ** (-elapsed_days / half_life_days(substance))
+        half_life = session["hl_weighted"] / session["weight"]
+        score += (
+            min(weight**0.5, _MAX_SESSION_CONTRIBUTION)
+            * session["headroom"]
+            * 2 ** (-days(at - session["start"]) / half_life)
+        )
     return score
 
 

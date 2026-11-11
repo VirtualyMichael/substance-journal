@@ -31,10 +31,27 @@ void main() {
       expect(currentToleranceLevel(events, byKey, track, at), closeTo(maxSessionContribution * decay(const Duration(minutes: 240)), 1e-9));
     });
 
-    test('doses more than six hours apart each count fully', () {
+    test('a later session adds in proportion to the room left under the ceiling', () {
       final events = [UseEvent('cannabis', t0), UseEvent('cannabis', t0.add(const Duration(hours: 7)))];
       final at = t0.add(const Duration(hours: 7));
-      expect(currentToleranceLevel(events, byKey, track, at), closeTo(decay(const Duration(hours: 7)) + 1.0, 1e-9));
+      final first = decay(const Duration(hours: 7));
+      expect(currentToleranceLevel(events, byKey, track, at), closeTo(first + (1 - first / toleranceCeiling), 1e-9));
+    });
+
+    test('steady daily use levels off below the ceiling instead of growing without limit', () {
+      final events = [
+        for (var d = 0; d < 60; d++)
+          for (var n = 0; n < 3; n++) UseEvent('cannabis', t0.add(Duration(days: d, hours: 8 * n)), weight: 2),
+      ];
+      final day30 = currentToleranceLevel(events, byKey, track, t0.add(const Duration(days: 30)));
+      final day60 = currentToleranceLevel(events, byKey, track, t0.add(const Duration(days: 60)));
+      expect(day60, lessThan(toleranceCeiling));
+      expect(day60, greaterThan(1.5)); // High
+      expect((day60 - day30).abs(), lessThan(0.1)); // a plateau
+      // Stopping: about four weeks back to baseline with the 7-day cannabis half-life.
+      final stop = t0.add(const Duration(days: 60));
+      final baseline = timeToLevel(events, byKey, track, stop, baselineLevel)!;
+      expect(baseline.difference(stop).inDays, inInclusiveRange(21, 40));
     });
 
     test('dose size scales the contribution', () {
@@ -75,7 +92,7 @@ void main() {
       ];
       final gain = sessionGain(events, byKey, track, t0, t0.add(const Duration(minutes: 90)));
       expect(gain.before, closeTo(decay(const Duration(days: 2)), 1e-9));
-      expect(gain.after, greaterThan(gain.before + 1.5));
+      expect(gain.after, greaterThan(gain.before + 1.0));
       expect(gain.percent, greaterThan(100));
       expect(sessionGain([UseEvent('cannabis', t0)], byKey, track, t0, t0).percent, isNull);
     });

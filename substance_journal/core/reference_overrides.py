@@ -224,6 +224,13 @@ def apply_overrides(substances: list[dict]) -> list[dict]:
         else:
             substance["tolerance_half_days"] = None
 
+    # Cannabis: PsychonautWiki gives half "1 - 2 weeks" and zero "2 - 3 weeks"; the midpoint of the
+    # half time (10.5 days) cannot reach zero in 2-3 weeks. Use the low end, 7 days, which matches
+    # PET studies of daily users: CB1 receptors start recovering within 2 days and are back to
+    # normal in about 4 weeks (Hirvonen et al. 2012, D'Souza et al. 2016).
+    by_key["cannabis"]["tolerance_half_days"] = 7.0
+    note("cannabis", "Tolerance half-life 7 days (low end of 1-2 weeks), consistent with CB1 recovery in about 4 weeks.")
+
     # --- psilocybin: people weigh dried mushrooms, not pure psilocybin ---
     # The published bands were in mg of psilocybin; PsychonautWiki's dried P. cubensis table is the
     # same numbers over about 10 mg psilocybin per gram (2.5 mg = 0.25 g, 25 mg = 2.5 g, 50 mg = 5 g).

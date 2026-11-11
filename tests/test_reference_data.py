@@ -110,7 +110,8 @@ class AuditedValueTests(unittest.TestCase):
 
     def test_published_half_times_are_parsed(self) -> None:
         self.assertEqual(self.by_key["alcohol"]["tolerance_half_days"], 5.0)
-        self.assertEqual(self.by_key["cannabis"]["tolerance_half_days"], 10.5)
+        # Overridden from the 10.5-day midpoint to the low end of "1 - 2 weeks" (see reference_overrides.py).
+        self.assertEqual(self.by_key["cannabis"]["tolerance_half_days"], 7.0)
         self.assertEqual(self.by_key["mdma"]["tolerance_half_days"], 30.0)
         self.assertEqual(parse_tolerance_days("3 - 7 days"), 5.0)
         self.assertEqual(parse_tolerance_days("2.5 months"), 75.0)

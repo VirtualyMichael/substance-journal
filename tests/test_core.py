@@ -477,7 +477,8 @@ class ToleranceTests(unittest.TestCase):
             ),
         ]
         level = current_tolerance_level(ingestions, self.substances_by_key, "psychedelics", at + timedelta(minutes=1))
-        self.assertAlmostEqual(level, 2.0, places=2)
+        # Both doses are in one session (under six hours apart), which adds sqrt(2), not 2.
+        self.assertAlmostEqual(level, 2 ** 0.5, places=2)
 
     def test_series_always_has_a_point_exactly_at_end(self) -> None:
         # Regression test: the fixed-step loop generally doesn't land exactly on
