@@ -33,7 +33,7 @@ class AlcoholSessionTiles extends ConsumerWidget {
 
     final start = drinks.first.time;
     final end = drinks.last.endTime ?? drinks.last.time;
-    final std = drinks.fold<double>(0, (a, d) => a + (d.dose ?? 0)) / gramsPerStandardDrink;
+    final std = drinks.fold<double>(0, (a, d) => a + standardDrinksOf(d, settings));
     final session = [for (final d in drinks) alcoholDrinkFrom(d, settings)];
     final exposure = sessionExposure(session, settings);
 
