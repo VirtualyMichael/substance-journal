@@ -15,6 +15,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
         with:
+          flutter-version: '3.47.8'
           channel: stable
           cache: true
       - run: flutter pub get
@@ -34,7 +35,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
-        with: { channel: stable, cache: true }
+        with: { flutter-version: '3.47.8', channel: stable, cache: true }
       - run: flutter build windows --release
       - uses: actions/upload-artifact@v4
         with:
@@ -49,9 +50,9 @@ jobs:
         working-directory: app
     steps:
       - uses: actions/checkout@v4
-      - run: sudo apt-get update && sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev libsqlite3-dev libsecret-1-dev
+      - run: sudo apt-get update && sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev libsqlite3-dev libsecret-1-dev libjsoncpp-dev
       - uses: subosito/flutter-action@v2
-        with: { channel: stable, cache: true }
+        with: { flutter-version: '3.47.8', channel: stable, cache: true }
       - run: flutter build linux --release
       - uses: actions/upload-artifact@v4
         with:
@@ -69,7 +70,7 @@ jobs:
       - uses: actions/setup-java@v4
         with: { distribution: temurin, java-version: '17' }
       - uses: subosito/flutter-action@v2
-        with: { channel: stable, cache: true }
+        with: { flutter-version: '3.47.8', channel: stable, cache: true }
       - run: flutter build apk --release
       - uses: actions/upload-artifact@v4
         with:
@@ -85,6 +86,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
-        with: { channel: stable, cache: true }
+        with: { flutter-version: '3.47.8', channel: stable, cache: true }
       # Unsigned: proves the app builds for iOS. Installing on a device needs an Apple developer account.
       - run: flutter build ios --release --no-codesign

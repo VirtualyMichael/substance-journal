@@ -20,9 +20,7 @@ void main() {
     }
   });
 
-  // ignore: curly_braces_in_flow_control_structures
-  for (final style in FlowStyle.values)
-  for (final palette in flowPalettes) {
+  for (final (style, palette) in [for (final s in FlowStyle.values) for (final p in flowPalettes) (s, p)]) {
     testWidgets('the ${palette.name} ${style.name} flow paints a varied picture', (tester) async {
       resetFlowShader();
       final key = GlobalKey();
