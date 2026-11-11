@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:async';
 import 'dart:io';
 
@@ -80,7 +81,7 @@ Future<int> writeDigestFolder(Directory root, AppDatabase db, Map<String, Substa
     }
     names.add(_slug(person.name));
   }
-  File(p.join(root.path, 'people.json')).writeAsStringSync('{"people": [${names.map((n) => '"$n"').join(', ')}]}');
+  File(p.join(root.path, 'people.json')).writeAsStringSync(jsonEncode({'people': names}));
   return written;
 }
 
@@ -126,4 +127,21 @@ class DigestAutoWriter {
       _running = false;
     }
   }
+}
+
+/// Removes what [writeDigestFolder] made in [root] (each person's folder and people.json) and
+/// nothing else, so a folder shared with other files is never emptied. Returns how many person
+/// folders were removed.
+int deleteDigestFiles(Directory root) {
+  if (!root.existsSync()) return 0;
+  var removed = 0;
+  for (final d in root.listSync().whereType<Directory>()) {
+    if (File(p.join(d.path, 'profile.md')).existsSync()) {
+      d.deleteSync(recursive: true);
+      removed++;
+    }
+  }
+  final people = File(p.join(root.path, 'people.json'));
+  if (people.existsSync()) people.deleteSync();
+  return removed;
 }

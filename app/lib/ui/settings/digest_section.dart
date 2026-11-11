@@ -59,6 +59,11 @@ class _DigestSectionState extends ConsumerState<DigestSection> {
     }
   }
 
+  Future<void> _deleteFiles() async {
+    final n = deleteDigestFiles(Directory(_folder));
+    if (mounted) setState(() => _message = n == 0 ? 'Nothing to delete in that folder.' : 'Deleted the files for $n ${n == 1 ? 'person' : 'people'}.');
+  }
+
   Future<void> _copy() async {
     setState(() {
       _busy = true;
@@ -171,7 +176,7 @@ class _DigestSectionState extends ConsumerState<DigestSection> {
           const SizedBox(height: 4),
           Text(
             'Keeps small files up to date (a profile, a page per month, a sheet per experience) that an AI tool reads one piece at a time, so it never needs the whole log. '
-            'Includes names and notes as written.',
+            'Includes names and notes as written. These files are plain text: the app lock and the journal encryption do not cover them.',
             style: text.bodySmall,
           ),
           SwitchListTile(
@@ -184,6 +189,7 @@ class _DigestSectionState extends ConsumerState<DigestSection> {
           ),
           Wrap(spacing: Gap.sm, runSpacing: Gap.sm, children: [
             OutlinedButton.icon(key: const ValueKey('digest-write'), icon: const Icon(Icons.folder_outlined), label: const Text('Write now'), onPressed: _busy ? null : _write),
+            TextButton(key: const ValueKey('digest-delete'), onPressed: _busy ? null : _deleteFiles, child: const Text('Delete these files')),
             TextButton(key: const ValueKey('digest-folder'), onPressed: _busy ? null : _chooseFolder, child: const Text('Choose folder')),
           ]),
         ],

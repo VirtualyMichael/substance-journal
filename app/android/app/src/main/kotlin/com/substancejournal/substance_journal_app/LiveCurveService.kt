@@ -140,6 +140,7 @@ class LiveCurveService : Service() {
         val intent = Intent(this, MainActivity::class.java).apply {
             action = "sj.live.$route"
             putExtra(MainActivity.ROUTE_EXTRA, route)
+            putExtra(MainActivity.TOKEN_EXTRA, MainActivity.routeToken(this@LiveCurveService))
             flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
         }
         return PendingIntent.getActivity(this, code, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)

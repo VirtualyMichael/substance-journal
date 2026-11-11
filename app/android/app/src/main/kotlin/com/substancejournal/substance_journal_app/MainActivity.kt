@@ -1,6 +1,7 @@
 package com.substancejournal.substance_journal_app
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -21,7 +22,7 @@ class MainActivity : FlutterFragmentActivity() {
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
-        initialRoute = intent?.getStringExtra(ROUTE_EXTRA)
+        initialRoute = acceptRoute(intent)
         intent?.removeExtra(ROUTE_EXTRA)
         channel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "sj/launch").also {
             it.setMethodCallHandler { call, result ->
@@ -67,13 +68,36 @@ class MainActivity : FlutterFragmentActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        val route = intent.getStringExtra(ROUTE_EXTRA) ?: return
+        val route = acceptRoute(intent)
         intent.removeExtra(ROUTE_EXTRA)
+        if (route == null) return
         channel?.invokeMethod("route", route)
+    }
+
+    // This activity is exported (the launcher needs it), so any app could send it a route. Only known
+    // routes are honoured, and the notification's routes also need the secret token this install
+    // put in its own PendingIntents, so another app cannot steer the screen from outside.
+    private fun acceptRoute(intent: Intent?): String? {
+        val route = intent?.getStringExtra(ROUTE_EXTRA) ?: return null
+        if (route !in ALLOWED_ROUTES) return null
+        if (route.startsWith("live-") && intent.getStringExtra(TOKEN_EXTRA) != routeToken(this)) return null
+        return route
     }
 
     companion object {
         const val ROUTE_EXTRA = "sj_route"
+        const val TOKEN_EXTRA = "sj_token"
+        private val ALLOWED_ROUTES = setOf("quicklog", "live-open", "live-same", "live-add", "live-note")
+
+        // A random value made once per install, known only to this app.
+        fun routeToken(context: Context): String {
+            val prefs = context.getSharedPreferences("sj_security", Context.MODE_PRIVATE)
+            prefs.getString("route_token", null)?.let { return it }
+            val fresh = java.util.UUID.randomUUID().toString()
+            prefs.edit().putString("route_token", fresh).apply()
+            return fresh
+        }
+
         private const val REQUEST_NOTIFICATIONS = 4108
     }
 }

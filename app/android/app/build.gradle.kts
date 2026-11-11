@@ -7,7 +7,7 @@ plugins {
 }
 
 // Release signing: scripts/make_android_keystore.ps1 writes android/key.properties. Without it
-// (a fresh checkout, CI) release builds fall back to the debug key so they still install for testing.
+// (CI) release builds fall back to the debug key, for testing only; anywhere else the build stops.
 val keyProps = Properties().apply {
     val file = rootProject.file("key.properties")
     if (file.exists()) file.inputStream().use { load(it) }
@@ -52,10 +52,14 @@ android {
 
     buildTypes {
         release {
-            signingConfig = if (keyProps.containsKey("storeFile")) {
-                signingConfigs.getByName("release")
-            } else {
-                signingConfigs.getByName("debug")
+            // A release build must be signed with the real key. The debug key is public knowledge, so
+            // an APK signed with it could be replaced by anyone. It is allowed only for CI test builds
+            // (the CI environment variable) or when asked for with -PallowDebugSigning=true.
+            val allowDebug = System.getenv("CI") != null || project.hasProperty("allowDebugSigning")
+            signingConfig = when {
+                keyProps.containsKey("storeFile") -> signingConfigs.getByName("release")
+                allowDebug -> signingConfigs.getByName("debug")
+                else -> throw GradleException("No android/key.properties: run scripts/make_android_keystore.ps1, or pass -PallowDebugSigning=true for a test-only build.")
             }
         }
     }
