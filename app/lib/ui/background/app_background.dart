@@ -121,12 +121,12 @@ class _FlowLayerState extends State<_FlowLayer> with SingleTickerProviderStateMi
         decoration: BoxDecoration(gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [p.deep, p.mid, p.bright.withValues(alpha: 0.8)])),
       );
     }
-    return CustomPaint(painter: _FlowPainter(shader, _time, p, widget.light, widget.quality.octaves), size: Size.infinite, isComplex: true, willChange: widget.animate);
+    return CustomPaint(painter: _FlowPainter(shader, _time, p, widget.light, widget.quality.octaves, MediaQuery.devicePixelRatioOf(context)), size: Size.infinite, isComplex: true, willChange: widget.animate);
   }
 }
 
 class _FlowPainter extends CustomPainter {
-  _FlowPainter(this.program, this.time, this.palette, this.light, this.octaves) : super(repaint: time);
+  _FlowPainter(this.program, this.time, this.palette, this.light, this.octaves, this.pixelRatio) : super(repaint: time);
 
   final ui.FragmentProgram program;
   final ValueNotifier<double> time;
@@ -134,12 +134,16 @@ class _FlowPainter extends CustomPainter {
   final bool light;
   final int octaves;
 
+  /// The shader works in device pixels, so it is told the size in device pixels. Telling it the
+  /// logical size made the pattern several times too fine and too large on phones.
+  final double pixelRatio;
+
   @override
   void paint(Canvas canvas, Size size) {
     final s = program.fragmentShader();
     var i = 0;
-    s.setFloat(i++, size.width);
-    s.setFloat(i++, size.height);
+    s.setFloat(i++, size.width * pixelRatio);
+    s.setFloat(i++, size.height * pixelRatio);
     s.setFloat(i++, time.value);
     s.setFloat(i++, light ? 1 : 0);
     for (final c in [palette.deep, palette.mid, palette.bright, palette.glow]) {
@@ -153,5 +157,5 @@ class _FlowPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(_FlowPainter old) => old.palette != palette || old.light != light || old.program != program || old.octaves != octaves;
+  bool shouldRepaint(_FlowPainter old) => old.palette != palette || old.light != light || old.program != program || old.octaves != octaves || old.pixelRatio != pixelRatio;
 }

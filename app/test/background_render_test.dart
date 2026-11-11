@@ -16,8 +16,9 @@ void main() {
   for (final palette in flowPalettes) {
     testWidgets('the ${palette.name} flow paints a varied picture', (tester) async {
       final key = GlobalKey();
-      tester.view.physicalSize = const Size(900, 600);
-      tester.view.devicePixelRatio = 1;
+      final dpr = double.tryParse(Platform.environment['SJ_DPR'] ?? '') ?? 1;
+      tester.view.physicalSize = Size(900 * dpr / (dpr > 1 ? 2 : 1), 600 * dpr / (dpr > 1 ? 2 : 1));
+      tester.view.devicePixelRatio = dpr;
       addTearDown(tester.view.reset);
       await tester.pumpWidget(ProviderScope(
         overrides: [backgroundProvider.overrideWith((ref) => Stream.value(BackgroundConfig(mode: BackgroundMode.still, palette: palette.id, dim: 0.1)))],
