@@ -13,8 +13,13 @@ import 'package:substance_journal_app/ui/background/app_background.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
+  testWidgets('the flow shader compiles and loads', (tester) async {
+    expect(await tester.runAsync(flowShaderAvailable), isTrue);
+  });
+
   for (final palette in flowPalettes) {
     testWidgets('the ${palette.name} flow paints a varied picture', (tester) async {
+      resetFlowShader();
       final key = GlobalKey();
       final dpr = double.tryParse(Platform.environment['SJ_DPR'] ?? '') ?? 1;
       tester.view.physicalSize = Size(900 * dpr / (dpr > 1 ? 2 : 1), 600 * dpr / (dpr > 1 ? 2 : 1));
@@ -38,6 +43,7 @@ void main() {
         seen.add((px[i] >> 4) << 8 | (px[i + 1] >> 4) << 4 | (px[i + 2] >> 4));
       }
       expect(seen.length, greaterThan(8), reason: 'a flat colour means the shader did not run');
+      expect(find.byType(CustomPaint), findsWidgets, reason: 'the shader, not the gradient fallback, is on screen');
 
       final dir = Platform.environment['SJ_SHOT_DIR'];
       if (dir != null) {

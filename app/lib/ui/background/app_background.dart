@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:math';
 import 'dart:ui' as ui;
 
+import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -21,6 +23,14 @@ Future<ui.FragmentProgram?> _loadProgram() => _program ??= () async {
         return null;
       }
     }();
+
+/// Forgets the loaded shader so the next screen loads it again (each widget test has its own clock).
+@visibleForTesting
+void resetFlowShader() => _program = null;
+
+/// Whether the flow shader compiled and loaded on this device (a test checks it, so a shader
+/// mistake cannot hide behind the gradient fallback).
+Future<bool> flowShaderAvailable() async => (await _loadProgram()) != null;
 
 /// The picture behind every screen. It sits under the whole app and repaints on its own layer, so
 /// the screens above it never redraw because of it.
@@ -130,6 +140,7 @@ class _FlowPainter extends CustomPainter {
 
   final ui.FragmentProgram program;
   final ValueNotifier<double> time;
+  static const _loopSeconds = 300.0;
   final FlowPalette palette;
   final bool light;
   final int octaves;
@@ -144,7 +155,6 @@ class _FlowPainter extends CustomPainter {
     var i = 0;
     s.setFloat(i++, size.width * pixelRatio);
     s.setFloat(i++, size.height * pixelRatio);
-    s.setFloat(i++, time.value);
     s.setFloat(i++, light ? 1 : 0);
     for (final c in [palette.deep, palette.mid, palette.bright, palette.glow]) {
       s.setFloat(i++, c.r);
@@ -152,6 +162,13 @@ class _FlowPainter extends CustomPainter {
       s.setFloat(i++, c.b);
     }
     s.setFloat(i++, octaves.toDouble());
+    // Time goes in as four phases already wrapped to one turn, worked out here in full precision:
+    // a growing number would lose its fine steps on a phone and make the motion jerk. The flow
+    // repeats every few minutes, and each phase turns at its own speed.
+    final turn = (time.value / _loopSeconds) % 1.0 * 2 * pi;
+    for (final m in const [1.0, -2.0, 3.0, -1.0]) {
+      s.setFloat(i++, (turn * m) % (2 * pi) + (turn * m < 0 ? 2 * pi : 0));
+    }
     canvas.drawRect(Offset.zero & size, Paint()..shader = s);
     s.dispose();
   }
