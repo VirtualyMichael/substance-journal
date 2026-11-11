@@ -8,6 +8,8 @@ import 'package:substance_journal_app/data/lan_sync.dart';
 import 'package:substance_journal_app/data/sync.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+  HttpOverrides.global = null; // the test binding fakes HTTP; these tests talk to a real local server
   driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
   final loopback = InternetAddress.loopbackIPv4;
   var nowMs = DateTime(2026, 7, 1, 12).millisecondsSinceEpoch;
@@ -38,6 +40,8 @@ void main() {
     final e = await db.addExperience(personId: me.id, sortDate: at);
     await db.addIngestion(experience: e, substanceKey: substance, route: 'oral', time: at, dose: 10, unit: 'mg');
   }
+
+  Future<int> rowCount(AppDatabase db) async => (await db.select(db.ingestions).get()).length;
 
   Future<int> doses(AppDatabase db) async => (await db.ingestionsForPerson((await db.activePeople()).single.id)).length;
 
@@ -132,6 +136,40 @@ void main() {
       final client = LanSyncClient(phone, 'phone', discoveryTargets: [loopback], discoveryPort: 9, discoveryWait: const Duration(milliseconds: 200));
       await phoneDb.setSetting('peerAddr:pc', '127.0.0.1:9');
       expect(await AutoSync(phoneDb, phone, client).run(), 0);
+    });
+
+    test('a dose logged on one device reaches the other within moments, and nothing bounces back', () async {
+      await phone.db.setSetting('peerAddr:pc', '127.0.0.1:${server!.httpPort}');
+      await LanSyncClient(phone, 'phone').syncWith('pc'); // finish the pairing
+      final auto = AutoSync(phoneDb, phone, LanSyncClient(phone, 'phone'), debounce: const Duration(milliseconds: 100), startDelay: const Duration(hours: 1), interval: const Duration(hours: 1));
+      auto.start();
+      addTearDown(auto.stop);
+
+      nowMs += 60000;
+      await seed(phoneDb, 'lsd', DateTime(2026, 6, 3, 20));
+      for (var i = 0; i < 40 && await rowCount(pcDb) < 1; i++) {
+        await Future<void>.delayed(const Duration(milliseconds: 100));
+      }
+      expect(await rowCount(pcDb), 1);
+
+      // The PC's copy of that dose is the phone's own work: it is not offered back.
+      expect(await phone.pendingChangeCount('pc'), 0);
+      expect(await auto.run(onlyIfPending: true), 0);
+    });
+
+    test('a device that is not there is retried until it appears', () async {
+      await phoneDb.setSetting('peerAddr:pc', '127.0.0.1:1');
+      await seed(phoneDb, 'lsd', DateTime(2026, 6, 3, 20));
+      final auto = AutoSync(phoneDb, phone, LanSyncClient(phone, 'phone', discoveryTargets: [loopback], discoveryPort: 9, discoveryWait: const Duration(milliseconds: 50)),
+          debounce: const Duration(milliseconds: 50), retryEvery: const Duration(milliseconds: 150), startDelay: const Duration(hours: 1), interval: const Duration(hours: 1));
+      auto.start();
+      addTearDown(auto.stop);
+      await auto.run(); // fails: nobody at that address
+      await phoneDb.setSetting('peerAddr:pc', '127.0.0.1:${server!.httpPort}'); // the other app opens
+      for (var i = 0; i < 40 && await rowCount(pcDb) < 1; i++) {
+        await Future<void>.delayed(const Duration(milliseconds: 100));
+      }
+      expect(await rowCount(pcDb), 1);
     });
 
     test('with only a pending pairing there is nothing to do', () async {

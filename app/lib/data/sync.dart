@@ -147,11 +147,14 @@ class SyncService {
   // ---- building and applying changes ----
 
   /// Everything changed after [since] (a clock stamp), or everything when null.
-  Future<Map<String, Object?>> buildChangeset({String? since}) async {
+  ///
+  /// With [excludeNode], rows that device itself wrote are left out: it already has them, and
+  /// sending them back would make every received change look like something new to send on.
+  Future<Map<String, Object?>> buildChangeset({String? since, String? excludeNode}) async {
     final tables = <String, Object?>{};
     var count = 0;
     for (final t in _tables) {
-      final rows = await t.changedSince(db, since);
+      final rows = await t.changedSince(db, since, excludeNode: excludeNode);
       if (rows.isNotEmpty) tables[t.name] = rows;
       count += rows.length;
     }
@@ -164,8 +167,12 @@ class SyncService {
     final sharedSettings = await (db.select(db.settings)
           ..where((s) => s.shared.equals(true) & (since == null ? const Constant(true) : s.hlc.isBiggerThanValue(since))))
         .get();
-    if (sharedSettings.isNotEmpty) tables['settings'] = [for (final s in sharedSettings) s.toJson()];
-    return {'tables': tables, 'rowCount': count + sharedSettings.length};
+    final settingsOut = [
+      for (final s in sharedSettings)
+        if (excludeNode == null || since == null || !s.hlc.endsWith('-$excludeNode')) s,
+    ];
+    if (settingsOut.isNotEmpty) tables['settings'] = [for (final s in settingsOut) s.toJson()];
+    return {'tables': tables, 'rowCount': count + settingsOut.length};
   }
 
   /// A sealed package for [peerId]: only what they do not have yet, unless [everything].
@@ -190,7 +197,7 @@ class SyncService {
   /// Rows a package for [peerId] would carry right now, for showing "N changes" before sending.
   Future<int> pendingChangeCount(String peerId) async {
     final since = await db.getSetting('syncPeerHave:$peerId');
-    return (await buildChangeset(since: since))['rowCount'] as int;
+    return (await buildChangeset(since: since, excludeNode: since == null || peerId.startsWith(_pendingPrefix) ? null : peerId))['rowCount'] as int;
   }
 
   /// Opens a package from any paired device and merges it. All or nothing.
@@ -616,11 +623,15 @@ class _SyncTable<T extends Table, D extends DataClass> {
 
   String get name => table.actualTableName;
 
-  Future<List<Map<String, dynamic>>> changedSince(GeneratedDatabase db, String? since) async {
+  Future<List<Map<String, dynamic>>> changedSince(GeneratedDatabase db, String? since, {String? excludeNode}) async {
+    final skip = excludeNode != null && since != null;
     final result = await db
         .customSelect(
-          since == null ? 'SELECT * FROM $name' : 'SELECT * FROM $name WHERE hlc > ?',
-          variables: [if (since != null) Variable<String>(since)],
+          since == null ? 'SELECT * FROM $name' : 'SELECT * FROM $name WHERE hlc > ?${skip ? " AND hlc NOT LIKE ? ESCAPE '!'" : ''}',
+          variables: [
+            if (since != null) Variable<String>(since),
+            if (skip) Variable<String>('%-${excludeNode.replaceAll('!', '!!').replaceAll('%', '!%').replaceAll('_', '!_')}'),
+          ],
         )
         .get();
     return [for (final r in result) _toJson(await table.map(r.data))];
