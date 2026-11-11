@@ -8,6 +8,7 @@ import 'package:sj_core/sj_core.dart';
 
 import 'database.dart';
 import 'digest.dart';
+import 'off_main.dart';
 
 /// Where the digest is written unless the person picked a folder: beside the journal database, in
 /// the app's own data folder. Not Documents, which OneDrive and other backups often copy to the cloud.
@@ -22,18 +23,24 @@ String _slug(String name) {
 Future<Digest> buildDigestForPerson(AppDatabase db, Person person, Map<String, Substance> byKey, DateTime now, {DigestOptions options = DigestOptions.full}) async {
   final experiences = await db.watchExperiences(person.id).first;
   final ids = {for (final e in experiences) e.id};
-  return buildDigest(
-    person: person,
-    experiences: experiences,
-    ingestions: await db.ingestionsForPerson(person.id),
-    notes: [for (final n in await db.select(db.timedNotes).get()) if (ids.contains(n.experienceId)) n],
-    ratings: [for (final r in await db.select(db.ratings).get()) if (ids.contains(r.experienceId)) r],
-    products: await db.select(db.products).get(),
-    byKey: byKey,
-    now: now,
-    alcoholSettings: await db.getEstimateSettings(person.id),
-    options: options,
-  );
+  final ingestions = await db.ingestionsForPerson(person.id);
+  final notes = [for (final n in await db.select(db.timedNotes).get()) if (ids.contains(n.experienceId)) n];
+  final ratings = [for (final r in await db.select(db.ratings).get()) if (ids.contains(r.experienceId)) r];
+  final products = await db.select(db.products).get();
+  final settings = await db.getEstimateSettings(person.id);
+  // The calculation takes a second or more on a long journal: keep it off the screen's thread.
+  return offMain(() => buildDigest(
+        person: person,
+        experiences: experiences,
+        ingestions: ingestions,
+        notes: notes,
+        ratings: ratings,
+        products: products,
+        byKey: byKey,
+        now: now,
+        alcoholSettings: settings,
+        options: options,
+      ));
 }
 
 /// Writes every person's digest under `root/person/` (replacing the previous one) and returns how

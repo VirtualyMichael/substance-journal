@@ -155,16 +155,28 @@ String _unit(Ingestion i) => i.substanceKey == 'alcohol' ? 'std drinks' : (i.uni
 
 /// Alcohol's tolerance input: the CNS exposure of each drinking session, keyed by when it started
 /// (the same exposure the day view uses, placed at the session's start instead of midnight).
+///
+/// Simulating every session is the slowest calculation in the app, and screens ask for it every
+/// tick, so the last answer is kept until the drinks or settings change.
 Map<DateTime, double> alcoholLoads(List<Ingestion> drinks, EstimateSettings settings) {
-  final converted = [for (final d in drinks) if (!d.deleted) alcoholDrinkFrom(d, settings)];
-  if (converted.isEmpty) return const {};
+  // Sorted, so callers that list the same drinks in a different order share the cached answer.
+  final live = [for (final d in drinks) if (!d.deleted) d]..sort((a, b) => a.time != b.time ? a.time.compareTo(b.time) : a.id.compareTo(b.id));
+  final key = Object.hashAll([for (final d in live) Object.hash(d.id, d.time, d.endTime, d.dose, d.detailsJson)]);
+  final cached = _loadsCache;
+  if (cached != null && cached.$1 == key && identical(cached.$2, settings)) return cached.$3;
+  final converted = [for (final d in live) alcoholDrinkFrom(d, settings)];
   final loads = <DateTime, double>{};
-  for (final session in groupIntoSessions(converted, settings)) {
-    final e = sessionExposure(session, settings);
-    loads[e.start] = (loads[e.start] ?? 0) + e.exposureBacHours;
+  if (converted.isNotEmpty) {
+    for (final session in groupIntoSessions(converted, settings)) {
+      final e = sessionExposure(session, settings);
+      loads[e.start] = (loads[e.start] ?? 0) + e.exposureBacHours;
+    }
   }
+  _loadsCache = (key, settings, loads);
   return loads;
 }
+
+(int, EstimateSettings, Map<DateTime, double>)? _loadsCache;
 
 ToleranceTrend _trend(double now, double weekAgo) {
   if (weekAgo <= 0.01) return now > 0.2 ? ToleranceTrend.rising : ToleranceTrend.steady;

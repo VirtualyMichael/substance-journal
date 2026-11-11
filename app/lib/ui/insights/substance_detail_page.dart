@@ -6,6 +6,7 @@ import 'package:sj_core/sj_core.dart';
 
 import '../../data/database.dart';
 import '../../data/history_stats.dart';
+import '../../data/off_main.dart';
 import '../../providers.dart';
 import '../charts/interactive_line_chart.dart';
 import '../design.dart';
@@ -86,7 +87,13 @@ class _SubstanceDetailPageState extends ConsumerState<SubstanceDetailPage> {
     final cacheKey = (rows, settings, catalog, now.day, now.hour);
     if (cacheKey != _cacheKey) {
       _cacheKey = cacheKey;
-      _histories = buildHistories(ingestions: rows, byKey: catalog.byKey, settings: settings, now: now);
+      final byKey = catalog.byKey;
+      offMain(() => buildHistories(ingestions: rows, byKey: byKey, settings: settings, now: now)).then((h) {
+        if (mounted && _cacheKey == cacheKey) setState(() => _histories = h);
+      });
+    }
+    if (_histories.isEmpty && rows.isNotEmpty) {
+      return Scaffold(appBar: AppBar(title: Text(substance?.name ?? widget.substanceKey)), body: const Center(child: CircularProgressIndicator()));
     }
     final h = _histories.where((x) => x.key == widget.substanceKey).firstOrNull;
     final name = substance?.name ?? widget.substanceKey;
