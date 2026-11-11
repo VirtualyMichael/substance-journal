@@ -10,6 +10,7 @@ import '../../providers.dart';
 import '../add/add_ingestion_page.dart';
 import '../add/dose_widgets.dart';
 import '../design.dart';
+import '../alcohol/alcohol_session_tiles.dart';
 import 'tolerance_card.dart';
 import '../timeline/timeline_chart.dart';
 import '../timeline/timeline_data.dart';
@@ -299,6 +300,7 @@ class _ExperiencePageState extends ConsumerState<ExperiencePage> {
                   ),
                 ),
               ),
+              if (drinks.isNotEmpty) AlcoholSessionTiles(personId: experience.personId, sessionDrinks: drinks),
               if (ingestions.isNotEmpty) ToleranceCard(personId: experience.personId, experience: experience, sessionIngestions: ingestions),
               const SizedBox(height: Gap.md),
               _sectionTitle('Ingestions'),
