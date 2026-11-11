@@ -52,6 +52,8 @@ void main() {
     await startApp(tester, app);
     await tester.tap(find.text('Settings'));
     await settle(tester);
+    await tapKey(tester, 'settings-alcohol');
+    await settle(tester);
     final daily = find.byKey(const ValueKey('limit-daily'));
     await tester.scrollUntilVisible(daily, 300, scrollable: find.byType(Scrollable).first);
     await tester.ensureVisible(daily);

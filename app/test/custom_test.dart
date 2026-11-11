@@ -383,6 +383,8 @@ void main() {
       await startApp(tester, app);
       await tester.tap(find.text('Settings'));
       await settle(tester);
+      await tapKey(tester, 'settings-data');
+      await settle(tester);
       await tapKey(tester, 'manage-units');
       expect(find.text('Blue Superman'), findsOneWidget);
       Finder inCard(String text) => find.descendant(of: find.byKey(ValueKey('unit-${unit.id}')), matching: find.textContaining(text));

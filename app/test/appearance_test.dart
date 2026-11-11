@@ -14,6 +14,8 @@ void main() {
 
     await tester.tap(find.text('Settings'));
     await settle(tester);
+    await tapKey(tester, 'settings-appearance');
+    await settle(tester);
     final swatch = find.byKey(const ValueKey('accent-ffd1495b'));
     await tester.scrollUntilVisible(swatch, 200, scrollable: find.byType(Scrollable).first);
     await tester.ensureVisible(swatch);

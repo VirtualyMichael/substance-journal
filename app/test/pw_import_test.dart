@@ -373,6 +373,8 @@ void main() {
       await settle(tester);
       await tester.tap(find.text('Settings'));
       await settle(tester);
+      await tapKey(tester, 'settings-backup');
+      await settle(tester);
 
       final button = find.byKey(const ValueKey('import-pw-file'));
       await tester.scrollUntilVisible(button, 300, scrollable: find.byType(Scrollable).first);

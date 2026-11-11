@@ -371,6 +371,8 @@ void main() {
 
       await tester.tap(find.text('Settings'));
       await settle(tester);
+      await tapKey(tester, 'settings-alcohol');
+      await settle(tester);
       await tapKey(tester, 'estimates-tile');
       await tester.enterText(find.byKey(const ValueKey('est-weight')), '10');
       await tapKey(tester, 'estimates-save');
@@ -381,6 +383,8 @@ void main() {
       expect(find.byKey(const ValueKey('est-saved')), findsOneWidget);
       expect((await dbRun(tester, () => app.db.getEstimateSettings(me.id))).userWeightLbs, 110);
 
+      await tester.pageBack();
+      await settle(tester);
       await tester.tap(find.text('Today'));
       await settle(tester);
       final after = double.parse(textOf(tester, 'bac-now').replaceAll('%', ''));
@@ -392,6 +396,8 @@ void main() {
       final (app, _) = await alcoholApp(tester);
       await startApp(tester, app);
       await tester.tap(find.text('Settings'));
+      await settle(tester);
+      await tapKey(tester, 'settings-alcohol');
       await settle(tester);
 
       await tapKey(tester, 'add-preset');

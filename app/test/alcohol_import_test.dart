@@ -390,6 +390,8 @@ void main() {
       await settle(tester);
       await tester.tap(find.text('Settings'));
       await settle(tester);
+      await tapKey(tester, 'settings-alcohol');
+      await settle(tester);
     }
 
     testWidgets('choosing the real backup shows a summary and imports it on confirmation', (tester) async {

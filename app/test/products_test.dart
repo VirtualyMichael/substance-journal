@@ -51,6 +51,8 @@ void main() {
     await startApp(tester, app);
     await tester.tap(find.text('Settings'));
     await settle(tester);
+    await tapKey(tester, 'settings-data');
+    await settle(tester);
     await tapKey(tester, 'manage-products');
     expect(find.textContaining('Save a strain or batch once'), findsOneWidget);
 

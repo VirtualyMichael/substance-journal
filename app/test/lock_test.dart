@@ -118,6 +118,8 @@ void main() {
     await startLocked(tester, app, FakeAuth());
     await tester.tap(find.text('Settings'));
     await settle(tester);
+    await tapKey(tester, 'settings-security');
+    await settle(tester);
 
     await tester.scrollUntilVisible(find.byKey(const ValueKey('lock-enable')), 300, scrollable: find.byType(Scrollable).first);
     await tapKey(tester, 'lock-enable');

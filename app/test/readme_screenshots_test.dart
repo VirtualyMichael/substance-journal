@@ -129,6 +129,8 @@ void main() {
 
     await tester.tap(find.text('Settings'));
     await settle(tester);
+    await tapKey(tester, 'settings-data');
+    await settle(tester);
     await tester.scrollUntilVisible(find.byKey(const ValueKey('open-testing')), 300, scrollable: find.byType(Scrollable).first);
     await tapKey(tester, 'open-testing');
     await _capture(tester, key, 'drug-checking');

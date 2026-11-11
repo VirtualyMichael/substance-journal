@@ -164,6 +164,8 @@ void main() {
 
     await tester.tap(find.text('Settings'));
     await settle(tester);
+    await tapKey(tester, 'settings-people');
+    await settle(tester);
     await tapKey(tester, 'add-person');
     await tester.enterText(find.byKey(const ValueKey('person-name')), 'Sam');
     await tapKey(tester, 'person-save');
@@ -244,6 +246,8 @@ void main() {
     final app = await buildTestApp(tester);
     await startApp(tester, app);
     await tester.tap(find.text('Settings'));
+    await settle(tester);
+    await tapKey(tester, 'settings-appearance');
     await settle(tester);
     await tester.tap(find.text('Dark'));
     await settle(tester);

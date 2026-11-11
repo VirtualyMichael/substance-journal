@@ -40,6 +40,8 @@ void main() {
     await settle(tester);
     await tester.tap(find.text('Settings'));
     await settle(tester);
+    await tapKey(tester, 'settings-sync');
+    await settle(tester);
     final open = find.byKey(const ValueKey('open-sync'));
     await tester.scrollUntilVisible(open, 300, scrollable: find.byType(Scrollable).first);
     await tester.ensureVisible(open);
