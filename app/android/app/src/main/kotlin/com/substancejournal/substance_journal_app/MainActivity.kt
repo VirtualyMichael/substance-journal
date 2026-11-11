@@ -35,6 +35,16 @@ class MainActivity : FlutterFragmentActivity() {
                 }
             }
         }
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "sj/watch").setMethodCallHandler { call, result ->
+            when (call.method) {
+                "push" -> {
+                    WatchBridge.push(applicationContext, call.arguments as String)
+                    result.success(true)
+                }
+                else -> result.notImplemented()
+            }
+        }
+        foreground = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "sj/watchfg")
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "sj/live").setMethodCallHandler { call, result ->
             when (call.method) {
                 "update" -> result.success(LiveCurveService.update(applicationContext, call.arguments as String))
@@ -46,6 +56,11 @@ class MainActivity : FlutterFragmentActivity() {
                 else -> result.notImplemented()
             }
         }
+    }
+
+    override fun cleanUpFlutterEngine(flutterEngine: FlutterEngine) {
+        foreground = null
+        super.cleanUpFlutterEngine(flutterEngine)
     }
 
     private fun askForNotifications(result: MethodChannel.Result) {
@@ -86,6 +101,10 @@ class MainActivity : FlutterFragmentActivity() {
 
     companion object {
         const val ROUTE_EXTRA = "sj_route"
+
+        // The channel the watch's requests use while the app is open.
+        @Volatile
+        var foreground: MethodChannel? = null
         const val TOKEN_EXTRA = "sj_token"
         private val ALLOWED_ROUTES = setOf("quicklog", "live-open", "live-same", "live-add", "live-note")
 

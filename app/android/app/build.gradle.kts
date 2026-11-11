@@ -77,4 +77,6 @@ flutter {
 
 dependencies {
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
+    // Data Layer: the link to a paired Wear OS watch.
+    implementation("com.google.android.gms:play-services-wearable:19.0.0")
 }

@@ -20,6 +20,7 @@ import 'data/digest_service.dart';
 import 'data/live_curve.dart';
 import 'data/lan_sync.dart';
 import 'data/reminders.dart';
+import 'data/watch_bridge.dart';
 import 'ui/quicklog/launch_route.dart';
 import 'data/sync.dart';
 
@@ -339,6 +340,64 @@ final liveCurveProvider = Provider<void>((ref) {
   }
   _liveShown = true;
   send('update', jsonEncode(payload));
+});
+
+// ---- Wear OS watch ----
+
+const _watchChannel = MethodChannel('sj/watch');
+const _watchFgChannel = MethodChannel('sj/watchfg');
+
+final watchPrefsProvider = StreamProvider<WatchPrefs>((ref) => ref.watch(databaseProvider).watchWatchPrefs());
+
+/// Sends the curve and recent doses to a paired watch (about once a minute and whenever a dose is
+/// logged), and answers the watch's "Same as last time" while the app is open. Nothing is sent
+/// unless the person turned the watch on. Watched by the app shell; does nothing off Android and in tests.
+final watchPushProvider = Provider<void>((ref) {
+  if (Platform.environment.containsKey('FLUTTER_TEST') || !Platform.isAndroid) return;
+  final prefs = ref.watch(watchPrefsProvider).value ?? const WatchPrefs();
+  final person = ref.watch(currentPersonProvider);
+  final now = ref.watch(nowProvider);
+  final ingestions = person == null ? null : ref.watch(personIngestionsProvider(person.id)).value;
+  final settings = person == null ? null : ref.watch(estimateSettingsProvider(person.id)).value;
+  final reference = ref.watch(catalogProvider);
+
+  // The watch asks through Android; while the app is open it is answered here, so the screen
+  // updates too. When the app is closed Android answers from a background copy instead.
+  _watchFgChannel.setMethodCallHandler((call) async {
+    final p = ref.read(currentPersonProvider);
+    final db = ref.read(databaseProvider);
+    final current = await db.getWatchPrefs();
+    if (p == null || !current.enabled) return jsonEncode({'ok': false, 'message': 'The watch is turned off in the app.'});
+    final catalog = ref.read(catalogProvider);
+    final at = ref.read(clockProvider)();
+    String? message;
+    var ok = true;
+    if (call.method == 'same') {
+      final result = await logSameForWatch(db: db, reference: catalog, personId: p.id, now: at);
+      ok = result.ok;
+      message = result.message;
+    }
+    final snapshot = buildWatchSnapshot(
+      ingestions: await db.ingestionsForPerson(p.id),
+      reference: catalog,
+      alcoholSettings: await db.getEstimateSettings(p.id),
+      now: at,
+      prefs: current,
+    );
+    return jsonEncode({'ok': ok, 'message': message, 'snapshot': jsonEncode(snapshot)});
+  });
+
+  if (!prefs.enabled || ingestions == null || settings == null) return;
+  final snapshot = buildWatchSnapshot(ingestions: ingestions, reference: reference, alcoholSettings: settings, now: now, prefs: prefs);
+  unawaited(() async {
+    try {
+      await _watchChannel.invokeMethod<bool>('push', jsonEncode(snapshot));
+    } on MissingPluginException {
+      // Not running on Android with the watch support built in.
+    } on PlatformException {
+      // The watch is a convenience; the app carries on without it.
+    }
+  }());
 });
 
 /// How notifications are delivered. Replaced in tests.

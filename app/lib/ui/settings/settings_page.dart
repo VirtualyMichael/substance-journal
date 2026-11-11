@@ -20,6 +20,7 @@ import '../safety/research_page.dart';
 import '../testing/testing_page.dart';
 import '../safety/safer_use_page.dart';
 import 'reminders_section.dart';
+import 'watch_section.dart';
 import 'pw_import_flow.dart';
 import 'background_section.dart';
 import '../lock/lock_gate.dart';
@@ -324,7 +325,7 @@ class SettingsCategoryBody extends ConsumerWidget {
             const BackgroundSection(),
       ],
       SettingsCategory.alcohol => [AlcoholSettingsSection(person: person)],
-      SettingsCategory.reminders => [const RemindersSection(), const SizedBox(height: Gap.lg), const LiveCurveSection()],
+      SettingsCategory.reminders => [const RemindersSection(), const SizedBox(height: Gap.lg), const LiveCurveSection(), const SizedBox(height: Gap.lg), const WatchSection()],
       SettingsCategory.sync => [
             Text('Sync', style: text.titleMedium),
             const SizedBox(height: 4),

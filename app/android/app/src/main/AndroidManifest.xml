@@ -48,6 +48,13 @@
                 android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
                 android:value="Keeps an ongoing notification with the current estimated curve of active substances up to date, when the user turns it on" />
         </service>
+        <!-- The Wear OS watch: its requests (log the last dose again, refresh) arrive here. -->
+        <service android:name=".WatchListenerService" android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.android.gms.wearable.MESSAGE_RECEIVED"/>
+                <data android:scheme="wear" android:host="*" android:pathPrefix="/"/>
+            </intent-filter>
+        </service>
         <!-- Quick Settings tile: add it from the tile editor. -->
         <service
             android:name=".QuickLogTileService"
