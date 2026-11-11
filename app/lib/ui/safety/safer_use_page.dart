@@ -24,6 +24,8 @@ class SaferUsePage extends ConsumerStatefulWidget {
 class _SaferUsePageState extends ConsumerState<SaferUsePage> {
   Substance? _a, _b;
   bool _seeded = false;
+  List<Substance> _all = const [];
+  List<Substance>? _sortedFrom;
 
   @override
   Widget build(BuildContext context) {
@@ -34,17 +36,26 @@ class _SaferUsePageState extends ConsumerState<SaferUsePage> {
       _a = reference.byKey[widget.initialA];
       _b = reference.byKey[widget.initialB];
     }
-    final all = [...reference.substances]..sort((x, y) => x.name.toLowerCase().compareTo(y.name.toLowerCase()));
+    // Sorted once per catalog, not on every rebuild.
+    if (!identical(_sortedFrom, reference.substances)) {
+      _sortedFrom = reference.substances;
+      _all = [...reference.substances]..sort((x, y) => x.name.toLowerCase().compareTo(y.name.toLowerCase()));
+    }
 
-    Widget picker(String key, String label, Substance? value, void Function(Substance?) onChanged) => DropdownMenu<Substance>(
-          key: ValueKey(key),
+    Widget picker(String key, String label, Substance? value, void Function(Substance?) onChanged) => SizedBox(
           width: 280,
-          label: Text(label),
-          enableFilter: true,
-          requestFocusOnTap: true,
-          initialSelection: value,
-          dropdownMenuEntries: [for (final s in all) DropdownMenuEntry(value: s, label: s.name)],
-          onSelected: (s) => setState(() => onChanged(s)),
+          child: InkWell(
+            key: ValueKey(key),
+            borderRadius: BorderRadius.circular(12),
+            onTap: () async {
+              final chosen = await showDialog<Substance>(context: context, builder: (_) => _CompoundSearchDialog(title: label, all: _all));
+              if (chosen != null) setState(() => onChanged(chosen));
+            },
+            child: InputDecorator(
+              decoration: InputDecoration(labelText: label, suffixIcon: const Icon(Icons.arrow_drop_down)),
+              child: Text(value?.name ?? 'Choose...'),
+            ),
+          ),
         );
 
     return Scaffold(
@@ -199,6 +210,60 @@ class _ComboResult extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// Pick one compound from the whole catalog. The list is built only for what is on screen, so
+/// opening it is instant even with hundreds of compounds.
+class _CompoundSearchDialog extends StatefulWidget {
+  const _CompoundSearchDialog({required this.title, required this.all});
+
+  final String title;
+  final List<Substance> all;
+
+  @override
+  State<_CompoundSearchDialog> createState() => _CompoundSearchDialogState();
+}
+
+class _CompoundSearchDialogState extends State<_CompoundSearchDialog> {
+  String _query = '';
+
+  @override
+  Widget build(BuildContext context) {
+    final q = _query.trim().toLowerCase();
+    final shown = q.isEmpty ? widget.all : [for (final s in widget.all) if (s.name.toLowerCase().contains(q)) s];
+    return AlertDialog(
+      title: Text(widget.title),
+      content: SizedBox(
+        width: 360,
+        height: 420,
+        child: Column(
+          children: [
+            TextField(
+              key: const ValueKey('compound-search'),
+              autofocus: true,
+              decoration: const InputDecoration(prefixIcon: Icon(Icons.search), hintText: 'Search'),
+              onChanged: (v) => setState(() => _query = v),
+            ),
+            const SizedBox(height: Gap.sm),
+            Expanded(
+              child: shown.isEmpty
+                  ? const Center(child: Text('Nothing matches.'))
+                  : ListView.builder(
+                      itemCount: shown.length,
+                      itemBuilder: (context, i) => ListTile(
+                        key: ValueKey('compound-${shown[i].key}'),
+                        dense: true,
+                        title: Text(shown[i].name),
+                        onTap: () => Navigator.of(context).pop(shown[i]),
+                      ),
+                    ),
+            ),
+          ],
+        ),
+      ),
+      actions: [TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Cancel'))],
     );
   }
 }

@@ -41,4 +41,19 @@ void main() {
     expect(find.descendant(of: result, matching: find.textContaining('does not mean it is safe')), findsOneWidget);
     await disposeApp(tester, app);
   });
+
+  testWidgets('compounds are chosen from a searchable list, and a result appears once both are picked', (tester) async {
+    final app = await page(tester);
+    await tapKey(tester, 'combo-a');
+    await tester.enterText(find.byKey(const ValueKey('compound-search')), 'alcoh');
+    await tester.pump();
+    expect(find.byKey(const ValueKey('compound-ketamine')), findsNothing); // filtered out
+    await tapKey(tester, 'compound-alcohol');
+    expect(find.byKey(const ValueKey('combo-result')), findsNothing); // one is not enough
+
+    await tapKey(tester, 'combo-b');
+    await tapKey(tester, 'compound-ketamine');
+    expect(find.descendant(of: find.byKey(const ValueKey('combo-result')), matching: find.textContaining('Alcohol + Ketamine')), findsOneWidget);
+    await disposeApp(tester, app);
+  });
 }
