@@ -53,6 +53,7 @@ List<ToleranceTrack> toleranceTracks({
   required DateTime now,
   int lookbackDays = 120,
   int projectDays = 60,
+  int pastDays = 14,
 }) {
   final tracks = <String, List<UseEvent>>{};
   final names = <String, Set<String>>{};
@@ -82,7 +83,7 @@ List<ToleranceTrack> toleranceTracks({
     }
     final start = DateTime(now.year, now.month, now.day);
     final projection = [
-      for (var day = -14; day <= projectDays; day++)
+      for (var day = -pastDays; day <= projectDays; day++)
         (start.add(Duration(days: day)), currentToleranceLevel(events, byKey, entry.key, start.add(Duration(days: day)))),
     ];
 

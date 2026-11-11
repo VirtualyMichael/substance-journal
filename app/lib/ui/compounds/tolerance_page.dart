@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sj_core/sj_core.dart';
 
+import '../../data/tolerance_events.dart';
 import '../../providers.dart';
 import '../design.dart';
 import '../timeline/timeline_chart.dart';
@@ -21,7 +22,7 @@ class TolerancePage extends ConsumerWidget {
     final catalog = ref.watch(catalogProvider);
     final rows = ref.watch(personIngestionsProvider(personId)).value ?? const [];
     final tracks = toleranceTracks(
-      events: [for (final i in rows) UseEvent(i.substanceKey, i.time)],
+      events: useEventsFor(rows, ref.watch(catalogProvider).byKey),
       byKey: catalog.byKey,
       now: now,
     );

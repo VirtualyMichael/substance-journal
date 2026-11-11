@@ -527,6 +527,55 @@ List<(DateTime, double)> toleranceMultiplierSeries(
 ]) =>
     [for (final (t, score) in toleranceSeries(dailyLoads, endDay, s)) (t, toleranceMultiplier(score, s))];
 
+/// The alcohol tolerance score at any moment (not just at midnight), from the daily loads: each
+/// day's exposure decays continuously with the tolerance half-life from the start of that day.
+double alcoholToleranceScoreAt(Map<DateTime, double> dailyLoads, DateTime at, [EstimateSettings s = const EstimateSettings()]) {
+  final decayConstant = log(2) / max(s.toleranceHalfLifeDays, 0.25);
+  var score = 0.0;
+  dailyLoads.forEach((day, load) {
+    final ageDays = at.difference(day).inMinutes / (24 * 60);
+    if (ageDays >= 0) score += load * exp(-decayConstant * ageDays);
+  });
+  return score;
+}
+
+/// The score and dose multiplier at every [step] from [from] to [to], for interactive charts.
+List<(DateTime, double, double)> alcoholToleranceTimeline(
+  Map<DateTime, double> dailyLoads,
+  DateTime from,
+  DateTime to, {
+  Duration step = const Duration(hours: 6),
+  EstimateSettings settings = const EstimateSettings(),
+}) {
+  final out = <(DateTime, double, double)>[];
+  var t = from;
+  while (!t.isAfter(to)) {
+    final score = alcoholToleranceScoreAt(dailyLoads, t, settings);
+    out.add((t, score, toleranceMultiplier(score, settings)));
+    t = t.add(step);
+  }
+  return out;
+}
+
+/// When the alcohol tolerance score falls to [target] with no more drinking after [at], or null if
+/// it is already there. The score halves every [EstimateSettings.toleranceHalfLifeDays].
+DateTime? alcoholTimeToScore(Map<DateTime, double> dailyLoads, DateTime at, double target, [EstimateSettings s = const EstimateSettings()]) {
+  final past = {for (final e in dailyLoads.entries) if (!e.key.isAfter(at)) e.key: e.value};
+  final now = alcoholToleranceScoreAt(past, at, s);
+  if (now <= target || target <= 0) return null;
+  final halfLife = max(s.toleranceHalfLifeDays, 0.25);
+  final days = halfLife * log(now / target) / log(2);
+  return _plusMinutes(at, days * 24 * 60);
+}
+
+/// Below this score the multiplier is under 1.02x: treated as back to baseline.
+double alcoholBaselineScore([EstimateSettings s = const EstimateSettings()]) {
+  final halfSaturation = max(s.toleranceHalfSaturationExposure, 1e-3);
+  final maxExtraDose = max(s.toleranceMaxExtraDose, 1e-3);
+  // Solve 1 + maxExtra * (1 - 2^(-score/halfSat)) = 1.02.
+  return -halfSaturation * log(1 - 0.02 / maxExtraDose) / log(2);
+}
+
 // ---- series helpers ----
 
 (DateTime?, double) peakValue(List<(DateTime, double)> points) {

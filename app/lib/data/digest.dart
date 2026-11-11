@@ -7,6 +7,7 @@ import '../ui/journal/tolerance_card.dart' show toleranceTrend;
 import 'alcohol_data.dart';
 import 'cannabis_products.dart';
 import 'database.dart';
+import 'tolerance_events.dart';
 import 'weekly_summary.dart';
 
 /// What to leave out when the digest might leave this device (a cloud AI, a chat window).
@@ -93,7 +94,7 @@ Digest buildDigest({
 
   final files = <String, String>{};
   final index = <DigestEntry>[];
-  final events = [for (final i in live) UseEvent(i.substanceKey, i.time)];
+  final events = useEventsFor(live, byKey);
 
   for (final e in exps) {
     final mine = [for (final i in live) if (i.experienceId == e.id) i];
