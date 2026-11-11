@@ -10,16 +10,20 @@ enum BackgroundMode { off, flow, still, image }
 
 /// How much work the flow does. Higher is smoother and finer and uses more battery.
 enum BackgroundQuality {
-  low('Low', 3, 15),
-  balanced('Balanced', 4, 30),
-  high('High', 6, 60);
+  low('Low', 3, 15, 0.3),
+  balanced('Balanced', 4, 30, 0.5),
+  high('High', 6, 60, 0.8);
 
-  const BackgroundQuality(this.label, this.octaves, this.fps);
+  const BackgroundQuality(this.label, this.octaves, this.fps, this.renderScale);
   final String label;
 
   /// Layers of detail in the flow.
   final int octaves;
   final int fps;
+
+  /// The flow is drawn at this fraction of the screen's pixels and stretched up. It is smooth
+  /// and soft anyway, and a quarter of the pixels is a quarter of the work.
+  final double renderScale;
 }
 
 class FlowPalette {

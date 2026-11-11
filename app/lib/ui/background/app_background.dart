@@ -155,7 +155,7 @@ class _FlowLayerState extends State<_FlowLayer> with SingleTickerProviderStateMi
       );
     }
     return CustomPaint(
-      painter: _FlowPainter(shader, widget.style, _time, p, widget.light, widget.quality.octaves, MediaQuery.devicePixelRatioOf(context)),
+      painter: _FlowPainter(shader, widget.style, _time, p, widget.light, widget.quality.octaves, MediaQuery.devicePixelRatioOf(context), widget.quality.renderScale),
       size: Size.infinite,
       isComplex: true,
       willChange: widget.animate,
@@ -164,7 +164,7 @@ class _FlowLayerState extends State<_FlowLayer> with SingleTickerProviderStateMi
 }
 
 class _FlowPainter extends CustomPainter {
-  _FlowPainter(this.program, this.style, this.time, this.palette, this.light, this.octaves, this.pixelRatio) : super(repaint: time);
+  _FlowPainter(this.program, this.style, this.time, this.palette, this.light, this.octaves, this.pixelRatio, this.renderScale) : super(repaint: time);
 
   final ui.FragmentProgram program;
   final FlowStyle style;
@@ -173,12 +173,17 @@ class _FlowPainter extends CustomPainter {
   final bool light;
   final int octaves;
   final double pixelRatio;
+  final double renderScale;
 
   /// How long the silk flow takes to come round again. Shorter is livelier.
   static const _silkLoopSeconds = 150.0;
 
   @override
   void paint(Canvas canvas, Size size) {
+    // Draw the flow into a smaller picture and stretch it to fit: the shader runs on a fraction
+    // of the pixels, which is what keeps the rest of the app smooth beside it.
+    final w = max(2, (size.width * pixelRatio * renderScale).round());
+    final h = max(2, (size.height * pixelRatio * renderScale).round());
     final s = program.fragmentShader();
     var i = 0;
     void colours() {
@@ -189,19 +194,15 @@ class _FlowPainter extends CustomPainter {
       }
     }
 
+    s.setFloat(i++, w.toDouble());
+    s.setFloat(i++, h.toDouble());
     switch (style) {
       case FlowStyle.noise:
-        // Exactly as the computer version has always drawn it.
-        s.setFloat(i++, size.width);
-        s.setFloat(i++, size.height);
         s.setFloat(i++, time.value);
         s.setFloat(i++, light ? 1 : 0);
         colours();
         s.setFloat(i++, octaves.toDouble());
       case FlowStyle.silk:
-        // The silk shader works in device pixels, so it is told the size in device pixels.
-        s.setFloat(i++, size.width * pixelRatio);
-        s.setFloat(i++, size.height * pixelRatio);
         s.setFloat(i++, light ? 1 : 0);
         colours();
         s.setFloat(i++, octaves.toDouble());
@@ -213,11 +214,17 @@ class _FlowPainter extends CustomPainter {
           s.setFloat(i++, x < 0 ? x + 2 * pi : x);
         }
     }
-    canvas.drawRect(Offset.zero & size, Paint()..shader = s);
+    final recorder = ui.PictureRecorder();
+    Canvas(recorder).drawRect(Rect.fromLTWH(0, 0, w.toDouble(), h.toDouble()), Paint()..shader = s);
+    final picture = recorder.endRecording();
+    final image = picture.toImageSync(w, h);
+    canvas.drawImageRect(image, Rect.fromLTWH(0, 0, w.toDouble(), h.toDouble()), Offset.zero & size, Paint()..filterQuality = FilterQuality.medium);
+    image.dispose();
+    picture.dispose();
     s.dispose();
   }
 
   @override
   bool shouldRepaint(_FlowPainter old) =>
-      old.palette != palette || old.light != light || old.program != program || old.octaves != octaves || old.pixelRatio != pixelRatio || old.style != style;
+      old.palette != palette || old.light != light || old.program != program || old.octaves != octaves || old.pixelRatio != pixelRatio || old.renderScale != renderScale || old.style != style;
 }

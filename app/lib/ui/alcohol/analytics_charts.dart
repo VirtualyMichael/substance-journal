@@ -37,7 +37,7 @@ class DailyBarsChart extends StatelessWidget {
           final chart = SizedBox(
             width: width,
             height: height,
-            child: CustomPaint(
+            child: RepaintBoundary(child: CustomPaint(
               painter: _BarsPainter(
                 days: days,
                 today: today,
@@ -49,7 +49,7 @@ class DailyBarsChart extends StatelessWidget {
                 todayColor: scheme.primary,
                 fixedSlot: width > constraints.maxWidth ? slot : (width - leftAxis - 8) / max(days.length, 1),
               ),
-            ),
+            )),
           );
           if (width <= constraints.maxWidth) return chart;
           return SingleChildScrollView(scrollDirection: Axis.horizontal, reverse: true, child: chart);

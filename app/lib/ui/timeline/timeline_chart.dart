@@ -76,7 +76,7 @@ class _TimelineChartState extends State<TimelineChart> {
             onTapDown: (d) => setState(() => _hover = d.localPosition),
             onHorizontalDragStart: (d) => setState(() => _hover = d.localPosition),
             onHorizontalDragUpdate: (d) => setState(() => _hover = d.localPosition),
-            child: CustomPaint(
+            child: RepaintBoundary(child: CustomPaint(
               painter: TimelinePainter(
                 series: series,
                 markers: w.markers,
@@ -96,7 +96,7 @@ class _TimelineChartState extends State<TimelineChart> {
                 tipBackground: scheme.inverseSurface,
                 tipText: scheme.onInverseSurface,
               ),
-            ),
+            )),
           ),
         ),
       ),

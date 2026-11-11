@@ -165,7 +165,7 @@ class _InteractiveLineChartState extends State<InteractiveLineChart> {
                     onTapDown: (d) => move(d.localPosition),
                     onHorizontalDragStart: (d) => move(d.localPosition),
                     onHorizontalDragUpdate: (d) => move(d.localPosition),
-                    child: CustomPaint(
+                    child: RepaintBoundary(child: CustomPaint(
                       painter: _ChartPainter(
                         widget: widget,
                         crosshair: at,
@@ -175,7 +175,7 @@ class _InteractiveLineChartState extends State<InteractiveLineChart> {
                         fontFamily: text.bodySmall?.fontFamily,
                         insets: const EdgeInsets.fromLTRB(_left, _top, _right, _bottom),
                       ),
-                    ),
+                    )),
                   ),
                 ),
               ),

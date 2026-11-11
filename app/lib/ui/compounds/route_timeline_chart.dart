@@ -42,10 +42,10 @@ class RouteTimelineChart extends StatelessWidget {
       children: [
         SizedBox(
           height: 190,
-          child: CustomPaint(
+          child: RepaintBoundary(child: CustomPaint(
             size: Size.infinite,
             painter: _ProfilePainter(profile, scheme, text.labelSmall ?? const TextStyle(fontSize: 10)),
-          ),
+          )),
         ),
         const SizedBox(height: Gap.sm),
         Wrap(
