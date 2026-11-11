@@ -61,7 +61,7 @@ class AppBackground extends ConsumerWidget {
     final light = Theme.of(context).brightness == Brightness.light;
     final scrim = (light ? Colors.white : Colors.black).withValues(alpha: config.dim);
     final look = style ?? flowStyleForPlatform();
-    Widget flow(bool animate) => _FlowLayer(style: look, palette: paletteById(config.palette), light: light, animate: animate, quality: config.quality);
+    Widget flow(bool animate) => _FlowLayer(style: look, palette: paletteById(config.palette), light: light, animate: animate, quality: config.quality, fps: config.effectiveFps);
     final Widget art;
     switch (config.mode) {
       case BackgroundMode.image:
@@ -83,13 +83,14 @@ class AppBackground extends ConsumerWidget {
 }
 
 class _FlowLayer extends StatefulWidget {
-  const _FlowLayer({required this.style, required this.palette, required this.light, required this.animate, required this.quality});
+  const _FlowLayer({required this.style, required this.palette, required this.light, required this.animate, required this.quality, required this.fps});
 
   final FlowStyle style;
   final FlowPalette palette;
   final bool light;
   final bool animate;
   final BackgroundQuality quality;
+  final int fps;
 
   @override
   State<_FlowLayer> createState() => _FlowLayerState();
@@ -110,7 +111,7 @@ class _FlowLayerState extends State<_FlowLayer> with SingleTickerProviderStateMi
     _ticker = createTicker((elapsed) {
       // A slow flow needs far fewer frames than the screen can draw; the level sets how many.
       if (elapsed < _last) _last = Duration.zero; // the ticker started over
-      if (elapsed - _last < Duration(microseconds: 1000000 ~/ widget.quality.fps - 1500)) return;
+      if (elapsed - _last < Duration(microseconds: 1000000 ~/ widget.fps - 1500)) return;
       _last = elapsed;
       _time.value = _stillTime + elapsed.inMicroseconds / Duration.microsecondsPerSecond;
     });

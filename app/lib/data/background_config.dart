@@ -48,7 +48,7 @@ FlowPalette paletteById(String id) => flowPalettes.firstWhere((p) => p.id == id,
 
 /// The look behind the app. Stored on this device only.
 class BackgroundConfig {
-  const BackgroundConfig({this.mode = BackgroundMode.flow, this.palette = 'amethyst', this.dim = 0.35, this.imagePath, this.quality = BackgroundQuality.balanced});
+  const BackgroundConfig({this.mode = BackgroundMode.flow, this.palette = 'amethyst', this.dim = 0.35, this.imagePath, this.quality = BackgroundQuality.balanced, this.fps});
 
   final BackgroundMode mode;
   final String palette;
@@ -58,17 +58,24 @@ class BackgroundConfig {
   final String? imagePath;
   final BackgroundQuality quality;
 
+  /// Frames per second chosen by hand (5 to 120); null follows the quality level.
+  final int? fps;
+
+  /// What the flow actually runs at.
+  int get effectiveFps => fps ?? quality.fps;
+
   bool get active => mode != BackgroundMode.off;
 
-  BackgroundConfig copyWith({BackgroundMode? mode, String? palette, double? dim, String? imagePath, BackgroundQuality? quality}) => BackgroundConfig(
+  BackgroundConfig copyWith({BackgroundMode? mode, String? palette, double? dim, String? imagePath, BackgroundQuality? quality, int? fps, bool clearFps = false}) => BackgroundConfig(
         mode: mode ?? this.mode,
         palette: palette ?? this.palette,
         dim: dim ?? this.dim,
         imagePath: imagePath ?? this.imagePath,
         quality: quality ?? this.quality,
+        fps: clearFps ? null : (fps ?? this.fps),
       );
 
-  String encode() => jsonEncode({'mode': mode.name, 'palette': palette, 'dim': dim, 'image': imagePath, 'quality': quality.name});
+  String encode() => jsonEncode({'mode': mode.name, 'palette': palette, 'dim': dim, 'image': imagePath, 'quality': quality.name, 'fps': fps});
 
   /// [defaultMode] is used when nothing has been chosen yet.
   static BackgroundConfig decode(String? raw, {BackgroundMode defaultMode = BackgroundMode.flow}) {
@@ -82,6 +89,7 @@ class BackgroundConfig {
         dim: dim is num ? dim.toDouble().clamp(0.0, 0.8) : 0.35,
         imagePath: j['image'] as String?,
         quality: BackgroundQuality.values.firstWhere((q) => q.name == j['quality'], orElse: () => BackgroundQuality.balanced),
+        fps: j['fps'] is num ? (j['fps'] as num).round().clamp(5, 120) : null,
       );
     } on Object {
       return BackgroundConfig(mode: defaultMode);

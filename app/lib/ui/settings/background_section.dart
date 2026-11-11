@@ -129,6 +129,17 @@ class BackgroundSection extends ConsumerWidget {
             onSelectionChanged: (v) => _save(ref, c.copyWith(quality: v.first)),
           ),
         ],
+        if (c.mode == BackgroundMode.flow) ...[
+          const SizedBox(height: Gap.sm),
+          Row(
+            children: [
+              SizedBox(width: 96, child: Text('${c.effectiveFps} fps', key: const ValueKey('fps-label'))),
+              Expanded(child: _FpsSlider(value: c.effectiveFps, onSaved: (v) => _save(ref, c.copyWith(fps: v)))),
+              TextButton(key: const ValueKey('fps-auto'), onPressed: c.fps == null ? null : () => _save(ref, c.copyWith(clearFps: true)), child: const Text('Auto')),
+            ],
+          ),
+          Text('Frame rate: how many times a second the flow moves. Higher looks smoother and uses more power; "Auto" follows the quality level.', style: text.bodySmall),
+        ],
         if (c.mode == BackgroundMode.image) ...[
           const SizedBox(height: Gap.sm),
           OutlinedButton.icon(
@@ -180,6 +191,39 @@ class _DimSliderState extends State<_DimSlider> {
       onChanged: (x) => setState(() => _dragging = x),
       onChangeEnd: (x) {
         widget.onSaved(x);
+        setState(() => _dragging = null);
+      },
+    );
+  }
+}
+
+/// Frames per second, 5 to 120, saved when the finger is lifted.
+class _FpsSlider extends StatefulWidget {
+  const _FpsSlider({required this.value, required this.onSaved});
+
+  final int value;
+  final ValueChanged<int> onSaved;
+
+  @override
+  State<_FpsSlider> createState() => _FpsSliderState();
+}
+
+class _FpsSliderState extends State<_FpsSlider> {
+  double? _dragging;
+
+  @override
+  Widget build(BuildContext context) {
+    final v = _dragging ?? widget.value.toDouble();
+    return Slider(
+      key: const ValueKey('background-fps'),
+      value: v.clamp(5, 120),
+      min: 5,
+      max: 120,
+      divisions: 115,
+      label: '${v.round()} fps',
+      onChanged: (x) => setState(() => _dragging = x),
+      onChangeEnd: (x) {
+        widget.onSaved(x.round());
         setState(() => _dragging = null);
       },
     );

@@ -25,6 +25,11 @@ void main() {
     expect(BackgroundConfig.decode(null, defaultMode: BackgroundMode.off).active, isFalse);
     expect(BackgroundConfig.decode('{"dim": 9}').dim, 0.8); // clamped
     expect(paletteById('missing').id, 'amethyst');
+    expect(const BackgroundConfig().effectiveFps, BackgroundQuality.balanced.fps); // follows the level until set by hand
+    final custom = BackgroundConfig.decode(const BackgroundConfig(fps: 144).encode());
+    expect(custom.fps, 120); // kept in range
+    expect(custom.effectiveFps, 120);
+    expect(custom.copyWith(clearFps: true).effectiveFps, 30);
   });
 
   test('with a background the screens and cards let it show through', () {
@@ -124,6 +129,38 @@ void main() {
     await tapKey(tester, 'crop-cancel');
     await settle(tester);
     expect(find.byKey(const ValueKey('background-crop')), findsNothing);
+    await disposeApp(tester, app);
+  });
+
+  testWidgets('the frame rate can be set by hand and put back to automatic', (tester) async {
+    final app = await buildTestApp(tester);
+    await dbRun(tester, app.db.ensureDefaultPerson);
+    await startApp(tester, app);
+    await tester.tap(find.text('Settings'));
+    await settle(tester);
+    await tapKey(tester, 'settings-appearance');
+    await settle(tester);
+    // The flow animates for ever, so the screen is stepped by hand rather than waited on.
+    Future<void> step() async {
+      await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 200)));
+      await tester.pump(const Duration(milliseconds: 100));
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+
+    await tester.tap(find.text('Flow'));
+    await step();
+    expect(find.byKey(const ValueKey('background-fps')), findsOneWidget);
+    expect(find.text('30 fps'), findsOneWidget);
+
+    await dbRun(tester, () => app.db.saveBackground(const BackgroundConfig(fps: 48)));
+    await step();
+    expect(find.text('48 fps'), findsOneWidget);
+    await tester.tap(find.byKey(const ValueKey('fps-auto')));
+    await step();
+    expect(BackgroundConfig.decode(await dbRun(tester, () => app.db.getSetting('background'))).fps, isNull);
+    expect(find.text('30 fps'), findsOneWidget);
+    await dbRun(tester, () => app.db.saveBackground(const BackgroundConfig(mode: BackgroundMode.off)));
+    await step();
     await disposeApp(tester, app);
   });
 }
