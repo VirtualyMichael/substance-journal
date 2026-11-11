@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:isolate';
 
@@ -9,7 +10,7 @@ final bool _inTest = Platform.environment.containsKey('FLUTTER_TEST');
 ///
 /// If the isolate cannot be used (a closure that captured something unsendable), it falls back to
 /// running inline, so a screen can never be left waiting forever.
-Future<T> offMain<T>(T Function() work) async {
+Future<T> offMain<T>(FutureOr<T> Function() work) async {
   if (_inTest) return work();
   try {
     return await Isolate.run(work);

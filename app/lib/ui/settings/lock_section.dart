@@ -30,6 +30,16 @@ class _LockSectionState extends ConsumerState<LockSection> {
   Future<String?> _askPin(String title, {bool confirm = false}) => showDialog<String>(context: context, builder: (_) => _PinDialog(title: title, confirm: confirm));
 
   Future<void> _setPin(LockConfig current) async {
+    if (current.enabled) {
+      // Changing the PIN needs the old one, so a borrowed unlocked phone cannot lock the owner out.
+      final old = await _askPin('Enter your current PIN');
+      if (old == null) return;
+      if (!await pinMatches(current, old)) {
+        if (mounted) ScaffoldMessenger.of(context).showToast(const SnackBar(content: Text('That is not your PIN.')));
+        return;
+      }
+    }
+    if (!mounted) return;
     final pin = await _askPin(current.enabled ? 'New PIN' : 'Choose a PIN', confirm: true);
     if (pin == null) return;
     final config = await lockWithPin(pin, previous: current);
@@ -60,9 +70,18 @@ class _LockSectionState extends ConsumerState<LockSection> {
         const SizedBox(height: 4),
         Text(
           'Ask for a PIN (or your fingerprint, face or device unlock) when the app opens and after it has been away. '
-          'This keeps other people out of the app. It does not encrypt the journal on this device; the device screen lock and encrypted backups do that.',
+          'This keeps other people out of the app. Separately, the journal file on this device is encrypted with a key held by the system, so copying the file off the device gets nothing.',
           style: text.bodySmall,
         ),
+        if (!ref.watch(databaseEncryptedProvider))
+          Padding(
+            padding: const EdgeInsets.only(top: 4),
+            child: Text(
+              'The journal file could not be encrypted on this device, so it is stored unprotected. Restart the app to try again.',
+              key: const ValueKey('db-not-encrypted'),
+              style: text.bodySmall?.copyWith(color: Theme.of(context).colorScheme.error),
+            ),
+          ),
         const SizedBox(height: Gap.sm),
         if (!config.enabled)
           FilledButton.icon(

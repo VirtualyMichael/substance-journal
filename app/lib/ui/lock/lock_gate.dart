@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -45,6 +46,20 @@ final lockConfigProvider = StreamProvider<LockConfig>((ref) => ref.watch(databas
 class Unlocked extends Notifier<bool> {
   int _failures = 0;
   DateTime? _waitUntil;
+  bool _restored = false;
+
+  /// Loads the wrong tries remembered from before the app was closed.
+  Future<void> restore() async {
+    if (_restored) return;
+    _restored = true;
+    final g = await ref.read(databaseProvider).loadLockGuard();
+    if (_failures == 0) {
+      _failures = g.failures;
+      _waitUntil = g.waitUntil;
+    }
+  }
+
+  void _remember() => unawaited(ref.read(databaseProvider).saveLockGuard(LockGuard(failures: _failures, waitUntil: _waitUntil)).catchError((Object _) {}));
 
   /// True while the device's own prompt is up: it pauses the app, which must not count as leaving it.
   bool authenticating = false;
@@ -53,8 +68,10 @@ class Unlocked extends Notifier<bool> {
   bool build() => false;
 
   void unlock() {
+    final hadFailures = _failures != 0 || _waitUntil != null;
     _failures = 0;
     _waitUntil = null;
+    if (hadFailures) _remember();
     state = true;
   }
 
@@ -70,9 +87,10 @@ class Unlocked extends Notifier<bool> {
   void failed(DateTime now) {
     _failures++;
     if (_failures >= 5) {
-      final seconds = (30 * (1 << (_failures - 5).clamp(0, 5))).clamp(30, 900);
+      final seconds = (30 * (1 << (_failures - 5).clamp(0, 7))).clamp(30, 3600);
       _waitUntil = now.add(Duration(seconds: seconds));
     }
+    _remember();
   }
 }
 
@@ -203,6 +221,7 @@ class _LockScreenState extends ConsumerState<LockScreen> {
   Future<void> _submit() async {
     final notifier = ref.read(unlockedProvider.notifier);
     final now = ref.read(clockProvider)();
+    await notifier.restore();
     final wait = notifier.secondsToWait(now);
     if (wait > 0) {
       setState(() => _error = 'Too many tries. Wait $wait seconds.');
@@ -215,7 +234,13 @@ class _LockScreenState extends ConsumerState<LockScreen> {
     final ok = await pinMatches(widget.config, _pin.text.trim());
     if (!mounted) return;
     if (ok) {
+      final upgrade = widget.config.iterations < pinIterations;
+      final pin = _pin.text.trim();
+      final previous = widget.config;
+      final db = ref.read(databaseProvider);
       notifier.unlock();
+      // A PIN made by an earlier version is re-hashed with more rounds now that it is known.
+      if (upgrade) unawaited(lockWithPin(pin, previous: previous).then(db.saveLockConfig).catchError((Object _) {}));
       return;
     }
     notifier.failed(now);

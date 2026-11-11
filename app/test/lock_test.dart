@@ -40,6 +40,8 @@ Future<void> startLocked(WidgetTester tester, TestApp app, DeviceAuth auth) asyn
 }
 
 void main() {
+  setUpAll(() => pinIterations = 1000); // the real count is deliberately slow
+
   test('a PIN is four to eight digits, stored only as a salted hash, and checked against it', () async {
     expect(isValidPin('1234'), isTrue);
     expect(isValidPin('12345678'), isTrue);
