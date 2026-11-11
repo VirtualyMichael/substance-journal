@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +11,7 @@ import '../../data/background_config.dart';
 import '../../providers.dart';
 import '../background/app_background.dart';
 import '../design.dart';
+import 'background_crop_page.dart';
 
 /// Asks for a picture or GIF. Replaced in tests so no real dialog opens.
 final backgroundFilePickerProvider = Provider<Future<String?> Function()>((ref) => () async {
@@ -29,12 +31,30 @@ class BackgroundSection extends ConsumerWidget {
 
   Future<void> _choosePhoto(BuildContext context, WidgetRef ref, BackgroundConfig current) async {
     final picked = await ref.read(backgroundFilePickerProvider)();
-    if (picked == null) return;
+    if (picked == null || !context.mounted) return;
+    final isGif = p.extension(picked).toLowerCase() == '.gif';
+    Uint8List? cropped;
+    if (!isGif) {
+      // Let the person move and zoom the picture under a frame the shape of this screen.
+      final size = MediaQuery.sizeOf(context);
+      cropped = await Navigator.of(context).push<Uint8List>(
+        MaterialPageRoute(builder: (_) => BackgroundCropPage(image: File(picked).readAsBytesSync(), aspectRatio: size.width / size.height)),
+      );
+      if (cropped == null) return;
+    }
     // Keep our own copy so the background survives the original being moved or deleted.
     final folder = Directory(p.join((await getApplicationSupportDirectory()).path, 'background'));
     await folder.create(recursive: true);
-    final target = File(p.join(folder.path, 'background-${DateTime.now().millisecondsSinceEpoch}${p.extension(picked).toLowerCase()}'));
-    await File(picked).copy(target.path);
+    final stamp = DateTime.now().millisecondsSinceEpoch;
+    final File target;
+    if (cropped == null) {
+      // A GIF is kept as it is: cropping would flatten the animation.
+      target = File(p.join(folder.path, 'background-$stamp.gif'));
+      await File(picked).copy(target.path);
+    } else {
+      target = File(p.join(folder.path, 'background-$stamp.png'));
+      await target.writeAsBytes(cropped);
+    }
     final old = current.imagePath;
     await _save(ref, current.copyWith(mode: BackgroundMode.image, imagePath: target.path));
     if (old != null && old != target.path && p.dirname(old) == folder.path) {
@@ -93,6 +113,20 @@ class BackgroundSection extends ConsumerWidget {
                   onSelected: (_) => _save(ref, c.copyWith(palette: pal.id)),
                 ),
             ],
+          ),
+        ],
+        if (c.mode == BackgroundMode.flow || c.mode == BackgroundMode.still) ...[
+          const SizedBox(height: Gap.md),
+          Text('Quality', style: text.titleSmall),
+          const SizedBox(height: 2),
+          Text('Higher is smoother and finer but uses more battery. Pick Low if it ever stutters.', style: text.bodySmall),
+          const SizedBox(height: Gap.sm),
+          SegmentedButton<BackgroundQuality>(
+            key: const ValueKey('background-quality'),
+            showSelectedIcon: false,
+            segments: [for (final q in BackgroundQuality.values) ButtonSegment(value: q, label: Text(q.label))],
+            selected: {c.quality},
+            onSelectionChanged: (v) => _save(ref, c.copyWith(quality: v.first)),
           ),
         ],
         if (c.mode == BackgroundMode.image) ...[

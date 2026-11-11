@@ -38,12 +38,12 @@ class AppBackground extends ConsumerWidget {
       case BackgroundMode.image:
         final path = config.imagePath;
         art = path != null && File(path).existsSync()
-            ? Image.file(File(path), fit: BoxFit.cover, gaplessPlayback: true, errorBuilder: (_, _, _) => _FlowLayer(palette: paletteById(config.palette), light: light, animate: false))
-            : _FlowLayer(palette: paletteById(config.palette), light: light, animate: false);
+            ? Image.file(File(path), fit: BoxFit.cover, gaplessPlayback: true, cacheWidth: 2200, errorBuilder: (_, _, _) => _FlowLayer(palette: paletteById(config.palette), light: light, animate: false, quality: config.quality))
+            : _FlowLayer(palette: paletteById(config.palette), light: light, animate: false, quality: config.quality);
       case BackgroundMode.flow:
       case BackgroundMode.still:
       case BackgroundMode.off:
-        art = _FlowLayer(palette: paletteById(config.palette), light: light, animate: config.mode == BackgroundMode.flow);
+        art = _FlowLayer(palette: paletteById(config.palette), light: light, animate: config.mode == BackgroundMode.flow, quality: config.quality);
     }
     return RepaintBoundary(
       child: IgnorePointer(
@@ -54,11 +54,12 @@ class AppBackground extends ConsumerWidget {
 }
 
 class _FlowLayer extends StatefulWidget {
-  const _FlowLayer({required this.palette, required this.light, required this.animate});
+  const _FlowLayer({required this.palette, required this.light, required this.animate, required this.quality});
 
   final FlowPalette palette;
   final bool light;
   final bool animate;
+  final BackgroundQuality quality;
 
   @override
   State<_FlowLayer> createState() => _FlowLayerState();
@@ -77,8 +78,8 @@ class _FlowLayerState extends State<_FlowLayer> with SingleTickerProviderStateMi
   void initState() {
     super.initState();
     _ticker = createTicker((elapsed) {
-      // About 30 frames a second is plenty for a slow flow and halves the battery cost.
-      if (elapsed - _last < const Duration(milliseconds: 33)) return;
+      // A slow flow needs far fewer frames than the screen can draw; the level sets how many.
+      if (elapsed - _last < Duration(microseconds: 1000000 ~/ widget.quality.fps - 1500)) return;
       _last = elapsed;
       _time.value = _stillTime + elapsed.inMicroseconds / Duration.microsecondsPerSecond;
     });
@@ -120,17 +121,18 @@ class _FlowLayerState extends State<_FlowLayer> with SingleTickerProviderStateMi
         decoration: BoxDecoration(gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [p.deep, p.mid, p.bright.withValues(alpha: 0.8)])),
       );
     }
-    return CustomPaint(painter: _FlowPainter(shader, _time, p, widget.light), size: Size.infinite, isComplex: true, willChange: widget.animate);
+    return CustomPaint(painter: _FlowPainter(shader, _time, p, widget.light, widget.quality.octaves), size: Size.infinite, isComplex: true, willChange: widget.animate);
   }
 }
 
 class _FlowPainter extends CustomPainter {
-  _FlowPainter(this.program, this.time, this.palette, this.light) : super(repaint: time);
+  _FlowPainter(this.program, this.time, this.palette, this.light, this.octaves) : super(repaint: time);
 
   final ui.FragmentProgram program;
   final ValueNotifier<double> time;
   final FlowPalette palette;
   final bool light;
+  final int octaves;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -145,10 +147,11 @@ class _FlowPainter extends CustomPainter {
       s.setFloat(i++, c.g);
       s.setFloat(i++, c.b);
     }
+    s.setFloat(i++, octaves.toDouble());
     canvas.drawRect(Offset.zero & size, Paint()..shader = s);
     s.dispose();
   }
 
   @override
-  bool shouldRepaint(_FlowPainter old) => old.palette != palette || old.light != light || old.program != program;
+  bool shouldRepaint(_FlowPainter old) => old.palette != palette || old.light != light || old.program != program || old.octaves != octaves;
 }

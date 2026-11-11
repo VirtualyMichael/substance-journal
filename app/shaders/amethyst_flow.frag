@@ -1,6 +1,9 @@
 #version 460 core
 #include <flutter/runtime_effect.glsl>
 
+// Phones default to half precision, which turns the noise into hard-edged facets. Ask for full.
+precision highp float;
+
 // A slow marbled flow (domain-warped noise) in four palette colours. Cheap enough to run behind
 // the whole app: three noise passes of four octaves each.
 uniform vec2 uSize;
@@ -10,6 +13,7 @@ uniform vec3 uDeep;
 uniform vec3 uMid;
 uniform vec3 uBright;
 uniform vec3 uGlow;
+uniform float uOctaves; // detail: 3 (fast) to 6 (finest)
 
 out vec4 fragColor;
 
@@ -34,7 +38,8 @@ float fbm(vec2 p) {
   float v = 0.0;
   float a = 0.5;
   mat2 rot = mat2(0.8, -0.6, 0.6, 0.8);
-  for (int i = 0; i < 4; i++) {
+  for (int i = 0; i < 6; i++) {
+    if (float(i) >= uOctaves) break;
     v += a * noise(p);
     p = rot * p * 2.02 + 7.1;
     a *= 0.5;
