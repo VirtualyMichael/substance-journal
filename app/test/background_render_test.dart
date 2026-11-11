@@ -13,21 +13,25 @@ import 'package:substance_journal_app/ui/background/app_background.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets('the flow shader compiles and loads', (tester) async {
-    expect(await tester.runAsync(flowShaderAvailable), isTrue);
+  testWidgets('both flow shaders compile and load', (tester) async {
+    for (final style in FlowStyle.values) {
+      expect(await tester.runAsync(() => flowShaderAvailable(style)), isTrue, reason: style.name);
+    }
   });
 
+  // ignore: curly_braces_in_flow_control_structures
+  for (final style in FlowStyle.values)
   for (final palette in flowPalettes) {
-    testWidgets('the ${palette.name} flow paints a varied picture', (tester) async {
+    testWidgets('the ${palette.name} ${style.name} flow paints a varied picture', (tester) async {
       resetFlowShader();
       final key = GlobalKey();
       final dpr = double.tryParse(Platform.environment['SJ_DPR'] ?? '') ?? 1;
-      tester.view.physicalSize = Size(900 * dpr / (dpr > 1 ? 2 : 1), 600 * dpr / (dpr > 1 ? 2 : 1));
+      tester.view.physicalSize = style == FlowStyle.silk ? const Size(450, 1000) : Size(900 * dpr / (dpr > 1 ? 2 : 1), 600 * dpr / (dpr > 1 ? 2 : 1));
       tester.view.devicePixelRatio = dpr;
       addTearDown(tester.view.reset);
       await tester.pumpWidget(ProviderScope(
         overrides: [backgroundProvider.overrideWith((ref) => Stream.value(BackgroundConfig(mode: BackgroundMode.still, palette: palette.id, dim: 0.1)))],
-        child: MaterialApp(theme: ThemeData.dark(), home: RepaintBoundary(key: key, child: const AppBackground())),
+        child: MaterialApp(theme: ThemeData.dark(), home: RepaintBoundary(key: key, child: AppBackground(style: style))),
       ));
       await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 300))); // the shader loads
       for (var i = 0; i < 3; i++) {
@@ -48,7 +52,7 @@ void main() {
       final dir = Platform.environment['SJ_SHOT_DIR'];
       if (dir != null) {
         final png = (await tester.runAsync(() => image.toByteData(format: ui.ImageByteFormat.png)))!;
-        File('$dir/flow-${palette.id}.png').writeAsBytesSync(png.buffer.asUint8List());
+        File('$dir/flow-${style.name}-${palette.id}.png').writeAsBytesSync(png.buffer.asUint8List());
       }
     });
   }
