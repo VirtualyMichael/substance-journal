@@ -14,16 +14,19 @@ const double wideBreakpoint = 840;
 /// Maximum width of reading-oriented content on large screens.
 const double contentMaxWidth = 960;
 
-ThemeData buildTheme(Brightness brightness, {Color seed = const Color(0xFF4F7CAC)}) {
+ThemeData buildTheme(Brightness brightness, {Color seed = const Color(0xFF4F7CAC), bool translucent = false}) {
   final scheme = ColorScheme.fromSeed(seedColor: seed, brightness: brightness);
+  // With a picture behind the app the screens and cards let it show through, a little.
+  Color veil(Color c, double alpha) => translucent ? c.withValues(alpha: alpha) : c;
   return ThemeData(
     useMaterial3: true,
     colorScheme: scheme,
     visualDensity: VisualDensity.adaptivePlatformDensity,
+    scaffoldBackgroundColor: translucent ? Colors.transparent : null,
     cardTheme: CardThemeData(
       elevation: 0,
       margin: EdgeInsets.zero,
-      color: scheme.surfaceContainerLow,
+      color: veil(scheme.surfaceContainerLow, 0.78),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
         side: BorderSide(color: scheme.outlineVariant),
@@ -32,7 +35,9 @@ ThemeData buildTheme(Brightness brightness, {Color seed = const Color(0xFF4F7CAC
     inputDecorationTheme: InputDecorationTheme(
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
     ),
-    appBarTheme: const AppBarTheme(centerTitle: false),
+    appBarTheme: AppBarTheme(centerTitle: false, backgroundColor: translucent ? veil(scheme.surface, 0.55) : null, surfaceTintColor: translucent ? Colors.transparent : null),
+    navigationBarTheme: NavigationBarThemeData(backgroundColor: translucent ? veil(scheme.surface, 0.8) : null),
+    navigationRailTheme: NavigationRailThemeData(backgroundColor: translucent ? veil(scheme.surface, 0.8) : null),
   );
 }
 

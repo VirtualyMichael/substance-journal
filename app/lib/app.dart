@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'providers.dart';
+import 'ui/background/app_background.dart';
 import 'ui/design.dart';
 import 'ui/lock/lock_gate.dart';
 import 'ui/shell.dart';
@@ -43,16 +44,19 @@ class _SubstanceJournalAppState extends ConsumerState<SubstanceJournalApp> {
     final themeMode = ref.watch(themeModeProvider).value ?? ThemeMode.system;
     final rainbow = ref.watch(rainbowAccentProvider).value ?? false;
     final accent = ref.watch(accentColorProvider).value;
+    final background = ref.watch(backgroundProvider).value?.active ?? false;
     _syncTimer(rainbow);
     final seed = rainbow ? HSLColor.fromAHSL(1, _hue, 0.65, 0.5).toColor() : (accent ?? const Color(0xFF4F7CAC));
     return MaterialApp(
       title: 'Substance Journal',
       debugShowCheckedModeBanner: false,
-      theme: buildTheme(Brightness.light, seed: seed),
-      darkTheme: buildTheme(Brightness.dark, seed: seed),
+      theme: buildTheme(Brightness.light, seed: seed, translucent: background),
+      darkTheme: buildTheme(Brightness.dark, seed: seed, translucent: background),
       themeMode: themeMode,
       themeAnimationDuration: rainbow ? _step : kThemeAnimationDuration,
-      builder: (context, child) => LockGate(child: child ?? const SizedBox.shrink()),
+      builder: (context, child) => LockGate(
+        child: Stack(fit: StackFit.expand, children: [const AppBackground(), child ?? const SizedBox.shrink()]),
+      ),
       home: const AppShell(),
     );
   }
