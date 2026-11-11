@@ -61,7 +61,8 @@ class _ToleranceOverviewState extends ConsumerState<ToleranceOverview> {
     // One line per tolerance track (substances sharing one would draw the same line twice).
     final tracks = <String, (List<String>, ToleranceView, String)>{};
     for (final e in views.entries) {
-      if (e.value.alcohol) continue;
+      // Leave out lines that stay at baseline for the whole range: they only add noise.
+      if (e.value.alcohol || e.value.points.every((p) => p.$2 < baselineLevel)) continue;
       final existing = tracks[e.value.trackKey];
       final name = catalog.byKey[e.key]?.name ?? e.key;
       tracks[e.value.trackKey] = existing == null ? ([name], e.value, e.key) : ([...existing.$1, name], existing.$2, existing.$3);

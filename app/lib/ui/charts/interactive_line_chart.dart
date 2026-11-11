@@ -257,7 +257,8 @@ class _ChartPainter extends CustomPainter {
       final y2 = y(max(b.from, bottomV));
       if (y2 - y1 < 1) continue;
       canvas.drawRect(Rect.fromLTRB(plot.left, y1, plot.right, y2), Paint()..color = b.color);
-      _text(canvas, b.label, Offset(plot.right - 4, y1 + 2), alignRight: true, size: 10);
+      // Only label a band tall enough to hold its name, so squeezed bands do not overprint each other.
+      if (y2 - y1 >= 14) _text(canvas, b.label, Offset(plot.right - 4, y1 + 2), alignRight: true, size: 10);
     }
 
     // Value grid.
