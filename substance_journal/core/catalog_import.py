@@ -215,7 +215,9 @@ def apply_crosschecks(items: list[dict], crosschecks: dict) -> list[dict]:
             if len(shown) > 3:
                 notes.append(f"{CROSSCHECK_PREFIX}{len(shown) - 3} more dose bands differ between PsychonautWiki and TripSit. Compare both pages.")
         item["safety_notes"] = notes
-    return items
+    from .dose_decisions import apply_decisions
+
+    return apply_decisions(items)
 
 
 def load_crosschecks(path: "Path | None" = None) -> dict:

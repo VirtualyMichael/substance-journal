@@ -7304,20 +7304,20 @@
       {
         "route": "insufflated",
         "unit": "mg",
-        "dose_threshold": 3.0,
+        "dose_threshold": 3,
         "dose_light": {
+          "min": 3.0,
+          "max": 5.0
+        },
+        "dose_common": {
           "min": 5.0,
           "max": 8.0
         },
-        "dose_common": {
+        "dose_strong": {
           "min": 8.0,
           "max": 15.0
         },
-        "dose_strong": {
-          "min": 15.0,
-          "max": 25.0
-        },
-        "dose_heavy": null,
+        "dose_heavy": 15.0,
         "duration": {
           "onset": {
             "min": 1.0,
@@ -7425,9 +7425,7 @@
     ],
     "safety_notes": [
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
-      "Cross-check: TripSit lists a lower common dose for insufflated (5-10mg) than PsychonautWiki (8 mg). Start with the lower figure.",
-      "Cross-check: TripSit lists a lower light dose for insufflated (3-5mg) than PsychonautWiki (5 mg). Start with the lower figure.",
-      "Cross-check: TripSit lists a lower strong dose for insufflated (8-15mg) than PsychonautWiki (15 mg). Start with the lower figure."
+      "Decision: Insufflated bands use TripSit's lower figures (light 3-5 mg, common 5-10 mg, strong 8-15 mg). Potency per dose is very steep, so measure with a milligram scale."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
     "fetched": "2026-10-25",
@@ -9267,18 +9265,18 @@
         "unit": "mg",
         "dose_threshold": 2.5,
         "dose_light": {
-          "min": 5.0,
-          "max": 10.0
+          "min": 10.0,
+          "max": 20.0
         },
         "dose_common": {
-          "min": 10.0,
-          "max": 25.0
-        },
-        "dose_strong": {
-          "min": 25.0,
+          "min": 20.0,
           "max": 50.0
         },
-        "dose_heavy": 50.0,
+        "dose_strong": {
+          "min": 50.0,
+          "max": 70.0
+        },
+        "dose_heavy": 70.0,
         "duration": {
           "onset": {
             "min": 30.0,
@@ -9345,10 +9343,7 @@
     ],
     "safety_notes": [
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
-      "Cross-check: the sources differ on the common dose for insufflated: PsychonautWiki 15 mg, TripSit 25-40mg.",
-      "Cross-check: the sources differ on the light dose for insufflated: PsychonautWiki 6 mg, TripSit 15-25mg.",
-      "Cross-check: the sources differ on the common dose for oral: PsychonautWiki 10 mg, TripSit 20-50mg.",
-      "Cross-check: 2 more dose bands differ between PsychonautWiki and TripSit. Compare both pages."
+      "Decision: Oral bands use TripSit's higher figures; PsychonautWiki lists light 5 mg, common 10 mg, strong 25 mg. Clinical doses start at 5-10 mg."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
     "fetched": "2026-10-25",
@@ -10655,10 +10650,10 @@
         },
         "dose_common": {
           "min": 50.0,
-          "max": 150.0
+          "max": 250.0
         },
         "dose_strong": {
-          "min": 150.0,
+          "min": 250.0,
           "max": 500.0
         },
         "dose_heavy": 500.0,
@@ -10761,7 +10756,7 @@
     ],
     "safety_notes": [
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
-      "Cross-check: the sources differ on the strong dose for oral: PsychonautWiki 150 mg, TripSit 250-400mg."
+      "Decision: The strong line uses TripSit's 250 mg; PsychonautWiki lists 150 mg. Health agencies treat up to about 400 mg a day as safe for most adults."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
     "fetched": "2026-10-25",
@@ -11440,18 +11435,18 @@
         "unit": "mg",
         "dose_threshold": 5.0,
         "dose_light": {
-          "min": 10.0,
-          "max": 30.0
+          "min": 20.0,
+          "max": 50.0
         },
         "dose_common": {
-          "min": 30.0,
-          "max": 60.0
+          "min": 50.0,
+          "max": 100.0
         },
         "dose_strong": {
-          "min": 60.0,
-          "max": 90.0
+          "min": 100.0,
+          "max": 150.0
         },
-        "dose_heavy": 90.0,
+        "dose_heavy": 150.0,
         "duration": {
           "onset": {
             "min": 3.0,
@@ -11657,10 +11652,7 @@
     ],
     "safety_notes": [
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
-      "Cross-check: the sources differ on the common dose for insufflated: PsychonautWiki 30 mg, TripSit 50-100mg.",
-      "Cross-check: the sources differ on the heavy dose for insufflated: PsychonautWiki 90 mg, TripSit 150mg+.",
-      "Cross-check: the sources differ on the light dose for insufflated: PsychonautWiki 10 mg, TripSit 20-50mg.",
-      "Cross-check: 1 more dose bands differ between PsychonautWiki and TripSit. Compare both pages."
+      "Decision: Insufflated bands use TripSit's higher figures; PsychonautWiki lists light 10 mg, common 30 mg, strong 60 mg, heavy 90 mg. Both are for pure cocaine and street purity varies, and fentanyl contamination is a known risk."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
     "fetched": "2026-10-25",
@@ -16794,9 +16786,9 @@
         },
         "dose_strong": {
           "min": 25.0,
-          "max": 50.0
+          "max": 30.0
         },
-        "dose_heavy": 50.0,
+        "dose_heavy": 30.0,
         "duration": {
           "onset": {
             "min": 5.0,
@@ -16856,7 +16848,7 @@
     ],
     "safety_notes": [
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
-      "Cross-check: TripSit lists a lower heavy dose for smoked (30-50mg) than PsychonautWiki (50 mg). Start with the lower figure."
+      "Decision: The heavy line uses TripSit's lower figure (30 mg smoked). Purity varies widely and there is no label to compare with."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
     "fetched": "2026-10-25",
@@ -17833,20 +17825,20 @@
       {
         "route": "oral",
         "unit": "g",
-        "dose_threshold": 1.0,
+        "dose_threshold": 0.5,
         "dose_light": {
-          "min": 2.0,
-          "max": 3.0
+          "min": 0.5,
+          "max": 1.5
         },
         "dose_common": {
-          "min": 3.0,
-          "max": 5.0
+          "min": 1.5,
+          "max": 3.0
         },
         "dose_strong": {
-          "min": 5.0,
-          "max": 8.0
+          "min": 3.0,
+          "max": 6.0
         },
-        "dose_heavy": 8.0,
+        "dose_heavy": 6.0,
         "duration": {
           "onset": {
             "min": 20.0,
@@ -17898,9 +17890,7 @@
     ],
     "safety_notes": [
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
-      "Cross-check: TripSit lists a lower common dose for oral (1.5-3g) than PsychonautWiki (3 g). Start with the lower figure.",
-      "Cross-check: TripSit lists a lower light dose for oral (0.5-1.5g) than PsychonautWiki (2 g). Start with the lower figure.",
-      "Cross-check: TripSit lists a lower strong dose for oral (3-6g) than PsychonautWiki (5 g). Start with the lower figure."
+      "Decision: Bands use TripSit's lower figures (light 0.5-1.5 g, common 1.5-3 g, strong 3-6 g). Leaf potency varies a lot between batches and extracts are far stronger."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
     "fetched": "2026-10-25",
@@ -18136,12 +18126,14 @@
     "audited": false,
     "sources": [
       "https://psychonautwiki.org/wiki/Lorazepam",
-      "https://tripsit.me/factsheets/lorazepam"
+      "https://tripsit.me/factsheets/lorazepam",
+      "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=45e31a87-a8db-4dda-b94b-83535b62e8e2"
     ],
     "safety_notes": [
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
       "Cross-check: the sources differ on the common dose for oral: PsychonautWiki 0.5 mg, TripSit 1-2mg.",
-      "Cross-check: the sources differ on the light dose for oral: PsychonautWiki 0.25 mg, TripSit 0.5mg-1mg."
+      "Cross-check: the sources differ on the light dose for oral: PsychonautWiki 0.25 mg, TripSit 0.5mg-1mg.",
+      "Decision: PsychonautWiki's bands are already lower than TripSit's, so they are kept. The label gives a usual 2-6 mg a day in divided doses (older labels) and a half-life of about 12 hours."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
     "fetched": "2026-10-25",
@@ -19771,12 +19763,14 @@
     "audited": false,
     "sources": [
       "https://psychonautwiki.org/wiki/Methadone",
-      "https://tripsit.me/factsheets/methadone"
+      "https://tripsit.me/factsheets/methadone",
+      "https://drugs.com/dosage/methadone.html"
     ],
     "safety_notes": [
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
       "Cross-check: the sources differ on the common dose for oral: PsychonautWiki 5 mg, TripSit 10-20mg.",
-      "Cross-check: the sources differ on the light dose for oral: PsychonautWiki 3 mg, TripSit 5-10mg."
+      "Cross-check: the sources differ on the light dose for oral: PsychonautWiki 3 mg, TripSit 5-10mg.",
+      "Decision: PsychonautWiki's bands are already lower than TripSit's, so they are kept. The prescribing label starts opioid-naive adults at 2.5 mg every 8-12 hours; methadone's half-life is 8-59 hours and it accumulates over 3-5 days, so peak breathing depression comes later and lasts longer than the high."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
     "fetched": "2026-10-25",
@@ -21065,20 +21059,20 @@
       {
         "route": "oral",
         "unit": "mg",
-        "dose_threshold": 5.0,
+        "dose_threshold": 5,
         "dose_light": {
+          "min": 5.0,
+          "max": 10.0
+        },
+        "dose_common": {
           "min": 10.0,
           "max": 20.0
         },
-        "dose_common": {
+        "dose_strong": {
           "min": 20.0,
           "max": 40.0
         },
-        "dose_strong": {
-          "min": 40.0,
-          "max": 60.0
-        },
-        "dose_heavy": 60.0,
+        "dose_heavy": 40.0,
         "duration": {
           "onset": {
             "min": 30.0,
@@ -21132,14 +21126,12 @@
     "audited": false,
     "sources": [
       "https://psychonautwiki.org/wiki/Methylphenidate",
-      "https://tripsit.me/factsheets/methylphenidate"
+      "https://tripsit.me/factsheets/methylphenidate",
+      "https://Drugs.com/pro/methylphenidate-chewable-tablets.html"
     ],
     "safety_notes": [
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
-      "Cross-check: TripSit lists a lower heavy dose for insufflated (30mg+) than PsychonautWiki (60 mg). Start with the lower figure.",
-      "Cross-check: TripSit lists a lower common dose for oral (10-20mg) than PsychonautWiki (20 mg). Start with the lower figure.",
-      "Cross-check: TripSit lists a lower light dose for oral (5-10mg) than PsychonautWiki (10 mg). Start with the lower figure.",
-      "Cross-check: 1 more dose bands differ between PsychonautWiki and TripSit. Compare both pages."
+      "Decision: Oral bands use TripSit's lower figures. Reference sources give adult daily doses around 20-30 mg in divided doses, with 60 mg a day as the usual ceiling for immediate release."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
     "fetched": "2026-10-25",
@@ -21839,9 +21831,9 @@
       {
         "route": "oral",
         "unit": "mg",
-        "dose_threshold": 10.0,
+        "dose_threshold": 5,
         "dose_light": {
-          "min": 10.0,
+          "min": 5.0,
           "max": 15.0
         },
         "dose_common": {
@@ -21908,7 +21900,7 @@
     ],
     "safety_notes": [
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
-      "Cross-check: TripSit lists a lower light dose for oral (5mg-10mg) than PsychonautWiki (10 mg). Start with the lower figure."
+      "Decision: Light starts at TripSit's lower figure (5 mg). Opioid-naive people should start at the bottom of the range; tolerance changes this a lot."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
     "fetched": "2026-10-25",
@@ -25243,11 +25235,13 @@
     "audited": false,
     "sources": [
       "https://psychonautwiki.org/wiki/Pregabalin",
-      "https://tripsit.me/factsheets/pregabalin"
+      "https://tripsit.me/factsheets/pregabalin",
+      "https://www.accessdata.fda.gov/drugsatfda_docs/label/2025/021446s046%2C022488s022lbl.pdf"
     ],
     "safety_notes": [
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
-      "Cross-check: the sources differ on the light dose for oral: PsychonautWiki 50 mg, TripSit 150-300mg."
+      "Cross-check: the sources differ on the light dose for oral: PsychonautWiki 50 mg, TripSit 150-300mg.",
+      "Decision: PsychonautWiki's bands are already lower than TripSit's, so they are kept. The label's therapeutic range is 150-600 mg a day (300 mg a day for diabetic nerve pain) with a half-life of about 6 hours."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
     "fetched": "2026-10-25",
@@ -27798,11 +27792,13 @@
     "audited": false,
     "sources": [
       "https://psychonautwiki.org/wiki/Tramadol",
-      "https://tripsit.me/factsheets/tramadol"
+      "https://tripsit.me/factsheets/tramadol",
+      "https://www.accessdata.fda.gov/drugsatfda_docs/label/2023/020281s040lbl.pdf"
     ],
     "safety_notes": [
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
-      "Cross-check: the sources differ on the light dose for oral: PsychonautWiki 25 mg, TripSit 50-100mg."
+      "Cross-check: the sources differ on the light dose for oral: PsychonautWiki 25 mg, TripSit 50-100mg.",
+      "Decision: PsychonautWiki's bands are already lower than TripSit's, so they are kept. The label gives 50-100 mg every 4-6 hours, at most 400 mg a day (300 mg over 75), and seizure and serotonin-syndrome risk rise with higher doses."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
     "fetched": "2026-10-25",
@@ -28019,20 +28015,20 @@
       {
         "route": "oral",
         "unit": "mg",
-        "dose_threshold": 5.0,
+        "dose_threshold": 2.5,
         "dose_light": {
+          "min": 2.5,
+          "max": 5.0
+        },
+        "dose_common": {
+          "min": 5.0,
+          "max": 10.0
+        },
+        "dose_strong": {
           "min": 10.0,
           "max": 20.0
         },
-        "dose_common": {
-          "min": 20.0,
-          "max": 30.0
-        },
-        "dose_strong": {
-          "min": 30.0,
-          "max": 50.0
-        },
-        "dose_heavy": 50.0,
+        "dose_heavy": 20.0,
         "duration": {
           "onset": {
             "min": 15.0,
@@ -28073,14 +28069,12 @@
     "audited": false,
     "sources": [
       "https://psychonautwiki.org/wiki/Zolpidem",
-      "https://tripsit.me/factsheets/zolpidem"
+      "https://tripsit.me/factsheets/zolpidem",
+      "https://drugs.com/pro/zolpidem.html"
     ],
     "safety_notes": [
       "Copied from PsychonautWiki and not independently checked. Compare with the wiki page and other sources before relying on it.",
-      "Cross-check: TripSit lists a lower common dose for oral (5-10mg) than PsychonautWiki (20 mg). Start with the lower figure.",
-      "Cross-check: TripSit lists a lower heavy dose for oral (20-30mg+) than PsychonautWiki (50 mg). Start with the lower figure.",
-      "Cross-check: TripSit lists a lower light dose for oral (2.5-5mg) than PsychonautWiki (10 mg). Start with the lower figure.",
-      "Cross-check: 1 more dose bands differ between PsychonautWiki and TripSit. Compare both pages."
+      "Decision: Bands use TripSit's lower figures. The prescribing label recommends 5 mg (women) or 5-10 mg (men) at bedtime and says not to exceed 10 mg a night; PsychonautWiki's common 20 mg is double that."
     ],
     "license": "PsychonautWiki, CC BY-SA 4.0",
     "fetched": "2026-10-25",
