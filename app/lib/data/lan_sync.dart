@@ -192,7 +192,7 @@ class LanSyncServer {
       await previous;
       try {
         await sync.receivePackage(body);
-        final reply = await sync.createPackage(sender);
+        final reply = await sync.createPackage(sender, addresses: await LanSyncClient.localAddresses());
         request.response
           ..statusCode = HttpStatus.ok
           ..write(reply);
@@ -316,10 +316,16 @@ class LanSyncClient {
         final p = int.tryParse(remembered.substring(i + 1));
         if (a != null && p != null) targets.add((address: a, port: p));
       }
+      // Every address the device announced last time (Wi-Fi and Tailscale), before falling back to a broadcast.
+      final announced = await sync.db.getSetting('peerAddrs:$peerId');
+      for (final text in (announced ?? '').split(',')) {
+        final a = InternetAddress.tryParse(text);
+        if (a != null && !targets.any((t) => t.address.address == a.address)) targets.add((address: a, port: defaultSyncPort));
+      }
     }
 
     Future<LanSyncResult> attempt(InternetAddress a, int p) async {
-      final package = await sync.createPackage(peerId);
+      final package = await sync.createPackage(peerId, addresses: await LanSyncClient.localAddresses());
       final client = HttpClient()..connectionTimeout = const Duration(seconds: 4);
       try {
         final request = await client.postUrl(Uri(scheme: 'http', host: a.address, port: p, path: '/sj/sync')).timeout(const Duration(seconds: 6));
@@ -359,7 +365,7 @@ class LanSyncClient {
     }
     throw LanSyncException(
       lastError == null
-          ? 'Could not find that device on this network. Open Substance Journal on it, make sure both are on the same Wi-Fi, '
+          ? 'Could not find that device on this network. Open Substance Journal on it, make sure both are on the same Wi-Fi or both signed in to Tailscale, '
               'and allow the app through the firewall if Windows asks.'
           : 'Could not reach that device ($lastError). Check it has the app open on the same Wi-Fi.',
     );

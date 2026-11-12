@@ -46,6 +46,15 @@ const _pendingPrefix = 'pending:';
 
 /// The only settings a paired device may change on this one. Anything else (the app lock, folders,
 /// remembered addresses, the pairing keys themselves) stays private to the device that owns it.
+/// An IPv4 address a paired device may announce: private LAN ranges and Tailscale's 100.64.0.0/10 only.
+bool isReachablePeerAddress(String text) {
+  final p = text.split('.');
+  if (p.length != 4) return false;
+  final n = [for (final x in p) int.tryParse(x) ?? -1];
+  if (n.any((v) => v < 0 || v > 255)) return false;
+  return n[0] == 10 || (n[0] == 172 && n[1] >= 16 && n[1] <= 31) || (n[0] == 192 && n[1] == 168) || (n[0] == 100 && n[1] >= 64 && n[1] <= 127);
+}
+
 bool isSyncableSetting(String key) =>
     key == 'recipesSeeded' || key.startsWith('estimate:') || key.startsWith('limits:') || key.startsWith('compoundPrefs:');
 
@@ -176,7 +185,7 @@ class SyncService {
   }
 
   /// A sealed package for [peerId]: only what they do not have yet, unless [everything].
-  Future<String> createPackage(String peerId, {bool everything = false}) async {
+  Future<String> createPackage(String peerId, {bool everything = false, List<String> addresses = const []}) async {
     final peer = await (db.select(db.peers)..where((t) => t.deviceId.equals(peerId))).getSingleOrNull();
     if (peer == null) throw const SyncException('Pair with that device first.');
     // A pairing nobody has claimed yet has no history: the first package carries everything.
@@ -186,6 +195,8 @@ class SyncService {
       'v': 1,
       'from': db.deviceId,
       'fromName': deviceName,
+      // Where this device can be reached (Wi-Fi, Tailscale), so the other side can find it without a broadcast.
+      if (addresses.isNotEmpty) 'addrs': addresses,
       'created': _now().toIso8601String(),
       // What this device already has from the receiver, so their reply is a true delta.
       'have': peer.lastSyncedHlc.isEmpty ? null : peer.lastSyncedHlc,
@@ -245,6 +256,12 @@ class SyncService {
             ));
       } else if (known != null && known.name != peerName) {
         await (db.update(db.peers)..where((t) => t.deviceId.equals(sender))).write(PeersCompanion(name: Value(peerName)));
+      }
+
+      final addrs = body['addrs'];
+      if (addrs is List) {
+        final clean = [for (final x in addrs) if (x is String && isReachablePeerAddress(x)) x].take(8).toList();
+        if (clean.isNotEmpty) await db.setSetting('peerAddrs:$sender', clean.join(','));
       }
 
       final merged = await _mergeTables({...?(body['tables'] as Map<String, dynamic>?)});
