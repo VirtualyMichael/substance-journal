@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:substance_journal_app/data/database.dart';
+import 'package:substance_journal_app/ui/background/app_background.dart';
 
 import 'helpers.dart';
 
@@ -47,6 +49,19 @@ void main() {
     expect(find.text('Timeline'), findsOneWidget);
     expect(find.text('Common'), findsOneWidget); // 100 mg MDMA
     expect(find.text('Ingestions'), findsOneWidget);
+    await disposeApp(tester, app);
+  });
+
+  testWidgets('the flowing background holds still while the chart-heavy session page is open', (tester) async {
+    final app = await buildTestApp(tester);
+    final me = await dbRun(tester, app.db.ensureDefaultPerson);
+    await seedExperience(tester, app, me);
+    await startApp(tester, app);
+    final container = ProviderScope.containerOf(tester.element(find.text('Saturday night')));
+    expect(container.read(backgroundPauseProvider), 0);
+    await tester.tap(find.text('Saturday night'));
+    await settle(tester);
+    expect(container.read(backgroundPauseProvider), 1);
     await disposeApp(tester, app);
   });
 

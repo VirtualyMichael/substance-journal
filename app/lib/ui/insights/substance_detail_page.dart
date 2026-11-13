@@ -8,6 +8,7 @@ import '../../data/database.dart';
 import '../../data/history_stats.dart';
 import '../../providers.dart';
 import '../charts/interactive_line_chart.dart';
+import '../background/app_background.dart' show PausesBackground;
 import '../design.dart';
 import '../journal/experience_page.dart';
 import '../journal/tolerance_card.dart' show ToleranceTrend;
@@ -64,7 +65,7 @@ class SubstanceDetailPage extends ConsumerStatefulWidget {
   ConsumerState<SubstanceDetailPage> createState() => _SubstanceDetailPageState();
 }
 
-class _SubstanceDetailPageState extends ConsumerState<SubstanceDetailPage> {
+class _SubstanceDetailPageState extends ConsumerState<SubstanceDetailPage> with PausesBackground<SubstanceDetailPage> {
   ChartRange _range = ChartRange.month;
   bool _byGain = true;
 

@@ -9,6 +9,7 @@ import '../../data/database.dart';
 import '../../providers.dart';
 import '../add/add_ingestion_page.dart';
 import '../add/dose_widgets.dart';
+import '../background/app_background.dart' show PausesBackground;
 import '../design.dart';
 import '../alcohol/alcohol_session_tiles.dart';
 import 'tolerance_card.dart';
@@ -30,7 +31,7 @@ class ExperiencePage extends ConsumerStatefulWidget {
   ConsumerState<ExperiencePage> createState() => _ExperiencePageState();
 }
 
-class _ExperiencePageState extends ConsumerState<ExperiencePage> {
+class _ExperiencePageState extends ConsumerState<ExperiencePage> with PausesBackground<ExperiencePage> {
   late final AppDatabase _db = ref.read(databaseProvider);
   final _notes = TextEditingController();
   Timer? _saveTimer;
