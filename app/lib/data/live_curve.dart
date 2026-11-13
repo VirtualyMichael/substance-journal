@@ -49,7 +49,7 @@ Map<String, Object?>? buildLiveCurve({
 
   final keys = {for (final a in active) a.substance.key};
   final recent = [for (final i in live) if (keys.contains(i.substanceKey) && now.difference(i.time) < const Duration(hours: 36)) i];
-  final built = buildTimelineSeries(ingestions: recent, reference: reference, now: now);
+  final built = buildTimelineSeries(ingestions: recent, reference: reference, now: now, alcoholSettings: alcoholSettings);
 
   final lines = <Map<String, Object?>>[];
   for (final s in built) {

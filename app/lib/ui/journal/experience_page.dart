@@ -176,7 +176,8 @@ class _ExperiencePageState extends ConsumerState<ExperiencePage> {
     final timedNotes = ref.watch(timedNotesProvider(widget.experienceId)).value ?? const <TimedNote>[];
     final ratings = ref.watch(ratingsProvider(widget.experienceId)).value ?? const <Rating>[];
 
-    final series = buildTimelineSeries(ingestions: ingestions, reference: reference, now: now);
+    final estimate = ref.watch(estimateSettingsProvider(experience.personId)).value ?? const EstimateSettings();
+    final series = buildTimelineSeries(ingestions: ingestions, reference: reference, now: now, alcoholSettings: estimate);
 
     // Alcohol in a mixed journal still gets a blood-alcohol estimate when hovering the chart.
     final drinks = [for (final i in ingestions) if (i.substanceKey == 'alcohol') i];

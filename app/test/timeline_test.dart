@@ -43,6 +43,18 @@ void main() {
   final reference = loadReference();
   final start = DateTime(2026, 7, 3, 20);
 
+  test('the alcohol curve follows the blood-alcohol model, so it is not over while the BAC says you are still drunk', () {
+    final first = DateTime(2026, 7, 3, 18);
+    final drinks = [for (var i = 0; i < 6; i++) ingestion('alcohol', 'oral', 28, first.add(Duration(minutes: 20 * i)), id: 'd$i')];
+    final now = first.add(const Duration(hours: 6));
+    final series = buildTimelineSeries(ingestions: drinks, reference: reference, now: now).singleWhere((s) => s.substanceKey == 'alcohol');
+    // 12 standard drinks at about 0.67 an hour take well over 10 hours to clear: still clearly present 6 hours in.
+    final atNow = series.points.lastWhere((p) => !p.$1.isAfter(now)).$2;
+    expect(atNow, greaterThan(0.5));
+    expect(series.end.isAfter(first.add(const Duration(hours: 14))), isTrue);
+    expect(series.label, contains('12 standard drinks')); // the same count the tiles use
+  });
+
   group('series', () {
     test('LSD at a common dose peaks at about the dose factor and is labelled', () {
       final series = buildTimelineSeries(

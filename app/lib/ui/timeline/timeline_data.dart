@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sj_core/sj_core.dart';
 
+import '../../data/alcohol_data.dart';
 import '../../data/database.dart';
 import '../../data/reference_repository.dart';
 import '../design.dart';
@@ -48,6 +49,7 @@ List<TimelineSeries> buildTimelineSeries({
   required List<Ingestion> ingestions,
   required ReferenceRepository reference,
   required DateTime now,
+  EstimateSettings alcoholSettings = const EstimateSettings(),
 }) {
   final bySubstance = <String, List<Ingestion>>{};
   for (final ingestion in ingestions) {
@@ -57,6 +59,11 @@ List<TimelineSeries> buildTimelineSeries({
   for (final entry in bySubstance.entries) {
     final substance = reference.byKey[entry.key];
     if (substance == null) continue;
+    if (entry.key == 'alcohol') {
+      final series = _alcoholSeries(substance, entry.value, alcoholSettings);
+      if (series != null) result.add(series);
+      continue;
+    }
     final curveIngestions = <CurveIngestion>[];
     final used = <Ingestion>[];
     for (final ingestion in entry.value) {
@@ -88,14 +95,36 @@ List<TimelineSeries> buildTimelineSeries({
   return result;
 }
 
+/// Alcohol is drawn from the same blood-alcohol model as the "Alcohol now" tiles (absorption lag, the
+/// person's elimination rate), not from the generic effect curve, so the curve and the numbers agree.
+/// Height is alcohol in the body relative to a common dose.
+TimelineSeries? _alcoholSeries(Substance substance, List<Ingestion> drinks, EstimateSettings settings) {
+  final sorted = [...drinks]..sort((a, b) => a.time.compareTo(b.time));
+  final model = [for (final d in sorted) alcoholDrinkFrom(d, settings)];
+  final pool = effectSeries(model, sorted.first.time, settings);
+  if (pool.isEmpty) return null;
+  final commonGrams = substance.nearestRoute('oral')?.doseCommon?.min ?? 20.0;
+  final gramsPerStandard = settings.standardDrinkPureAlcoholOz * alcoholDensityGramsPerFlOz;
+  final commonStandard = (commonGrams / gramsPerStandard).clamp(0.5, 10.0);
+  var total = 0.0;
+  for (final d in sorted) {
+    total += standardDrinksOf(d, settings);
+  }
+  final label = sorted.length == 1
+      ? 'Alcohol ${describeAlcoholDose(sorted.first)}'
+      : 'Alcohol ${total.toStringAsFixed(1).replaceFirst(RegExp(r'\.0$'), '')} standard drinks (${sorted.length} doses)';
+  return TimelineSeries(
+    label: label,
+    color: substanceColor(substance.key),
+    points: [for (final p in pool) (p.$1, p.$2 / commonStandard)],
+    ingestionId: sorted.first.id,
+    doses: [for (final d in sorted) d.time],
+    substanceKey: substance.key,
+  );
+}
+
 /// "LSD 100 µg" for one dose; "Alcohol 12 g (3 doses)" when several add up on one curve.
 String _seriesLabel(String name, List<Ingestion> used) {
-  if (used.first.substanceKey == 'alcohol') {
-    if (used.length == 1) return '$name ${describeAlcoholDose(used.first)}';
-    final grams = used.fold<double>(0, (sum, i) => sum + (i.dose ?? 0));
-    final std = grams / 14.0;
-    return '$name ${std == std.roundToDouble() ? std.toStringAsFixed(0) : std.toStringAsFixed(1)} standard drinks (${used.length} doses)';
-  }
   if (used.length == 1) return '$name ${formatDose(used.first.dose, used.first.unit)}';
   final units = {for (final i in used) i.unit};
   final known = used.every((i) => i.dose != null) && units.length == 1;
