@@ -98,7 +98,18 @@ List<TimelineSeries> buildTimelineSeries({
 /// Alcohol is drawn from the same blood-alcohol model as the "Alcohol now" tiles (absorption lag, the
 /// person's elimination rate), not from the generic effect curve, so the curve and the numbers agree.
 /// Height is alcohol in the body relative to a common dose.
+// The alcohol curve does not depend on "now", so redrawing every clock tick must not simulate it again.
+final _alcoholCache = <String, TimelineSeries?>{};
+
 TimelineSeries? _alcoholSeries(Substance substance, List<Ingestion> drinks, EstimateSettings settings) {
+  final key = '${identityHashCode(settings)}|${substance.key}|${[for (final d in drinks) '${d.id}@${d.hlc}'].join(',')}';
+  if (_alcoholCache.containsKey(key)) return _alcoholCache[key];
+  final built = _buildAlcoholSeries(substance, drinks, settings);
+  if (_alcoholCache.length >= 12) _alcoholCache.remove(_alcoholCache.keys.first);
+  return _alcoholCache[key] = built;
+}
+
+TimelineSeries? _buildAlcoholSeries(Substance substance, List<Ingestion> drinks, EstimateSettings settings) {
   final sorted = [...drinks]..sort((a, b) => a.time.compareTo(b.time));
   final model = [for (final d in sorted) alcoholDrinkFrom(d, settings)];
   final pool = effectSeries(model, sorted.first.time, settings);
