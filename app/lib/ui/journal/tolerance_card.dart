@@ -64,6 +64,14 @@ class _ToleranceCardState extends ConsumerState<ToleranceCard> {
   /// Null: the default span, two weeks before the session until it is back to baseline.
   ChartRange? _range;
 
+  List<Ingestion>? _cachedAll;
+  EstimateSettings? _cachedSettings;
+  Map<String, Substance>? _cachedCatalog;
+  List<Ingestion> _cachedLive = const [];
+  List<UseEvent> _cachedEvents = const [];
+  Map<DateTime, double> _cachedLoads = const {};
+  Map<String, List<Ingestion>> _cachedTracks = {};
+
   @override
   Widget build(BuildContext context) {
     final now = ref.watch(nowProvider);
@@ -83,12 +91,24 @@ class _ToleranceCardState extends ConsumerState<ToleranceCard> {
     }
     if (substances.isEmpty) return const SizedBox.shrink();
 
-    final live = [for (final i in all) if (!i.deleted) i];
+    // The clock ticks every 30 seconds but the journal does not change, so the heavy inputs are kept
+    // until the journal, the settings or the catalogue actually change.
+    if (!identical(_cachedAll, all) || !identical(_cachedSettings, settings) || !identical(_cachedCatalog, catalog.byKey)) {
+      final live = [for (final i in all) if (!i.deleted) i];
+      _cachedLive = live;
+      _cachedEvents = useEventsFor(live, catalog.byKey);
+      _cachedLoads = alcoholLoads([for (final i in live) if (i.substanceKey == 'alcohol') i], settings);
+      _cachedTracks = {};
+      _cachedAll = all;
+      _cachedSettings = settings;
+      _cachedCatalog = catalog.byKey;
+    }
     final ctx = _Context(
       catalog: catalog.byKey,
-      events: useEventsFor(live, catalog.byKey),
-      live: live,
-      loads: alcoholLoads([for (final i in live) if (i.substanceKey == 'alcohol') i], settings),
+      events: _cachedEvents,
+      live: _cachedLive,
+      loads: _cachedLoads,
+      tracks: _cachedTracks,
       settings: settings,
       now: now,
       start: session.first.time,
@@ -181,7 +201,7 @@ class _ToleranceCardState extends ConsumerState<ToleranceCard> {
     final gainPct = before < 0.05 ? null : (after - before) / before * 100;
 
     // How recently and how often, before this session.
-    final track = [for (final i in c.live) if (inTrack(i)) i];
+    final track = c.tracks[key] ??= [for (final i in c.live) if (inTrack(i)) i];
     final earlier = [for (final i in track) if (i.time.isBefore(c.start.subtract(const Duration(hours: 12)))) i];
     final last = earlier.isEmpty ? null : earlier.map((i) => i.time).reduce((a, b) => a.isAfter(b) ? a : b);
     final month = track.where((i) => !i.time.isBefore(c.now.subtract(const Duration(days: 30))) && !i.time.isAfter(c.now)).length;
@@ -256,11 +276,14 @@ class _ToleranceCardState extends ConsumerState<ToleranceCard> {
 
 /// What every track on the card is calculated from.
 class _Context {
-  const _Context({required this.catalog, required this.events, required this.live, required this.loads, required this.settings, required this.now, required this.start});
+  const _Context({required this.catalog, required this.events, required this.live, required this.loads, required this.tracks, required this.settings, required this.now, required this.start});
   final Map<String, Substance> catalog;
   final List<UseEvent> events;
   final List<Ingestion> live;
   final Map<DateTime, double> loads;
+
+  /// Each track's own ingestions, found once per journal state.
+  final Map<String, List<Ingestion>> tracks;
   final EstimateSettings settings;
   final DateTime now;
   final DateTime start;

@@ -134,6 +134,7 @@ class _AppShellState extends ConsumerState<AppShell> {
     ref.watch(digestAutoWriterProvider);
     ref.watch(liveCurveProvider);
     ref.watch(watchPushProvider);
+    ref.watch(alcoholLoadsWarmProvider);
     ref.watch(reminderServiceProvider);
     final person = ref.watch(currentPersonProvider);
     if (person == null) return const Scaffold(body: Center(child: CircularProgressIndicator()));

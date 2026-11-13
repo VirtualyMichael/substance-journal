@@ -11,6 +11,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:sj_core/sj_core.dart';
 
+import 'data/history_stats.dart' show warmAlcoholLoads;
 import 'data/alcohol_import.dart';
 import 'data/custom_substances.dart';
 import 'data/database.dart';
@@ -352,6 +353,18 @@ final watchPrefsProvider = StreamProvider<WatchPrefs>((ref) => ref.watch(databas
 /// Sends the curve and recent doses to a paired watch (about once a minute and whenever a dose is
 /// logged), and answers the watch's "Same as last time" while the app is open. Nothing is sent
 /// unless the person turned the watch on. Watched by the app shell; does nothing off Android and in tests.
+/// Keeps the alcohol tolerance inputs calculated in the background, so no screen has to wait for them.
+final alcoholLoadsWarmProvider = Provider<void>((ref) {
+  final person = ref.watch(currentPersonProvider);
+  if (person == null) return;
+  final all = ref.watch(personIngestionsProvider(person.id)).value;
+  final settings = ref.watch(estimateSettingsProvider(person.id)).value;
+  if (all == null || settings == null) return;
+  final drinks = [for (final i in all) if (i.substanceKey == 'alcohol') i];
+  if (drinks.isEmpty) return;
+  unawaited(warmAlcoholLoads(drinks, settings));
+});
+
 final watchPushProvider = Provider<void>((ref) {
   if (Platform.environment.containsKey('FLUTTER_TEST') || !Platform.isAndroid) return;
   final prefs = ref.watch(watchPrefsProvider).value ?? const WatchPrefs();

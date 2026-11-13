@@ -168,14 +168,24 @@ String _unit(Ingestion i) => i.substanceKey == 'alcohol' ? 'std drinks' : (i.uni
 /// Simulating every session is the slowest calculation in the app, and screens ask for it every
 /// tick, so the last answer is kept until the drinks or settings change.
 Map<DateTime, double> alcoholLoads(List<Ingestion> drinks, EstimateSettings settings) {
-  // Sorted, so callers that list the same drinks in a different order share the cached answer.
-  final live = [
-    for (final d in drinks)
-      if (!d.deleted) d,
-  ]..sort((a, b) => a.time != b.time ? a.time.compareTo(b.time) : a.id.compareTo(b.id));
-  final key = Object.hashAll([for (final d in live) Object.hash(d.id, d.time, d.endTime, d.dose, d.detailsJson)]);
+  final live = _sortedLive(drinks);
+  final key = _loadsKey(live);
   final cached = _loadsCache;
   if (cached != null && cached.$1 == key && identical(cached.$2, settings)) return cached.$3;
+  final loads = _computeLoads(live, settings);
+  _loadsCache = (key, settings, loads);
+  return loads;
+}
+
+/// Sorted, so callers that list the same drinks in a different order share the cached answer.
+List<Ingestion> _sortedLive(List<Ingestion> drinks) => [
+      for (final d in drinks)
+        if (!d.deleted) d,
+    ]..sort((a, b) => a.time != b.time ? a.time.compareTo(b.time) : a.id.compareTo(b.id));
+
+int _loadsKey(List<Ingestion> live) => Object.hashAll([for (final d in live) Object.hash(d.id, d.time, d.endTime, d.dose, d.detailsJson)]);
+
+Map<DateTime, double> _computeLoads(List<Ingestion> live, EstimateSettings settings) {
   final converted = [for (final d in live) alcoholDrinkFrom(d, settings)];
   final loads = <DateTime, double>{};
   if (converted.isNotEmpty) {
@@ -184,8 +194,20 @@ Map<DateTime, double> alcoholLoads(List<Ingestion> drinks, EstimateSettings sett
       loads[e.start] = (loads[e.start] ?? 0) + e.exposureBacHours;
     }
   }
-  _loadsCache = (key, settings, loads);
   return loads;
+}
+
+/// Does the slow part of [alcoholLoads] on a background isolate and leaves the answer where
+/// [alcoholLoads] finds it, so opening a screen that needs it does not freeze for half a second.
+Future<void> warmAlcoholLoads(List<Ingestion> drinks, EstimateSettings settings) async {
+  final live = _sortedLive(drinks);
+  final key = _loadsKey(live);
+  final cached = _loadsCache;
+  if (cached != null && cached.$1 == key && identical(cached.$2, settings)) return;
+  final loads = await offMain(() => _computeLoads(live, settings));
+  final now = _loadsCache;
+  if (now != null && now.$1 == key && identical(now.$2, settings)) return; // a screen got there first
+  _loadsCache = (key, settings, loads);
 }
 
 (int, EstimateSettings, Map<DateTime, double>)? _loadsCache;

@@ -61,8 +61,7 @@ class AppBackground extends ConsumerWidget {
     final light = Theme.of(context).brightness == Brightness.light;
     final scrim = (light ? Colors.white : Colors.black).withValues(alpha: config.dim);
     final look = style ?? flowStyleForPlatform();
-    final paused = ref.watch(backgroundPauseProvider) > 0;
-    Widget flow(bool animate) => _FlowLayer(style: look, palette: paletteById(config.palette), light: light, animate: animate, paused: paused, quality: config.quality, fps: config.effectiveFps);
+    Widget flow(bool animate) => _FlowLayer(style: look, palette: paletteById(config.palette), light: light, animate: animate, quality: config.quality, fps: config.effectiveFps);
     final Widget art;
     switch (config.mode) {
       case BackgroundMode.image:
@@ -83,56 +82,14 @@ class AppBackground extends ConsumerWidget {
   }
 }
 
-/// How many chart-heavy screens are open right now. While any is, the flowing background holds still:
-/// redrawing a full-screen shader every frame under several charts is what makes those pages stutter.
-class BackgroundPause extends Notifier<int> {
-  @override
-  int build() => 0;
-  void push() => state++;
-  void pop() => state = state > 0 ? state - 1 : 0;
-}
-
-final backgroundPauseProvider = NotifierProvider<BackgroundPause, int>(BackgroundPause.new);
-
-/// Add to the State of a screen full of charts: the background freezes while it is open.
-mixin PausesBackground<T extends ConsumerStatefulWidget> on ConsumerState<T> {
-  BackgroundPause? _pause;
-
-  // The whole app (and its providers) may already be torn down when this runs.
-  static void _safely(void Function()? action) {
-    try {
-      action?.call();
-    } on Object {
-      // Nothing left to pause.
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _pause = ref.read(backgroundPauseProvider.notifier);
-    Future.microtask(() => _safely(_pause?.push));
-  }
-
-  @override
-  void dispose() {
-    final pause = _pause;
-    _pause = null;
-    if (pause != null) Future.microtask(() => _safely(pause.pop));
-    super.dispose();
-  }
-}
-
 class _FlowLayer extends StatefulWidget {
-  const _FlowLayer({required this.style, required this.palette, required this.light, required this.animate, required this.quality, required this.fps, this.paused = false});
+  const _FlowLayer({required this.style, required this.palette, required this.light, required this.animate, required this.quality, required this.fps});
 
   final FlowStyle style;
   final FlowPalette palette;
   final bool light;
   final bool animate;
 
-  /// Hold the current frame (a chart-heavy screen is open) without jumping back to the still frame.
-  final bool paused;
   final BackgroundQuality quality;
   final int fps;
 
@@ -172,9 +129,7 @@ class _FlowLayerState extends State<_FlowLayer> with SingleTickerProviderStateMi
   }
 
   void _syncTicker() {
-    if (widget.animate && widget.paused) {
-      if (_ticker.isActive) _ticker.stop();
-    } else if (widget.animate && !_ticker.isActive) {
+    if (widget.animate && !_ticker.isActive) {
       // A restarted ticker counts from zero again, so forget how far the last run got.
       _last = Duration.zero;
       _ticker.start();
