@@ -25,6 +25,8 @@ Pick rule per band edge (threshold, low, common, high, heavy):
   higher heavy figure. Clinical papers and FDA labels are context only and never vote.
 Ladder: low.max = common.min, common.max = high.min, high.max = heavy (or the strong max when no source gives heavy).
 --rest adds every other catalog compound where PsychonautWiki and TripSit both publish a route.
+
+After a rebuild, run scripts/apply_owner_dose_decisions.py so the owner's own choices (commit 6c7a7ec) replace the audit's medians on those routes.
 """
 import json, os, re, sys, time, urllib.parse, urllib.request
 from pathlib import Path

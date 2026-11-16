@@ -545,12 +545,12 @@ def test_the_prepare_tools_still_write_nothing(srv):
 
 
 def test_the_dose_hold_uses_the_audited_high_and_heavy_edges(srv):
-    # Cocaine snorted: the catalog's heavy is 150 mg, the cross-checked audit (PsychonautWiki now, TripSit) puts it at 90 mg.
-    roa = srv.resolve_route(srv.resolve_substance("cocaine"), "snorted")
+    # MDMA by mouth: the catalog's heavy edge is 150 mg; two sources (TripSit 175+, Erowid 200+) put it higher, so the audit's is 175 mg.
+    roa = srv.resolve_route(srv.resolve_substance("mdma"), "oral")
     assert roa["dose_heavy"] == 150
-    assert "heavy" in srv.dose_warning(roa, 100)
-    assert srv.dose_warning(roa, 50) == ""
-    held = json.loads(srv.log_dose("cocaine", 100, unit="mg", route="snorted"))
+    assert srv.dose_warning(roa, 160) == ""
+    assert "heavy" in srv.dose_warning(roa, 180)
+    held = json.loads(srv.log_dose("mdma", 180, unit="mg", route="oral"))
     assert held["held_for_yes"] is True and held["saved"] == "nothing"
     # A route the audit does not cover keeps the catalog's own bands.
     shrooms = srv.resolve_route(srv.resolve_substance("psilocybin mushrooms"), "oral")
@@ -566,10 +566,10 @@ def test_without_the_audit_file_the_catalog_bands_stand(srv, tmp_path, monkeypat
         (data / name).write_text((real / name).read_text(encoding="utf-8"), encoding="utf-8")
     monkeypatch.setenv("SUBSTANCE_JOURNAL_DATA", str(data))
     srv._catalog = None
-    roa = srv.resolve_route(srv.resolve_substance("cocaine"), "snorted")
+    roa = srv.resolve_route(srv.resolve_substance("mdma"), "oral")
     assert srv._audited_edges == {}
-    assert srv.dose_warning(roa, 100) == ""
+    assert "heavy" in srv.dose_warning(roa, 160)
     (data / "dose_audit.json").write_text("{not json", encoding="utf-8")
     srv._catalog = None
-    roa = srv.resolve_route(srv.resolve_substance("cocaine"), "snorted")
-    assert srv._audited_edges == {} and srv.dose_warning(roa, 100) == ""
+    roa = srv.resolve_route(srv.resolve_substance("mdma"), "oral")
+    assert srv._audited_edges == {} and "heavy" in srv.dose_warning(roa, 160)
