@@ -132,3 +132,23 @@ def test_missing_folder_explains_how_to_make_it(tmp_path, monkeypatch):
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
     assert "Keep the folder up to date" in mod.profile()
+
+
+def test_every_tool_is_marked_read_only(srv):
+    import asyncio
+
+    tools = asyncio.run(srv.mcp.list_tools())
+    assert len(tools) == 10
+    for t in tools:
+        a = t.annotations
+        assert getattr(a, "read_only_hint", getattr(a, "readOnlyHint", None)) is True, t.name
+
+
+def test_a_default_person_answers_for_me_when_several_exist(srv, tmp_path, monkeypatch):
+    other = tmp_path / "alex"
+    other.mkdir()
+    (other / "profile.md").write_text("# Alex\n", encoding="utf-8")
+    assert "More than one person" in srv.profile()
+    monkeypatch.setenv("SUBSTANCE_JOURNAL_PERSON", "Me")
+    assert srv.profile() == srv.profile(person="me") and "More than one person" not in srv.profile()
+    assert "Alex" in srv.profile(person="alex")

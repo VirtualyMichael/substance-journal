@@ -21,6 +21,7 @@ import '../testing/testing_page.dart';
 import '../safety/safer_use_page.dart';
 import 'reminders_section.dart';
 import 'watch_section.dart';
+import '../voice_assistant.dart';
 import 'pw_import_flow.dart';
 import 'background_section.dart';
 import '../lock/lock_gate.dart';
@@ -108,7 +109,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
       SettingsCategory.sync => 'Phone and computer, automatic sync',
       SettingsCategory.security => (lock?.enabled ?? false) ? 'App lock on, journal encrypted' : 'App lock off, journal encrypted',
       SettingsCategory.backup => 'Backups, exports and imports',
-      SettingsCategory.ai => 'A summary for an AI tool',
+      SettingsCategory.ai => ref.watch(assistantLinkSupportedProvider) ? 'A summary for an AI tool, and the voice assistant' : 'A summary for an AI tool',
       SettingsCategory.data => 'Custom units, products, glossary, safer use',
       SettingsCategory.about => 'Sources and credits',
     };
@@ -372,7 +373,7 @@ class SettingsCategoryBody extends ConsumerWidget {
               onPressed: () => runPwImport(context, ref),
             ),
       ],
-      SettingsCategory.ai => [DigestSection(person: person)],
+      SettingsCategory.ai => [DigestSection(person: person), const SizedBox(height: Gap.lg), const VoiceAssistantSection()],
       SettingsCategory.data => [
             Text('Custom units', style: text.titleMedium),
             const SizedBox(height: 4),

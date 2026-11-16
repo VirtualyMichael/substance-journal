@@ -16,6 +16,10 @@ try:
     from mcp.server.mcpserver import MCPServer as FastMCP  # mcp 2.x
 except ImportError:
     from mcp.server.fastmcp import FastMCP  # mcp 1.x
+from mcp.types import ToolAnnotations
+
+# Every tool only reads the digest folder, so an assistant can run them without asking each time.
+RO = ToolAnnotations(readOnlyHint=True, destructiveHint=False, idempotentHint=True, openWorldHint=False)
 
 GUIDE = """How to use the journal records (read this once):
 
@@ -84,6 +88,11 @@ def _dir(person: str) -> tuple[Path | None, str]:
             if d.name == want or d.name.startswith(want):
                 return d, ""
         return None, "No such person. Available: " + ", ".join(d.name for d in people)
+    me = re.sub(r"[^a-z0-9]+", "-", os.environ.get("SUBSTANCE_JOURNAL_PERSON", "").lower()).strip("-")
+    if me and len(people) > 1:  # the person "my", "me" and "I" mean, set where the server is registered
+        for d in people:
+            if d.name == me:
+                return d, ""
     if len(people) > 1:
         return None, "More than one person in the journal. Pass person=one of: " + ", ".join(d.name for d in people)
     return people[0], ""
@@ -111,20 +120,20 @@ def _read(folder: Path, rel: str) -> str:
         return ""
 
 
-@mcp.tool()
+@mcp.tool(annotations=RO)
 def guide() -> str:
     """How the records are laid out and how to answer well from them. Call this first."""
     return GUIDE
 
 
-@mcp.tool()
+@mcp.tool(annotations=RO)
 def list_people() -> str:
     """The people whose journals are available."""
     people = _people()
     return ", ".join(d.name for d in people) if people else _missing()
 
 
-@mcp.tool()
+@mcp.tool(annotations=RO)
 def profile(person: str = "", max_tokens: int = 1500) -> str:
     """One page: what is used, how often, last use, tolerance and direction, the last 7 days, the latest experiences."""
     folder, err = _dir(person)
@@ -133,7 +142,7 @@ def profile(person: str = "", max_tokens: int = 1500) -> str:
     return _cap(_read(folder, "profile.md"), max_tokens)
 
 
-@mcp.tool()
+@mcp.tool(annotations=RO)
 def month(month: str = "", person: str = "", max_tokens: int = 2500) -> str:
     """One month day by day with totals (month as YYYY-MM; empty for the latest month)."""
     folder, err = _dir(person)
@@ -148,7 +157,7 @@ def month(month: str = "", person: str = "", max_tokens: int = 2500) -> str:
     return _cap(_read(folder, f"months/{chosen}.md"), max_tokens)
 
 
-@mcp.tool()
+@mcp.tool(annotations=RO)
 def list_experiences(start: str = "", end: str = "", substance: str = "", limit: int = 20, person: str = "") -> str:
     """Experiences newest first as one line each (date YYYY-MM-DD for start and end; substance by name). Use experience() to open one."""
     folder, err = _dir(person)
@@ -171,7 +180,7 @@ def list_experiences(start: str = "", end: str = "", substance: str = "", limit:
     return "\n".join(shown) + more
 
 
-@mcp.tool()
+@mcp.tool(annotations=RO)
 def experience(which: str = "latest", person: str = "", max_tokens: int = 2500) -> str:
     """One experience's full fact sheet: 'latest', a date YYYY-MM-DD (every experience that day) or an id from list_experiences."""
     folder, err = _dir(person)
@@ -191,7 +200,7 @@ def experience(which: str = "latest", person: str = "", max_tokens: int = 2500) 
     return _cap(text, max_tokens)
 
 
-@mcp.tool()
+@mcp.tool(annotations=RO)
 def find(text: str, limit: int = 8, person: str = "") -> str:
     """Search notes, doses, products and ratings across everything for a word or phrase. Returns short snippets with the date and file."""
     folder, err = _dir(person)
@@ -212,7 +221,7 @@ def find(text: str, limit: int = 8, person: str = "") -> str:
     return "\n".join(shown) + more
 
 
-@mcp.tool()
+@mcp.tool(annotations=RO)
 def doses(substance: str, start: str = "", end: str = "", limit: int = 40, person: str = "") -> str:
     """Every dose of one compound (by name) over a date range, with potency and notes, newest first."""
     folder, err = _dir(person)
@@ -241,7 +250,7 @@ def doses(substance: str, start: str = "", end: str = "", limit: int = 40, perso
     return "\n".join(shown) + more
 
 
-@mcp.tool()
+@mcp.tool(annotations=RO)
 def tolerance(person: str = "") -> str:
     """Where tolerance stands for each compound used, with its direction (rising, steady, falling), last use and counts."""
     folder, err = _dir(person)
@@ -251,7 +260,7 @@ def tolerance(person: str = "") -> str:
     return "\n".join(lines) if lines else "No tolerance information (nothing used recently)."
 
 
-@mcp.tool()
+@mcp.tool(annotations=RO)
 def compare_months(a: str, b: str, person: str = "") -> str:
     """Totals for two months side by side (YYYY-MM each): doses, days used, per-compound totals."""
     folder, err = _dir(person)

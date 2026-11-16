@@ -27,7 +27,7 @@ class _LockSectionState extends ConsumerState<LockSection> {
     });
   }
 
-  Future<String?> _askPin(String title, {bool confirm = false}) => showDialog<String>(context: context, builder: (_) => _PinDialog(title: title, confirm: confirm));
+  Future<String?> _askPin(String title, {bool confirm = false}) => showDialog<String>(context: context, builder: (_) => PinDialog(title: title, confirm: confirm));
 
   Future<void> _setPin(LockConfig current) async {
     if (current.enabled) {
@@ -133,17 +133,18 @@ class _LockSectionState extends ConsumerState<LockSection> {
   }
 }
 
-class _PinDialog extends StatefulWidget {
-  const _PinDialog({required this.title, required this.confirm});
+/// Asks for a PIN (twice when [confirm]); pops it, or null on Cancel.
+class PinDialog extends StatefulWidget {
+  const PinDialog({super.key, required this.title, this.confirm = false});
 
   final String title;
   final bool confirm;
 
   @override
-  State<_PinDialog> createState() => _PinDialogState();
+  State<PinDialog> createState() => _PinDialogState();
 }
 
-class _PinDialogState extends State<_PinDialog> {
+class _PinDialogState extends State<PinDialog> {
   final _pin = TextEditingController();
   final _again = TextEditingController();
   String? _error;

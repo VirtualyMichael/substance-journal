@@ -88,13 +88,25 @@ DanceSafe, NUAA and Wikipedia instead of baking colours in.
 - **Presets.** Low, Medium and High filled from each route's reference ranges, plus your own saved presets (even a whole cannabis calculator setup).
 - **Same as last time** on the journal repeats your latest dose after one confirm, and **Log now** on the dose step saves a dose in two taps. Every compound also lists your **recent doses** and presets right where you enter the dose.
 - **Tolerance on the experience page.** Where tolerance stands for what you took, whether it is rising or falling, how long since you last used it, and when it should be back to baseline.
-- **Voice assistant logging.** The MCP server logs doses, drinks, presets and timed notes by voice, with a read-back and a yes before anything is saved, and explains how to phrase requests the first time (see `mcp/substance-journal`).
+- **Voice assistant logging.** The MCP server logs doses, drinks, presets and timed notes by voice, saving at once and telling you what it saved (undo is one phrase away; only a dose above the reference's strong range waits for a yes), and explains how to phrase requests the first time (see `mcp/substance-journal`).
 - **Tolerance & history.** Insights shows tolerance over time for everything used in the last year (drag across a chart to read any day; range chips from a week to all time) and a card per substance. Each substance opens a full history: when today's tolerance halves, a break planner, records (largest dose per route, largest session, most in 24 hours, highest peak or BAC), lifetime figures, the amount per session over time, day and hour patterns, routes, what it is taken with, and the sessions that raised tolerance most. Doses count by size against a common dose, and repeat doses in one session count less.
 - **Session tolerance and alcohol figures.** Each experience has an interactive tolerance chart with how much the session added (before → after, %) and when it halves from the end of the session and from now. Drinking sessions show standard drinks, active now, BAC now, the estimated peak, near-zero time and the tolerance multiplier (a past session shows its peak, near-zero time and tolerance before → after).
 - **Summary for an AI.** Settings > Summary for an AI copies a text summary (small, medium or large, with names, notes and places left out by default) or keeps a folder of small pre-calculated files up to date on a computer. A read-only MCP server and a portable skill let a local or cloud AI read the profile, a month or one experience at a time, with potency, estimated curves, tolerance, notes and ratings, so even a short context window is enough (see `mcp/substance-journal-reader`).
 - **Live curve notification (Android).** An optional persistent notification with a graph of your current estimated curve: a coloured line per active substance, dose dots, a now marker and the BAC if alcohol is in the mix. It redraws every minute, goes away when nothing is active, and has Same as last, Add dose and Add note buttons. Substance names are hidden whenever the screen is off or the phone is locked (the graph and BAC still show). Turn it on in Settings.
 - **Quick log** (the bolt in the app bar): one tap, then a confirm, logs a preset, repeats a recent dose or logs a drink, and warns if that substance is still active. On Android it also opens from the app icon's long-press menu, a Quick Settings tile and a home-screen widget.
 - **Psilocybin mushrooms** are weighed in grams, dried or fresh (fresh counts as a tenth), with a pure-psilocybin option that converts for you.
+  A **potency calculator** in the add flow also takes powder, capsules (count x mg), chocolate or gummies (by labelled g or mg), tea and lemon tek; how dry the
+  material is; whole, caps or stems; the batch's psilocybin and psilocin % (from your lab result, a published analysis, your own estimate or a personal
+  calibration); and an optional storage-loss guess. It shows an estimate of **psilocybin equivalents in mg with a low-high range**, the formula
+  (psilocybin + psilocin x 284.25/204.27) and every assumption with its source. The entry still logs grams of dried mushroom; the estimate and the inputs
+  are stored beside it. **Batches** are saved as presets (name, strain, potency, where the number came from, form, amount, notes), so the next entry is one
+  tap, and after an entry you can record how the batch compared with what you expected to get a damped personal calibration (never dosing advice).
+  A small **strain reference** gives numbers only where a lab analysis was published, and a **Get your batch tested** page explains potency tests and lists
+  services checked on their own sites (`app/assets/data/mushroom_strains.json`, `app/assets/data/potency_testing.json`).
+- **LSD and mushroom tolerance as a percent.** For LSD and psilocybin mushrooms (and mescaline through published cross-tolerance), the experience page shows
+  the estimated loss of effect for a same-size dose with an uncertainty band, from a tolerance profile with sources (Isbell 1956 and 1961, Wolbach 1962 and
+  others, reviewed by Buchborn et al. 2016): little in the first hours, about half a day later, about 80% with daily use, gone within about 3 to 6 days.
+  It deliberately gives no "dose to feel normal".
 
 ### Alcohol mode
 
@@ -177,14 +189,33 @@ Doses, durations, tolerance and interactions come from [PsychonautWiki](https://
 | **Copied, sources differ** | 103 | The app shows where PsychonautWiki and TripSit disagree and says to start with the lower figure. |
 | **Copied** | the rest | From PsychonautWiki only, labelled as not independently checked. |
 
-The cross-check is reproducible: `python scripts/crosscheck_tripsit.py` regenerates [the report](docs/data-audit/crosscheck.md). See
+The cross-check is reproducible: `python scripts/crosscheck_tripsit.py` regenerates [the report](docs/data-audit/crosscheck.md).
+
+**Dose audit (threshold, low, common, high, heavy).** `app/assets/data/dose_audit.json` holds dose bands for 187 compounds (232 routes) checked against PsychonautWiki's current pages, Erowid's dose charts and TripSit, with clinical studies and FDA labels for context. Each entry lists every source's own figures, how far they agree and a confidence level, and the compound page shows them. The app and the MCP server's dose hold use these bands in place of the catalog's; anything not audited says it comes from one source. `python scripts/build_dose_audit.py --fetch` then `python scripts/build_dose_audit.py --rest app/assets/data/dose_audit.json` rebuilds it (see the script's header for the rules).
+
+**Compound pages** also draw a tolerance graph (one common dose, and a common dose every 1, 3, 7 or 14 days) from the same tolerance model as the experience page, and, for 26 common compounds, plain-language sections on what it is, how it works, typical effects, timing and harm reduction from `app/assets/data/compound_details.json`, each with its sources. See
 [docs/ATTRIBUTION.md](docs/ATTRIBUTION.md) for licences and credit, and [docs/ROADMAP.md](docs/ROADMAP.md) for what is done and what is next.
 
 ## AI and voice access
 
 [`mcp/substance-journal`](mcp/substance-journal) is an optional [MCP](https://modelcontextprotocol.io) server that lets Claude, a voice assistant or another agent read reports from
-and log into the journal's database on your computer. It only adds rows (stamped like another device so they sync to your phone), can remove only entries it made itself,
-and every log reads back what it will do and waits for a yes first. Tools: `log_drink`, `log_dose`, `undo_last`, `report`, `list_people`, `list_presets`.
+and log into the journal's database on your computer. A `log_*` tool saves what you asked for at once and the assistant tells you what it saved; an entry with a warning (a dose above the strong range) is held, and
+`confirm_log` saves it only with your clear yes in your own words. (The `prepare_*` functions inside the server are not offered as tools: a small model used them and asked for a yes it did not need.) It only adds rows (stamped like another device so they sync to your phone), can undo
+only its own entries from the last 10 minutes that you have not changed, and is capped at 24 hours back, nothing in the future and 12 entries an hour.
+A SQLite authorizer refuses every other write, reads use a read-only connection, and the journal is backed up before writing. Tools: `log_dose`, `log_drink`, `log_preset`, `log_note`, `confirm_log`, `undo_last`, and the read-only `current_status` (what is active now, with an estimated
+phase), `recent`, `report`, `how_to_ask`, `list_people`, `list_presets`. [`mcp/substance-journal-reader`](mcp/substance-journal-reader) is read-only and works from the app's plain-text summary folder.
+
+**Voice assistant link (encrypted journal).** The app never hands out its database key. On a computer you let the assistant in yourself: open the app,
+go to *Settings > Summary for an AI > Voice assistant* and switch on *Let my voice assistant add entries while this app is open* (it asks for your app
+lock PIN first if you set one; off by default, and it only turns itself on at start if you also tick *Turn on again when the app starts*). While it is on,
+the app answers on 127.0.0.1 only and writes `voice-assistant\link.json` beside the journal with a port and a token: a random key for this link only,
+made new each time, **not the database key**. The MCP server uses that link in preference to the file, and the app writes each entry itself, so
+encryption, sync and every screen behave as for an entry you typed. A *Voice assistant linked* strip shows while it is on, and every entry it adds
+pops up with an **Undo**. Through the link the assistant can add doses, drinks and notes and undo its own recent ones; it cannot read your whole
+journal (only the latest few entries, what is active now, people and preset names), edit or delete your entries, or see anything when the app is
+closed. The app enforces its own limits too: inserts only, nothing in the future or over 24 hours old, 12 assistant entries an hour, each request once.
+While the link is on, `link.json` can be read by any program running as your Windows user, so turn the link off when you do not need it. With an
+encrypted journal and no link, the server says: *"Open Substance Journal and turn on Settings > Voice assistant."*
 
 ## Build from source
 

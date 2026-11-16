@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -13,6 +14,8 @@ part 'database.g.dart';
 
 /// Bumped when a table changes; backups copy the file before an upgrade past an older number.
 const int currentSchemaVersion = 5;
+
+const Symbol _stampNodeKey = #sjStampNode;
 
 @DriftDatabase(tables: [
   People,
@@ -66,11 +69,20 @@ class AppDatabase extends _$AppDatabase {
         },
       );
 
-  /// Stamps a local edit: advances the clock and returns its text form.
+  /// Stamps a local edit: advances the clock and returns its text form. Inside [stampedAs] the
+  /// stamp carries that node id instead of this device's (the clock itself still advances), so an
+  /// edit made for the voice assistant reads `...-mcp`, as the assistant's own server always wrote.
   String nextHlc() {
     _clock = _clock.send(_nowMillis());
-    return _clock.toString();
+    final node = Zone.current[_stampNodeKey];
+    return node is String ? Hlc(_clock.wallMillis, _clock.counter, node).toString() : _clock.toString();
   }
+
+  /// Runs [body] with every edit in it stamped as made by [node] (see [nextHlc]).
+  Future<T> stampedAs<T>(String node, Future<T> Function() body) => runZoned(body, zoneValues: {_stampNodeKey: node});
+
+  /// Milliseconds on this database's clock (what [nextHlc] stamps with).
+  int get nowMillis => _nowMillis();
 
   /// Folds a remote clock into ours so later local edits sort after everything we have seen.
   void observeHlc(String remote) {
@@ -565,7 +577,9 @@ class AppDatabase extends _$AppDatabase {
         ..orderBy([(t) => OrderingTerm.asc(t.name)]))
       .watch();
 
-  /// Saves what the dose step holds ([input], the dose form's own JSON) under [name].
+  /// Saves what the dose step holds ([input], the dose form's own JSON) under [name]. [extra] adds
+  /// keys beside 'input' (a mushroom batch keeps its strain and potency under 'batch'); older
+  /// versions read only 'input' and ignore the rest.
   Future<Preset> addDosePreset({
     required String substanceKey,
     required String route,
@@ -573,6 +587,7 @@ class AppDatabase extends _$AppDatabase {
     required double amount,
     required String unit,
     required Map<String, Object?> input,
+    Map<String, Object?> extra = const {},
   }) async {
     final id = newId();
     await into(presets).insert(PresetsCompanion.insert(
@@ -583,10 +598,25 @@ class AppDatabase extends _$AppDatabase {
       name: name.trim(),
       amount: amount,
       unit: unit,
-      detailsJson: Value(jsonEncode({'input': input})),
+      detailsJson: Value(jsonEncode({...extra, 'input': input})),
     ));
     return (select(presets)..where((t) => t.id.equals(id))).getSingle();
   }
+
+  /// Rewrites a dose preset's name, amount and saved form (a mushroom batch after a new lab result).
+  Future<void> updateDosePreset(
+    String id, {
+    required String name,
+    required double amount,
+    required Map<String, Object?> input,
+    Map<String, Object?> extra = const {},
+  }) =>
+      (update(presets)..where((t) => t.id.equals(id))).write(PresetsCompanion(
+        name: Value(name.trim()),
+        amount: Value(amount),
+        detailsJson: Value(jsonEncode({...extra, 'input': input})),
+        hlc: Value(nextHlc()),
+      ));
 
   Future<void> setPresetDeleted(String id, bool value) =>
       (update(presets)..where((t) => t.id.equals(id))).write(PresetsCompanion(deleted: Value(value), hlc: Value(nextHlc())));

@@ -20,6 +20,7 @@ import 'journal/experience_page.dart';
 import 'journal/journal_page.dart';
 import 'quicklog/quick_log_page.dart';
 import 'settings/settings_page.dart';
+import 'voice_assistant.dart';
 
 enum _Destination { journal, calendar, compounds, insights, settings, today, history, analytics, recipes }
 
@@ -206,7 +207,8 @@ class _AppShellState extends ConsumerState<AppShell> {
                   NavigationDestination(icon: Icon(icon), selectedIcon: Icon(selected), label: label),
               ],
             ),
-      body: wide
+      body: VoiceAssistantHost(
+        child: wide
           ? Row(
               children: [
                 NavigationRail(
@@ -223,6 +225,7 @@ class _AppShellState extends ConsumerState<AppShell> {
               ],
             )
           : body,
+      ),
     );
   }
 }

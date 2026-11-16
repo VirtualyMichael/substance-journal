@@ -34,7 +34,7 @@ open the profile, a month and several experiences in one conversation.
 {"mcpServers": {"substance-journal-reader": {"command": "python", "args": ["<path>/mcp/substance-journal-reader/server.py"]}}}
 ```
 
-   `pip install mcp` first. Set `SUBSTANCE_JOURNAL_DIGEST` if the folder is somewhere else.
+   `pip install mcp` first. Set `SUBSTANCE_JOURNAL_DIGEST` if the folder is somewhere else, and `SUBSTANCE_JOURNAL_PERSON` (in the server's `env`) to the person "my" and "me" mean when the journal has several people.
 
 ## Tools
 
