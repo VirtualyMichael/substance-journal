@@ -33,7 +33,7 @@ const int assistantLinkVersion = 1;
 const String assistantNode = 'mcp';
 
 /// The app's version as shown to the assistant (keep in step with pubspec.yaml).
-const String appVersionName = '2.0.0';
+const String appVersionName = '2.0.1';
 
 class AssistantCaps {
   const AssistantCaps({
