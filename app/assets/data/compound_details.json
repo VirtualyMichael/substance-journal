@@ -1,0 +1,945 @@
+{
+ "version": 1,
+ "generated": "2026-11-15",
+ "note": "Plain-language summaries written from the sources listed with each compound. Effect names that match the PsychonautWiki effect index (effects.json) link to its definition.",
+ "compounds": {
+  "lsd": {
+   "what_it_is": "A semi-synthetic psychedelic made from a compound in ergot fungus, active in millionths of a gram.",
+   "how_it_works": "It binds strongly to several serotonin receptors, above all the 5-HT2A receptor, and to a lesser extent to dopamine and adrenaline-type receptors. Activating 5-HT2A is what produces the psychedelic effects.",
+   "effects": [
+    "Color enhancement",
+    "Visual distortions",
+    "Cognitive euphoria",
+    "Thought acceleration",
+    "Anxiety",
+    "Confusion",
+    "Time distortion",
+    "Pupil dilation"
+   ],
+   "timing": "Swallowed: effects begin in about 0.4 to 1 hour and last about 7 to 12 hours (Wikipedia); TripSit gives an onset of 45 to 90 minutes, 9 to 14 hours of effects and 12 to 24 hours of after-effects. Larger doses last longer.",
+   "harm_reduction": [
+    "Blotter sold as LSD is sometimes an NBOMe compound instead (Erowid); a reagent test can tell them apart.",
+    "Tabs are often weaker than advertised (TripSit), so the amount on a tab is usually unknown.",
+    "TripSit advises caution with cannabis, which can intensify and change the effects.",
+    "In a dose study, 200 µg produced significant anxiety where 100 µg did not (Holze 2021)."
+   ],
+   "sources": [
+    {
+     "name": "Wikipedia: LSD",
+     "url": "https://en.wikipedia.org/wiki/LSD",
+     "used_for": "what it is, how it works, side effects",
+     "retrieved": "2026-11-15"
+    },
+    {
+     "name": "TripSit factsheet",
+     "url": "https://tripsit.me/factsheets/lsd",
+     "used_for": "effects, timing, cautions",
+     "retrieved": "2026-11-15"
+    },
+    {
+     "name": "Erowid",
+     "url": "https://erowid.org/chemicals/lsd/lsd_dose.shtml",
+     "used_for": "blotter and NBOMe caution",
+     "retrieved": "2026-11-15"
+    },
+    {
+     "name": "Holze et al. 2021",
+     "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8027607/",
+     "used_for": "anxiety at 200 µg",
+     "retrieved": "2026-11-15"
+    }
+   ]
+  },
+  "psilocybin_mushrooms": {
+   "what_it_is": "A broad group of fungi from several genera that contain psilocybin; there is no single \"magic mushroom\" species.",
+   "how_it_works": "Psilocybin is a prodrug: the body turns it into psilocin, which activates serotonin receptors. The hallucinogenic effects come from the 5-HT2A receptor, with 5-HT1A and 5-HT2C receptors possibly contributing.",
+   "effects": [
+    "Visual distortions",
+    "Color enhancement",
+    "Unity and interconnectedness",
+    "Cognitive euphoria",
+    "Time dilation",
+    "Ego dissolution"
+   ],
+   "timing": "TripSit: common doses are often felt within two hours, sometimes up to three; effects last 4 to 6 hours, with after-effects for 1 to 24 hours.",
+   "harm_reduction": [
+    "Potency varies a lot between species, strains, batches and even parts of one mushroom (Erowid: up to tenfold), so the same weight can land very differently.",
+    "Effects can take up to three hours to start (TripSit), so taking more early can stack two doses.",
+    "In a clinical dose study, 39% of volunteers had extreme anxiety or fear at the two highest doses (Griffiths 2011)."
+   ],
+   "sources": [
+    {
+     "name": "Wikipedia: Psilocybin mushroom",
+     "url": "https://en.wikipedia.org/wiki/Psilocybin_mushroom",
+     "used_for": "what it is",
+     "retrieved": "2026-11-15"
+    },
+    {
+     "name": "Wikipedia: Psilocin",
+     "url": "https://en.wikipedia.org/wiki/Psilocin",
+     "used_for": "how it works",
+     "retrieved": "2026-11-15"
+    },
+    {
+     "name": "TripSit factsheet",
+     "url": "https://tripsit.me/factsheets/mushrooms",
+     "used_for": "effects, timing, cautions",
+     "retrieved": "2026-11-15"
+    },
+    {
+     "name": "Erowid",
+     "url": "https://erowid.org/plants/mushrooms/mushrooms_dose.shtml",
+     "used_for": "potency varies",
+     "retrieved": "2026-11-15"
+    },
+    {
+     "name": "Griffiths et al. 2011",
+     "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3308357/",
+     "used_for": "anxiety at higher doses",
+     "retrieved": "2026-11-15"
+    }
+   ]
+  },
+  "mdma": {
+   "what_it_is": "An entactogen (\"ecstasy\" as tablets, \"molly\" as crystals) with stimulant and mild psychedelic properties, first made in 1912.",
+   "how_it_works": "It mainly makes nerve cells release more serotonin, dopamine and noradrenaline in parts of the brain.",
+   "effects": [
+    "Empathy, affection, and sociability enhancement",
+    "Physical euphoria",
+    "Stimulation",
+    "Teeth grinding",
+    "Increased perspiration",
+    "Increased heart rate",
+    "Increased bodily temperature",
+    "Pupil dilation"
+   ],
+   "timing": "TripSit: onset 20 to 70 minutes, effects 3 to 5 hours, after-effects 1 to 72 hours.",
+   "harm_reduction": [
+    "Deaths have been reported from overheating and dehydration (Wikipedia).",
+    "Short-term side effects include jaw clenching, blurred vision, sweating and a fast heart rate (Wikipedia).",
+    "In 166 volunteers, 125 mg raised blood pressure, heart rate and body temperature significantly more often than 75 mg (Vizeli and Liechti 2017).",
+    "Ecstasy tablets can contain other drugs or little MDMA (Erowid, which points to lab testing such as DrugsData).",
+    "TripSit notes that higher doses may increase neurotoxic effects."
+   ],
+   "sources": [
+    {
+     "name": "Wikipedia: MDMA",
+     "url": "https://en.wikipedia.org/wiki/MDMA",
+     "used_for": "what it is, how it works, side effects",
+     "retrieved": "2026-11-15"
+    },
+    {
+     "name": "TripSit factsheet",
+     "url": "https://tripsit.me/factsheets/mdma",
+     "used_for": "timing, neurotoxicity note",
+     "retrieved": "2026-11-15"
+    },
+    {
+     "name": "Erowid",
+     "url": "https://erowid.org/chemicals/mdma/mdma_dose.shtml",
+     "used_for": "tablet contents",
+     "retrieved": "2026-11-15"
+    },
+    {
+     "name": "Vizeli and Liechti 2017",
+     "url": "https://pubmed.ncbi.nlm.nih.gov/28443695/",
+     "used_for": "dose and body effects",
+     "retrieved": "2026-11-15"
+    }
+   ]
+  },
+  "cannabis": {
+   "what_it_is": "A psychoactive drug from the Cannabis plant; its main active compound is THC, one of over a hundred cannabinoids in the plant.",
+   "how_it_works": "THC partly activates the body's CB1 and CB2 cannabinoid receptors.",
+   "effects": [
+    "Sedation",
+    "Appetite intensification",
+    "Muscle relaxation",
+    "Pain relief",
+    "Creativity enhancement",
+    "Anxiety suppression",
+    "Anxiety",
+    "Paranoia",
+    "Sleepiness",
+    "Dry mouth"
+   ],
+   "timing": "TripSit: smoked, onset 1 to 10 minutes and 1 to 4 hours of effects; eaten, onset 30 to 120 minutes and 4 to 10 hours of effects.",
+   "harm_reduction": [
+    "Edibles take much longer to start than smoking (TripSit: 30 to 120 minutes against 1 to 10), so a second dose taken early can add on top of the first.",
+    "Cannabis use is linked to a higher risk of psychosis (Wikipedia).",
+    "Long-term regular use can lead to addiction, chronic cough and cannabinoid hyperemesis syndrome (repeated vomiting) (Wikipedia).",
+    "Side effects of THC include anxiety, memory impairment and drowsiness (Wikipedia)."
+   ],
+   "sources": [
+    {
+     "name": "Wikipedia: Cannabis (drug)",
+     "url": "https://en.wikipedia.org/wiki/Cannabis_(drug)",
+     "used_for": "what it is, risks",
+     "retrieved": "2026-11-15"
+    },
+    {
+     "name": "Wikipedia: Tetrahydrocannabinol",
+     "url": "https://en.wikipedia.org/wiki/Tetrahydrocannabinol",
+     "used_for": "how it works, side effects",
+     "retrieved": "2026-11-15"
+    },
+    {
+     "name": "TripSit factsheet",
+     "url": "https://tripsit.me/factsheets/cannabis",
+     "used_for": "effects, timing, cautions",
+     "retrieved": "2026-11-15"
+    }
+   ]
+  },
+  "alcohol": {
+   "what_it_is": "Ethanol, the active ingredient in beer, wine and spirits.",
+   "how_it_works": "A central nervous system depressant: it lowers the electrical activity of nerve cells in the brain, which causes intoxication.",
+   "effects": [
+    "Disinhibition",
+    "Cognitive euphoria",
+    "Sedation",
+    "Motor control loss",
+    "Skin flushing",
+    "Amnesia",
+    "Dizziness",
+    "Nausea"
+   ],
+   "timing": "TripSit: onset 15 to 30 minutes, effects 1.5 to 3 hours per drink, after-effects (hangover) 6 to 48 hours.",
+   "harm_reduction": [
+    "In high amounts alcohol can cause loss of consciousness or death (Wikipedia).",
+    "Alcohol is addictive; stopping after dependence can bring withdrawal (Wikipedia).",
+    "TripSit suggests spreading drinks over a few hours with water in between, and checking labels for alcohol content.",
+    "TripSit lists alcohol among the combinations to avoid for GHB, benzodiazepines and ketamine."
+   ],
+   "sources": [
+    {
+     "name": "Wikipedia: Alcohol (drug)",
+     "url": "https://en.wikipedia.org/wiki/Alcohol_(drug)",
+     "used_for": "what it is, how it works, side effects",
+     "retrieved": "2026-11-15"
+    },
+    {
+     "name": "TripSit factsheet",
+     "url": "https://tripsit.me/factsheets/alcohol",
+     "used_for": "effects, timing, cautions",
+     "retrieved": "2026-11-15"
+    }
+   ]
+  },
+  "caffeine": {
+   "what_it_is": "A stimulant of the methylxanthine class found in coffee, tea, soft drinks and tablets; the most widely used psychoactive drug.",
+   "how_it_works": "It blocks adenosine receptors, so adenosine's calming, sleep-promoting signal is held back.",
+   "effects": [
+    "Wakefulness",
+    "Stimulation",
+    "Increased heart rate",
+    "Thought acceleration",
+    "Anxiety",
+    "Frequent urination"
+   ],
+   "timing": "TripSit: onset 5 to 10 minutes, effects 1.5 to 5 hours.",
+   "harm_reduction": [
+    "Pills and powders make it possible to take a dangerous amount by accident; a whole box of caffeine tablets at once can be fatal (Erowid).",
+    "Daily use can cause mild dependence, with headache, sleepiness and irritability when stopping (Wikipedia).",
+    "Some health authorities advise pregnant women to limit caffeine (Wikipedia)."
+   ],
+   "sources": [
+    {
+     "name": "Wikipedia: Caffeine",
+     "url": "https://en.wikipedia.org/wiki/Caffeine",
+     "used_for": "what it is, how it works, side effects",
+     "retrieved": "2026-11-15"
+    },
+    {
+     "name": "TripSit factsheet",
+     "url": "https://tripsit.me/factsheets/caffeine",
+     "used_for": "effects, timing",
+     "retrieved": "2026-11-15"
+    },
+    {
+     "name": "Erowid",
+     "url": "https://erowid.org/chemicals/caffeine/caffeine_dose.shtml",
+     "used_for": "concentrated forms",
+     "retrieved": "2026-11-15"
+    }
+   ]
+  },
+  "nicotine": {
+   "what_it_is": "A stimulant alkaloid found mainly in tobacco, also made synthetically for vapes, pouches, gum and patches.",
+   "how_it_works": "It activates nicotinic acetylcholine receptors, which releases dopamine, acetylcholine and noradrenaline.",
+   "effects": [
+    "Stimulation",
+    "Anxiety suppression",
+    "Cognitive euphoria",
+    "Increased heart rate"
+   ],
+   "timing": "Erowid: smoked, onset within a minute and effects 10 to 30 minutes; gum and other oral forms, onset 2 to 15 minutes and effects 1 to 2 hours.",
+   "harm_reduction": [
+    "Nicotine is highly addictive; withdrawal brings irritability, anxiety and trouble concentrating (Wikipedia).",
+    "Products list the nicotine they contain, not what is absorbed, and smokers adjust how much they take in without noticing (Erowid).",
+    "Slower forms such as patches and gum deliver lower doses and are used to help people stop smoking (Wikipedia)."
+   ],
+   "sources": [
+    {
+     "name": "Wikipedia: Nicotine",
+     "url": "https://en.wikipedia.org/wiki/Nicotine",
+     "used_for": "what it is, how it works, side effects",
+     "retrieved": "2026-11-15"
+    },
+    {
+     "name": "Erowid",
+     "url": "https://erowid.org/chemicals/nicotine/nicotine_dose.shtml",
+     "used_for": "timing, absorbed dose",
+     "retrieved": "2026-11-15"
+    }
+   ]
+  },
+  "ketamine": {
+   "what_it_is": "A dissociative anaesthetic used in medicine for anaesthesia, pain and treatment-resistant depression.",
+   "how_it_works": "It blocks the NMDA receptor, a receptor for the brain's main excitatory messenger, glutamate.",
+   "effects": [
+    "Physical disconnection",
+    "Cognitive disconnection",
+    "Physical euphoria",
+    "Motor control loss",
+    "Pain relief",
+    "Dizziness"
+   ],
+   "timing": "TripSit: snorted, onset 7.5 to 20 minutes; swallowed, 10 to 75 minutes; effects 1 to 2 hours and after-effects 1 to 2 hours.",
+   "harm_reduction": [
+    "TripSit advises against driving, walking around or other motor activity while under its effects.",
+    "Mixing with other depressants such as alcohol, benzodiazepines or opioids is listed as risky by TripSit."
+   ],
+   "sources": [
+    {
+     "name": "Wikipedia: Ketamine",
+     "url": "https://en.wikipedia.org/wiki/Ketamine",
+     "used_for": "what it is, how it works",
+     "retrieved": "2026-11-15"
+    },
+    {
+     "name": "TripSit factsheet",
+     "url": "https://tripsit.me/factsheets/ketamine",
+     "used_for": "effects, timing, cautions",
+     "retrieved": "2026-11-15"
+    }
+   ]
+  },
+  "cocaine": {
+   "what_it_is": "A stimulant from the leaves of the coca plant.",
+   "how_it_works": "It blocks the reuptake of serotonin, noradrenaline and dopamine, so they stay active between nerve cells for longer.",
+   "effects": [
+    "Stimulation",
+    "Cognitive euphoria",
+    "Ego inflation",
+    "Irritability",
+    "Increased heart rate",
+    "Mouth numbing",
+    "Nausea"
+   ],
+   "timing": "TripSit: rapid onset, effects 1 to 1.5 hours, after-effects 1 to 4 hours.",
+   "harm_reduction": [
+    "It can narrow blood vessels and raise heart rate, blood pressure and body temperature; overdose can cause stroke, heart attack or sudden cardiac death (Wikipedia).",
+    "Chronic use can lead to dependence and damage inside the nose (Wikipedia).",
+    "Purity varies widely (TripSit), so the same amount can be much stronger than expected."
+   ],
+   "sources": [
+    {
+     "name": "Wikipedia: Cocaine",
+     "url": "https://en.wikipedia.org/wiki/Cocaine",
+     "used_for": "what it is, how it works, side effects",
+     "retrieved": "2026-11-15"
+    },
+    {
+     "name": "TripSit factsheet",
+     "url": "https://tripsit.me/factsheets/cocaine",
+     "used_for": "effects, timing, cautions",
+     "retrieved": "2026-11-15"
+    }
+   ]
+  },
+  "amphetamine": {
+   "what_it_is": "A stimulant prescribed for ADHD and narcolepsy, and also used recreationally.",
+   "how_it_works": "It increases the activity of noradrenaline and dopamine (and other monoamines) in the brain.",
+   "effects": [
+    "Focus intensification",
+    "Stimulation",
+    "Thought acceleration",
+    "Increased heart rate",
+    "Appetite suppression",
+    "Wakefulness"
+   ],
+   "timing": "TripSit: swallowed, onset 15 to 30 minutes and effects 4 to 8 hours; snorted, onset 5 to 10 minutes and effects 3 to 6 hours.",
+   "harm_reduction": [
+    "Recreational doses are usually far larger than prescribed ones and carry a much greater risk of serious side effects; heavy use risks addiction (Wikipedia).",
+    "TripSit advises against mixing with other stimulants or with depressants, which strains the heart.",
+    "Street amphetamine is often impure (TripSit), so a purer batch can be much stronger."
+   ],
+   "sources": [
+    {
+     "name": "Wikipedia: Amphetamine",
+     "url": "https://en.wikipedia.org/wiki/Amphetamine",
+     "used_for": "what it is, how it works, side effects",
+     "retrieved": "2026-11-15"
+    },
+    {
+     "name": "TripSit factsheet",
+     "url": "https://tripsit.me/factsheets/amphetamine",
+     "used_for": "effects, timing, cautions",
+     "retrieved": "2026-11-15"
+    }
+   ]
+  },
+  "methamphetamine": {
+   "what_it_is": "A potent stimulant, used mostly recreationally and rarely as a second-line ADHD treatment.",
+   "how_it_works": "It makes nerve cells release serotonin, noradrenaline and dopamine.",
+   "effects": [
+    "Stimulation",
+    "Wakefulness",
+    "Cognitive euphoria",
+    "Increased libido",
+    "Appetite suppression",
+    "Increased perspiration",
+    "Teeth grinding",
+    "Irritability"
+   ],
+   "timing": "TripSit: swallowed, onset 20 to 70 minutes and effects 10 to 12 hours; smoked or injected, onset within 2 minutes; after-effects around 24 hours, longer with redosing.",
+   "harm_reduction": [
+    "Overdose or long binges can cause psychosis, muscle breakdown, seizures and bleeding in the brain (Wikipedia).",
+    "It carries a high risk of compulsive use and dependence, and high doses damage dopamine nerve cells (Wikipedia).",
+    "TripSit lists using it within 14 days of an MAOI as something to avoid."
+   ],
+   "sources": [
+    {
+     "name": "Wikipedia: Methamphetamine",
+     "url": "https://en.wikipedia.org/wiki/Methamphetamine",
+     "used_for": "what it is, how it works, side effects",
+     "retrieved": "2026-11-15"
+    },
+    {
+     "name": "TripSit factsheet",
+     "url": "https://tripsit.me/factsheets/methamphetamine",
+     "used_for": "effects, timing, cautions",
+     "retrieved": "2026-11-15"
+    }
+   ]
+  },
+  "dmt": {
+   "what_it_is": "A short-acting psychedelic tryptamine found in many plants and animals; brewed with an MAOI it is the basis of ayahuasca.",
+   "how_it_works": "It binds to many receptors, most strongly serotonin receptors (5-HT2A, 5-HT1A, 5-HT2C), which are thought to cause its effects. Swallowed alone it is broken down before it can act; an MAOI prevents that.",
+   "effects": [
+    "Immersion intensification",
+    "Ego dissolution",
+    "Autonomous entity",
+    "Time distortion",
+    "Color shifting",
+    "Auditory hallucination",
+    "Feelings of impending doom"
+   ],
+   "timing": "TripSit: smoked or vaporised, onset within 2 minutes and effects 3 to 10 minutes; taken by mouth with an MAOI, onset 20 to 45 minutes and effects 3 to 7 hours.",
+   "harm_reduction": [
+    "It may cause acute psychological distress or heart and blood-pressure effects, especially in people predisposed to them (Wikipedia).",
+    "The chance of an overwhelming \"breakthrough\" rises with dose, and vaporising is not fully efficient, so the dose received varies (TripSit).",
+    "Taken by mouth it needs an MAOI (Wikipedia), and an MAOI changes how other drugs act: TripSit, for example, lists methamphetamine within 14 days of an MAOI as something to avoid."
+   ],
+   "sources": [
+    {
+     "name": "Wikipedia: Dimethyltryptamine",
+     "url": "https://en.wikipedia.org/wiki/Dimethyltryptamine",
+     "used_for": "what it is, how it works, side effects",
+     "retrieved": "2026-11-15"
+    },
+    {
+     "name": "TripSit factsheet",
+     "url": "https://tripsit.me/factsheets/dmt",
+     "used_for": "effects, timing, cautions",
+     "retrieved": "2026-11-15"
+    }
+   ]
+  },
+  "mescaline": {
+   "what_it_is": "A naturally occurring psychedelic from cacti such as peyote and San Pedro, used recreationally, spiritually and in research.",
+   "how_it_works": "It mainly partly activates the serotonin 5-HT2A receptor; blocking that receptor with ketanserin blocks its effects.",
+   "effects": [
+    "Cognitive euphoria",
+    "Empathy, affection, and sociability enhancement",
+    "Color enhancement",
+    "Tactile intensification",
+    "Stimulation",
+    "Pupil dilation",
+    "Nausea",
+    "Muscle tension"
+   ],
+   "timing": "TripSit: onset 60 to 180 minutes or more, effects 6 to 12 hours. In a clinical study, effects lasted from about 6 hours (100 mg) to 14 hours (800 mg) (Klaiber 2024).",
+   "harm_reduction": [
+    "Slow onset (TripSit) makes it easy to take more before the first dose has arrived.",
+    "Nausea and vomiting were frequent at the highest dose studied (Klaiber 2024).",
+    "Doses differ between mescaline salts and cactus material; published charts are for mescaline hydrochloride (TripSit, Erowid)."
+   ],
+   "sources": [
+    {
+     "name": "Wikipedia: Mescaline",
+     "url": "https://en.wikipedia.org/wiki/Mescaline",
+     "used_for": "what it is, how it works, side effects",
+     "retrieved": "2026-11-15"
+    },
+    {
+     "name": "TripSit factsheet",
+     "url": "https://tripsit.me/factsheets/mescaline",
+     "used_for": "effects, timing, cautions",
+     "retrieved": "2026-11-15"
+    },
+    {
+     "name": "Klaiber et al. 2024",
+     "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11442856/",
+     "used_for": "duration, nausea",
+     "retrieved": "2026-11-15"
+    }
+   ]
+  },
+  "2c-b": {
+   "what_it_is": "A psychedelic of the phenethylamine (2C) family, usually taken by mouth.",
+   "how_it_works": "It partly activates serotonin 5-HT2 receptors, including 5-HT2A.",
+   "effects": [
+    "Cognitive euphoria",
+    "Laughter fits",
+    "Empathy, affection, and sociability enhancement",
+    "Color enhancement",
+    "Tactile intensification",
+    "Stimulation",
+    "Nausea",
+    "Pupil dilation"
+   ],
+   "timing": "TripSit: swallowed, onset 20 to 75 minutes and effects 4 to 8 hours; snorted, onset 1 to 10 minutes and effects 2 to 4 hours.",
+   "harm_reduction": [
+    "Snorted it acts within minutes, swallowed it can take over an hour (TripSit), so effects and timing differ a lot by route."
+   ],
+   "sources": [
+    {
+     "name": "Wikipedia: 2C-B",
+     "url": "https://en.wikipedia.org/wiki/2C-B",
+     "used_for": "what it is, how it works, side effects",
+     "retrieved": "2026-11-15"
+    },
+    {
+     "name": "TripSit factsheet",
+     "url": "https://tripsit.me/factsheets/2c-b",
+     "used_for": "effects, timing, cautions",
+     "retrieved": "2026-11-15"
+    }
+   ]
+  },
+  "ghb": {
+   "what_it_is": "A depressant that also occurs naturally in the brain as a signalling molecule.",
+   "how_it_works": "It acts on its own GHB receptor and weakly activates the GABA-B receptor, slowing the nervous system.",
+   "effects": [
+    "Sedation",
+    "Disinhibition",
+    "Physical euphoria",
+    "Motor control loss",
+    "Sleepiness"
+   ],
+   "timing": "TripSit: onset 20 to 60 minutes, effects 1.5 to 2.5 hours, after-effects 2 to 4 hours.",
+   "harm_reduction": [
+    "The step from heavy sleep to overdose is short: Erowid lists heavy sleep at 3 to 5 g, overdose at 5 to 10 g and risk of death above that.",
+    "TripSit lists alcohol, benzodiazepines and other depressants as combinations to avoid."
+   ],
+   "sources": [
+    {
+     "name": "Wikipedia: Gamma-Hydroxybutyric acid",
+     "url": "https://en.wikipedia.org/wiki/Gamma-Hydroxybutyric_acid",
+     "used_for": "what it is, how it works",
+     "retrieved": "2026-11-15"
+    },
+    {
+     "name": "TripSit factsheet",
+     "url": "https://tripsit.me/factsheets/ghb",
+     "used_for": "effects, timing, cautions",
+     "retrieved": "2026-11-15"
+    },
+    {
+     "name": "Erowid",
+     "url": "https://erowid.org/chemicals/ghb/ghb_dose.shtml",
+     "used_for": "overdose range",
+     "retrieved": "2026-11-15"
+    }
+   ]
+  },
+  "alprazolam": {
+   "what_it_is": "A fast-acting benzodiazepine (Xanax) prescribed for anxiety and panic disorder.",
+   "how_it_works": "Like other benzodiazepines, it boosts the effect of GABA, the brain's main calming messenger, at GABA-A receptors.",
+   "effects": [
+    "Anxiety suppression",
+    "Sedation",
+    "Muscle relaxation",
+    "Amnesia",
+    "Motor control loss",
+    "Disinhibition"
+   ],
+   "timing": "TripSit: onset 15 to 40 minutes, effects 5 to 8 hours, after-effects 6 to 24 hours.",
+   "harm_reduction": [
+    "Higher doses raise the chance of blacking out (TripSit).",
+    "After long use, stopping suddenly is strongly advised against (TripSit); the prescribing label describes a gradual taper.",
+    "Combining with alcohol or other depressants is listed to avoid (TripSit)."
+   ],
+   "sources": [
+    {
+     "name": "Wikipedia: Alprazolam",
+     "url": "https://en.wikipedia.org/wiki/Alprazolam",
+     "used_for": "what it is, side effects",
+     "retrieved": "2026-11-15"
+    },
+    {
+     "name": "Wikipedia: Clonazepam",
+     "url": "https://en.wikipedia.org/wiki/Clonazepam",
+     "used_for": "how benzodiazepines work",
+     "retrieved": "2026-11-15"
+    },
+    {
+     "name": "TripSit factsheet",
+     "url": "https://tripsit.me/factsheets/alprazolam",
+     "used_for": "effects, timing, cautions",
+     "retrieved": "2026-11-15"
+    },
+    {
+     "name": "FDA label (alprazolam)",
+     "url": "https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=02840ea6-e4a0-96a0-e063-6394a90a19ae",
+     "used_for": "tapering",
+     "retrieved": "2026-11-15"
+    }
+   ]
+  },
+  "diazepam": {
+   "what_it_is": "A long-acting benzodiazepine (Valium) used for anxiety, seizures, alcohol withdrawal and muscle spasms.",
+   "how_it_works": "It increases the effect of GABA, the brain's main calming messenger.",
+   "effects": [
+    "Anxiety suppression",
+    "Sedation",
+    "Muscle relaxation",
+    "Amnesia",
+    "Motor control loss",
+    "Dizziness"
+   ],
+   "timing": "TripSit: onset 30 to 90 minutes, effects 10 to 24 hours, after-effects up to several days.",
+   "harm_reduction": [
+    "Long use leads to tolerance and dependence, with withdrawal when the dose is reduced (Wikipedia).",
+    "Rare serious side effects include slowed breathing (Wikipedia); other depressants add to it (TripSit).",
+    "Its long action means effects can carry into the next day (TripSit)."
+   ],
+   "sources": [
+    {
+     "name": "Wikipedia: Diazepam",
+     "url": "https://en.wikipedia.org/wiki/Diazepam",
+     "used_for": "what it is, how it works, side effects",
+     "retrieved": "2026-11-15"
+    },
+    {
+     "name": "TripSit factsheet",
+     "url": "https://tripsit.me/factsheets/diazepam",
+     "used_for": "effects, timing, cautions",
+     "retrieved": "2026-11-15"
+    }
+   ]
+  },
+  "clonazepam": {
+   "what_it_is": "A benzodiazepine (Klonopin) used for anxiety disorders and seizures.",
+   "how_it_works": "It binds to GABA-A receptors and increases the effect of GABA, the brain's main calming messenger.",
+   "effects": [
+    "Anxiety suppression",
+    "Sedation",
+    "Muscle relaxation",
+    "Amnesia",
+    "Motor control loss",
+    "Sleepiness"
+   ],
+   "timing": "TripSit: onset 20 to 45 minutes, effects 8 to 12 hours, after-effects 8 to 48 hours.",
+   "harm_reduction": [
+    "Dependence develops in about one in three people who take benzodiazepines for more than four weeks (Wikipedia).",
+    "TripSit lists all other central nervous system depressants as combinations to avoid."
+   ],
+   "sources": [
+    {
+     "name": "Wikipedia: Clonazepam",
+     "url": "https://en.wikipedia.org/wiki/Clonazepam",
+     "used_for": "what it is, how it works, side effects",
+     "retrieved": "2026-11-15"
+    },
+    {
+     "name": "TripSit factsheet",
+     "url": "https://tripsit.me/factsheets/clonazepam",
+     "used_for": "effects, timing, cautions",
+     "retrieved": "2026-11-15"
+    }
+   ]
+  },
+  "oxycodone": {
+   "what_it_is": "A semi-synthetic opioid painkiller (OxyContin, Roxicodone and others).",
+   "how_it_works": "It activates the μ-opioid receptor.",
+   "effects": [
+    "Pain relief",
+    "Physical euphoria",
+    "Sedation",
+    "Respiratory depression",
+    "Constipation",
+    "Itchiness",
+    "Nausea",
+    "Pupil constriction"
+   ],
+   "timing": "TripSit: immediate-release by mouth, onset about 20 minutes and effects 4 to 6 hours; extended-release, effects 6 to 8 hours.",
+   "harm_reduction": [
+    "It is highly addictive, and stopping quickly after regular use brings withdrawal (Wikipedia).",
+    "Slowed breathing is the main danger, and other depressants add to it (Wikipedia, TripSit)."
+   ],
+   "sources": [
+    {
+     "name": "Wikipedia: Oxycodone",
+     "url": "https://en.wikipedia.org/wiki/Oxycodone",
+     "used_for": "what it is, how it works, side effects",
+     "retrieved": "2026-11-15"
+    },
+    {
+     "name": "TripSit factsheet",
+     "url": "https://tripsit.me/factsheets/oxycodone",
+     "used_for": "effects, timing, cautions",
+     "retrieved": "2026-11-15"
+    }
+   ]
+  },
+  "morphine": {
+   "what_it_is": "An opiate found naturally in opium poppies, used mainly as a painkiller.",
+   "how_it_works": "It acts directly on the central nervous system to relieve pain and change how pain is felt.",
+   "effects": [
+    "Pain relief",
+    "Physical euphoria",
+    "Sedation",
+    "Constipation",
+    "Itchiness",
+    "Pupil constriction",
+    "Dry mouth"
+   ],
+   "timing": "TripSit: immediate-release by mouth, onset 10 to 30 minutes and effects 4 to 6 hours.",
+   "harm_reduction": [
+    "Serious side effects include slowed breathing, vomiting and low blood pressure (Wikipedia).",
+    "It is highly addictive, and reducing the dose after long use brings withdrawal (Wikipedia)."
+   ],
+   "sources": [
+    {
+     "name": "Wikipedia: Morphine",
+     "url": "https://en.wikipedia.org/wiki/Morphine",
+     "used_for": "what it is, how it works, side effects",
+     "retrieved": "2026-11-15"
+    },
+    {
+     "name": "TripSit factsheet",
+     "url": "https://tripsit.me/factsheets/morphine",
+     "used_for": "effects, timing, cautions",
+     "retrieved": "2026-11-15"
+    }
+   ]
+  },
+  "codeine": {
+   "what_it_is": "An opiate used for pain, cough and diarrhoea, often combined with paracetamol (acetaminophen).",
+   "how_it_works": "The liver turns codeine into morphine; how fast depends on a person's genes, so the same dose can act very differently between people.",
+   "effects": [
+    "Pain relief",
+    "Physical euphoria",
+    "Sedation",
+    "Itchiness",
+    "Constipation",
+    "Pupil constriction",
+    "Nausea"
+   ],
+   "timing": "TripSit: onset 30 to 45 minutes, effects 3 to 6 hours.",
+   "harm_reduction": [
+    "Many codeine products also contain paracetamol (acetaminophen); TripSit warns against taking too much of it alongside other products that contain it.",
+    "It can cause breathing difficulties and addiction (Wikipedia)."
+   ],
+   "sources": [
+    {
+     "name": "Wikipedia: Codeine",
+     "url": "https://en.wikipedia.org/wiki/Codeine",
+     "used_for": "what it is, how it works, side effects",
+     "retrieved": "2026-11-15"
+    },
+    {
+     "name": "TripSit factsheet",
+     "url": "https://tripsit.me/factsheets/codeine",
+     "used_for": "effects, timing, cautions",
+     "retrieved": "2026-11-15"
+    }
+   ]
+  },
+  "tramadol": {
+   "what_it_is": "An opioid painkiller that also works on serotonin and noradrenaline.",
+   "how_it_works": "The liver turns it into O-desmethyltramadol, a stronger opioid; tramadol itself also blocks the reuptake of serotonin and noradrenaline.",
+   "effects": [
+    "Pain relief",
+    "Cognitive euphoria",
+    "Itchiness",
+    "Sleepiness",
+    "Nausea",
+    "Vomiting",
+    "Constipation"
+   ],
+   "timing": "TripSit: first effects after about an hour, peak blood levels at about 4 hours, effects 5 to 7 hours.",
+   "harm_reduction": [
+    "It can cause seizures and serotonin syndrome (Wikipedia); TripSit notes it lowers the seizure threshold and that recreational effects have a ceiling.",
+    "TripSit lists benzodiazepines, alcohol and other opioids as combinations to avoid."
+   ],
+   "sources": [
+    {
+     "name": "Wikipedia: Tramadol",
+     "url": "https://en.wikipedia.org/wiki/Tramadol",
+     "used_for": "what it is, how it works, side effects",
+     "retrieved": "2026-11-15"
+    },
+    {
+     "name": "TripSit factsheet",
+     "url": "https://tripsit.me/factsheets/tramadol",
+     "used_for": "effects, timing, cautions",
+     "retrieved": "2026-11-15"
+    }
+   ]
+  },
+  "kratom": {
+   "what_it_is": "The leaves of Mitragyna speciosa, a tropical tree from Southeast Asia.",
+   "how_it_works": "Its alkaloids (mainly mitragynine and 7-hydroxymitragynine) partly activate the μ-opioid receptor. Some people find it stimulating, probably not through the usual stimulant mechanisms.",
+   "effects": [
+    "Stimulation",
+    "Sedation",
+    "Physical euphoria",
+    "Empathy, affection, and sociability enhancement",
+    "Nausea",
+    "Constipation"
+   ],
+   "timing": "TripSit: onset 10 to 40 minutes, effects 2 to 5 hours.",
+   "harm_reduction": [
+    "Serious side effects can include slowed breathing, seizures, psychosis and liver injury; regular use can lead to addiction and withdrawal (Wikipedia).",
+    "Most deaths linked to kratom involved other substances as well (Wikipedia).",
+    "Strength varies between batches and products, and extract-enhanced products are far stronger than plain leaf (TripSit, Erowid)."
+   ],
+   "sources": [
+    {
+     "name": "Wikipedia: Mitragyna speciosa",
+     "url": "https://en.wikipedia.org/wiki/Mitragyna_speciosa",
+     "used_for": "what it is, how it works, side effects",
+     "retrieved": "2026-11-15"
+    },
+    {
+     "name": "TripSit factsheet",
+     "url": "https://tripsit.me/factsheets/kratom",
+     "used_for": "effects, timing, cautions",
+     "retrieved": "2026-11-15"
+    },
+    {
+     "name": "Erowid",
+     "url": "https://erowid.org/plants/kratom/kratom_dose.shtml",
+     "used_for": "product strength",
+     "retrieved": "2026-11-15"
+    }
+   ]
+  },
+  "dextromethorphan": {
+   "what_it_is": "A cough suppressant found in many cough and cold medicines, which acts as a dissociative at high doses.",
+   "how_it_works": "At high doses it and its metabolite dextrorphan block the NMDA receptor, like ketamine; it also blocks serotonin and noradrenaline reuptake and activates sigma-1 receptors.",
+   "effects": [
+    "Physical disconnection",
+    "Cognitive disconnection",
+    "Motor control loss",
+    "Nausea",
+    "Itchiness",
+    "Increased heart rate"
+   ],
+   "timing": "TripSit: onset 20 to 60 minutes, effects 6 to 8 hours, after-effects up to 12 hours.",
+   "harm_reduction": [
+    "Many cough products contain other active ingredients that are dangerous in large amounts, such as chlorpheniramine (CPM) or paracetamol; check the label (Erowid).",
+    "TripSit gives doses per kilogram of body weight and reports deaths at very high amounts."
+   ],
+   "sources": [
+    {
+     "name": "Wikipedia: Dextromethorphan",
+     "url": "https://en.wikipedia.org/wiki/Dextromethorphan",
+     "used_for": "what it is, how it works, side effects",
+     "retrieved": "2026-11-15"
+    },
+    {
+     "name": "TripSit factsheet",
+     "url": "https://tripsit.me/factsheets/dextromethorphan",
+     "used_for": "timing, weight-based dosing",
+     "retrieved": "2026-11-15"
+    },
+    {
+     "name": "Erowid",
+     "url": "https://erowid.org/chemicals/dxm/dxm_dose.shtml",
+     "used_for": "other ingredients",
+     "retrieved": "2026-11-15"
+    }
+   ]
+  },
+  "nitrous": {
+   "what_it_is": "Nitrous oxide (\"laughing gas\"), a gas used in medicine and food that is inhaled for a brief high.",
+   "how_it_works": "It is not broken down by the body; inhaled, it causes euphoria, dissociation and relaxation within seconds.",
+   "effects": [
+    "Laughter fits",
+    "Cognitive euphoria",
+    "Auditory distortion",
+    "Physical disconnection",
+    "Pain relief",
+    "Motor control loss",
+    "Nausea",
+    "Headache"
+   ],
+   "timing": "TripSit: onset within a minute, effects 1 to 5 minutes, after-effects 15 to 30 minutes.",
+   "harm_reduction": [
+    "Rare deaths and injuries come from lack of oxygen or from accidents, often alongside alcohol (Wikipedia).",
+    "Heavy, frequent use can cause vitamin B12 deficiency and lasting nerve damage, including to the spinal cord (Wikipedia)."
+   ],
+   "sources": [
+    {
+     "name": "Wikipedia: Recreational use of nitrous oxide",
+     "url": "https://en.wikipedia.org/wiki/Recreational_use_of_nitrous_oxide",
+     "used_for": "what it is, how it works, side effects",
+     "retrieved": "2026-11-15"
+    },
+    {
+     "name": "TripSit factsheet",
+     "url": "https://tripsit.me/factsheets/nitrous",
+     "used_for": "effects, timing",
+     "retrieved": "2026-11-15"
+    }
+   ]
+  },
+  "methylphenidate": {
+   "what_it_is": "A stimulant (Ritalin, Concerta) prescribed for ADHD and narcolepsy.",
+   "how_it_works": "It is believed to work by blocking the reuptake of dopamine and noradrenaline.",
+   "effects": [
+    "Focus intensification",
+    "Motivation enhancement",
+    "Stimulation",
+    "Appetite suppression",
+    "Increased heart rate",
+    "Increased bodily temperature",
+    "Paranoia"
+   ],
+   "timing": "TripSit: immediate-release, onset 30 to 120 minutes and effects 3 to 6 hours; extended-release, effects 8 to 12 hours; crushing an extended-release tablet makes it act like immediate-release.",
+   "harm_reduction": [
+    "Common side effects include loss of appetite, poor sleep and small rises in heart rate and blood pressure (Wikipedia).",
+    "Dependence and withdrawal are mainly reported with high-dose or non-medical use (Wikipedia)."
+   ],
+   "sources": [
+    {
+     "name": "Wikipedia: Methylphenidate",
+     "url": "https://en.wikipedia.org/wiki/Methylphenidate",
+     "used_for": "what it is, how it works, side effects",
+     "retrieved": "2026-11-15"
+    },
+    {
+     "name": "TripSit factsheet",
+     "url": "https://tripsit.me/factsheets/methylphenidate",
+     "used_for": "effects, timing, cautions",
+     "retrieved": "2026-11-15"
+    }
+   ]
+  }
+ }
+}

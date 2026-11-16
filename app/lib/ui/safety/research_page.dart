@@ -4,6 +4,7 @@ import '../../data/research_links.dart';
 import '../design.dart';
 import '../link_tile.dart';
 import 'glossary_page.dart';
+import 'potency_testing_page.dart';
 
 /// Where to read more before taking something: the reference sites this app is built on, plus
 /// testing and support services. Links open in the browser.
@@ -33,6 +34,13 @@ class ResearchPage extends StatelessWidget {
                 icon: const Icon(Icons.abc),
                 label: const Text('Glossary: what the words mean'),
                 onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const GlossaryPage())),
+              ),
+              const SizedBox(height: Gap.sm),
+              OutlinedButton.icon(
+                key: const ValueKey('open-potency-testing'),
+                icon: const Icon(Icons.science_outlined),
+                label: const Text('Get your mushroom batch tested'),
+                onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const PotencyTestingPage())),
               ),
               const SizedBox(height: Gap.md),
               for (final (group, links) in researchHub) ...[

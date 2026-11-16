@@ -1,0 +1,147 @@
+{
+  "version": 1,
+  "verified": "2026-11-15",
+  "note": "Only strains with a published laboratory analysis are given numbers. Values are % of dry weight. Each figure comes from one grow or one sample: another grow of the 'same' strain can differ several-fold (Bigwood & Beug 1982 found about fourfold differences between flushes of one culture). Strain names in the trade are not standardised.",
+  "strains": [
+    {
+      "name": "Creeper",
+      "analyses": [
+        {"psilocybin_pct": 1.3, "psilocin_pct": 0.024, "material": "Lab-grown, dried, whole fruiting bodies (3 mushrooms)", "source": "Goff R et al. (2024) Anal Chim Acta 1288:342161, https://doi.org/10.1016/j.aca.2023.342161; psilocybin/psilocin split as tabulated in Kurzbaum E et al. (2025) J Fungi 11:99, https://doi.org/10.3390/jof11020099", "note": "13 +/- 3 mg/g psilocybin, 0.24 +/- 0.07 mg/g psilocin; total 1.36% in the paper's abstract."}
+      ]
+    },
+    {
+      "name": "Blue Meanie",
+      "analyses": [
+        {"psilocybin_pct": 1.18, "psilocin_pct": 0.036, "material": "Lab-grown, dried, whole fruiting bodies (3 mushrooms)", "source": "Goff R et al. (2024) Anal Chim Acta 1288:342161, https://doi.org/10.1016/j.aca.2023.342161; split as tabulated in Kurzbaum E et al. (2025) J Fungi 11:99", "note": "11.8 +/- 0.4 mg/g psilocybin, 0.36 +/- 0.15 mg/g psilocin; total 1.221%."}
+      ]
+    },
+    {
+      "name": "B+",
+      "analyses": [
+        {"psilocybin_pct": 1.11, "psilocin_pct": 0.022, "material": "Lab-grown, dried, whole fruiting bodies (3 mushrooms)", "source": "Goff R et al. (2024) Anal Chim Acta 1288:342161, https://doi.org/10.1016/j.aca.2023.342161; split as tabulated in Kurzbaum E et al. (2025) J Fungi 11:99", "note": "11.1 +/- 2.5 mg/g psilocybin, 0.22 +/- 0.09 mg/g psilocin; total 1.134%."},
+        {"psilocybin_pct": 0.0, "psilocin_pct": 0.36, "material": "User-provided dried sample, Uruguay, stored at room temperature in the dark, age unknown", "source": "Rodriguez L et al. (2025) ACS Omega 10:55725-55732, https://doi.org/10.1021/acsomega.5c07092", "note": "No psilocybin detected; the authors suspect moisture during storage converted it. Shows how much one sample can differ."}
+      ]
+    },
+    {
+      "name": "Texas Yellow",
+      "analyses": [
+        {"psilocybin_pct": 1.08, "psilocin_pct": 0.024, "material": "Lab-grown, dried, whole fruiting bodies (3 mushrooms)", "source": "Goff R et al. (2024) Anal Chim Acta 1288:342161, https://doi.org/10.1016/j.aca.2023.342161; split as tabulated in Kurzbaum E et al. (2025) J Fungi 11:99", "note": "10.8 +/- 0.8 mg/g psilocybin, 0.24 +/- 0.05 mg/g psilocin; total 1.103%."}
+      ]
+    },
+    {
+      "name": "Thai",
+      "analyses": [
+        {"psilocybin_pct": 0.81, "psilocin_pct": 0.07, "material": "Lab-grown 'Thai Cubensis', dried, whole fruiting bodies (3 mushrooms)", "source": "Goff R et al. (2024) Anal Chim Acta 1288:342161, https://doi.org/10.1016/j.aca.2023.342161; split as tabulated in Kurzbaum E et al. (2025) J Fungi 11:99", "note": "8.1 +/- 0.7 mg/g psilocybin, 0.7 +/- 0.2 mg/g psilocin; total 0.879%."}
+      ]
+    },
+    {
+      "name": "Penis Envy",
+      "analyses": [
+        {"psilocybin_pct": 1.549, "psilocin_pct": 0.177, "material": "Lab-grown, freeze-dried, powdered (several fruiting bodies)", "source": "Sharchaton A et al. (2026) J Fungi 12:486, Table 1, https://doi.org/10.3390/jof12070486", "note": "15.49 +/- 1.08 mg/g psilocybin, 1.77 +/- 0.14 mg/g psilocin. One grow; community reports vary."}
+      ]
+    },
+    {
+      "name": "Albino Penis Envy",
+      "analyses": [
+        {"psilocybin_pct": 1.138, "psilocin_pct": 0.067, "material": "Lab-grown, freeze-dried, powdered", "source": "Sharchaton A et al. (2026) J Fungi 12:486, Table 1, https://doi.org/10.3390/jof12070486", "note": "11.38 +/- 2.01 mg/g psilocybin, 0.67 +/- 0.30 mg/g psilocin."}
+      ]
+    },
+    {
+      "name": "Golden Teacher",
+      "analyses": [
+        {"psilocybin_pct": 0.25, "psilocin_pct": 0.05, "material": "One user-provided dried sample, Uruguay, stored at room temperature in the dark, age unknown", "source": "Rodriguez L et al. (2025) ACS Omega 10:55725-55732, https://doi.org/10.1021/acsomega.5c07092", "note": "A single sample of unknown age and handling; far below lab-grown strains and probably not representative."}
+      ],
+      "note": "Only one published sample was found, plus a Jack Frost x Golden Teacher cross (listed separately). Community reports vary widely; a lab result or your own value is better."
+    },
+    {
+      "name": "Jack Frost x Golden Teacher",
+      "analyses": [
+        {"psilocybin_pct": 1.103, "psilocin_pct": 0.015, "material": "Lab-grown, freeze-dried, powdered", "source": "Sharchaton A et al. (2026) J Fungi 12:486, Table 1, https://doi.org/10.3390/jof12070486", "note": "11.03 +/- 1.52 mg/g psilocybin, 0.15 +/- 0.05 mg/g psilocin. A cross, not Golden Teacher itself."}
+      ]
+    },
+    {
+      "name": "Jack Frost",
+      "analyses": [
+        {"psilocybin_pct": 0.495, "psilocin_pct": 0.0, "material": "Lab-grown, freeze-dried, powdered", "source": "Sharchaton A et al. (2026) J Fungi 12:486, Table 1, https://doi.org/10.3390/jof12070486", "note": "4.95 +/- 0.05 mg/g psilocybin; psilocin below the detection limit."}
+      ]
+    },
+    {
+      "name": "Jack Frost x Shakti",
+      "analyses": [
+        {"psilocybin_pct": 0.675, "psilocin_pct": 0.04, "material": "Lab-grown, freeze-dried, powdered", "source": "Sharchaton A et al. (2026) J Fungi 12:486, Table 1, https://doi.org/10.3390/jof12070486", "note": "6.75 +/- 1.73 mg/g psilocybin, 0.40 +/- 0.22 mg/g psilocin."}
+      ]
+    },
+    {
+      "name": "Mak IND",
+      "analyses": [
+        {"psilocybin_pct": 1.96, "psilocin_pct": 0.065, "material": "Lab-grown, freeze-dried, powdered", "source": "Sharchaton A et al. (2026) J Fungi 12:486, Table 1, https://doi.org/10.3390/jof12070486", "note": "19.60 +/- 2.93 mg/g psilocybin, 0.65 +/- 0.38 mg/g psilocin; the highest in that study."}
+      ]
+    },
+    {
+      "name": "Sat",
+      "analyses": [
+        {"psilocybin_pct": 1.353, "psilocin_pct": 0.038, "material": "Lab-grown, freeze-dried, powdered", "source": "Sharchaton A et al. (2026) J Fungi 12:486, Table 1, https://doi.org/10.3390/jof12070486", "note": "13.53 +/- 2.96 mg/g psilocybin, 0.38 +/- 0.17 mg/g psilocin."}
+      ]
+    },
+    {
+      "name": "Jedi Mind Fck",
+      "analyses": [
+        {"psilocybin_pct": 1.158, "psilocin_pct": 0.099, "material": "Lab-grown, freeze-dried, powdered", "source": "Sharchaton A et al. (2026) J Fungi 12:486, Table 1, https://doi.org/10.3390/jof12070486", "note": "11.58 +/- 1.71 mg/g psilocybin, 0.99 +/- 0.20 mg/g psilocin."}
+      ]
+    },
+    {
+      "name": "Enigma",
+      "analyses": [
+        {"psilocybin_pct": 0.791, "psilocin_pct": 0.011, "material": "Lab-grown, freeze-dried, powdered", "source": "Sharchaton A et al. (2026) J Fungi 12:486, Table 1, https://doi.org/10.3390/jof12070486", "note": "7.91 +/- 0.87 mg/g psilocybin, 0.11 +/- 0.03 mg/g psilocin."}
+      ]
+    },
+    {
+      "name": "Xico",
+      "analyses": [
+        {"psilocybin_pct": 0.622, "psilocin_pct": 0.065, "material": "Lab-grown, freeze-dried, powdered", "source": "Sharchaton A et al. (2026) J Fungi 12:486, Table 1, https://doi.org/10.3390/jof12070486", "note": "6.22 +/- 1.73 mg/g psilocybin, 0.65 +/- 0.36 mg/g psilocin."}
+      ]
+    },
+    {
+      "name": "Mal",
+      "analyses": [
+        {"psilocybin_pct": 0.562, "psilocin_pct": 0.038, "material": "Lab-grown, freeze-dried, powdered", "source": "Sharchaton A et al. (2026) J Fungi 12:486, Table 1, https://doi.org/10.3390/jof12070486", "note": "5.62 +/- 0.36 mg/g psilocybin, 0.38 +/- 0.25 mg/g psilocin."}
+      ]
+    },
+    {
+      "name": "Z+",
+      "analyses": [
+        {"psilocybin_pct": 0.324, "psilocin_pct": 0.0, "material": "Lab-grown, freeze-dried, powdered", "source": "Sharchaton A et al. (2026) J Fungi 12:486, Table 1, https://doi.org/10.3390/jof12070486", "note": "3.24 +/- 0.18 mg/g psilocybin; psilocin below the detection limit."}
+      ]
+    },
+    {
+      "name": "SE Houston",
+      "analyses": [
+        {"psilocybin_pct": 0.228, "psilocin_pct": 0.068, "material": "Lab-grown, freeze-dried, powdered", "source": "Sharchaton A et al. (2026) J Fungi 12:486, Table 1, https://doi.org/10.3390/jof12070486", "note": "2.28 +/- 0.60 mg/g psilocybin, 0.68 +/- 0.14 mg/g psilocin."}
+      ]
+    },
+    {
+      "name": "Oak Ridge light",
+      "analyses": [
+        {"psilocybin_pct": 0.203, "psilocin_pct": 0.049, "material": "Lab-grown, freeze-dried, powdered", "source": "Sharchaton A et al. (2026) J Fungi 12:486, Table 1, https://doi.org/10.3390/jof12070486", "note": "2.03 +/- 0.56 mg/g psilocybin, 0.49 +/- 0.23 mg/g psilocin; the lowest in that study."}
+      ]
+    },
+    {
+      "name": "Thai Pink Buffalo",
+      "analyses": [
+        {"psilocybin_pct": 0.14, "psilocin_pct": 0.13, "material": "One user-provided dried sample, Uruguay, age unknown", "source": "Rodriguez L et al. (2025) ACS Omega 10:55725-55732, https://doi.org/10.1021/acsomega.5c07092", "note": "Single sample of unknown age."}
+      ]
+    },
+    {
+      "name": "Cambodian",
+      "analyses": [
+        {"psilocybin_pct": 0.033, "psilocin_pct": 0.16, "material": "One user-provided dried sample, Uruguay, age unknown", "source": "Rodriguez L et al. (2025) ACS Omega 10:55725-55732, https://doi.org/10.1021/acsomega.5c07092", "note": "Single sample of unknown age."}
+      ]
+    },
+    {
+      "name": "Libelula",
+      "analyses": [
+        {"psilocybin_pct": 0.056, "psilocin_pct": 0.098, "material": "One user-provided dried sample, Uruguay, age unknown", "source": "Rodriguez L et al. (2025) ACS Omega 10:55725-55732, https://doi.org/10.1021/acsomega.5c07092", "note": "Single sample of unknown age; the lowest published P. cubensis value found."}
+      ]
+    }
+  ]
+}

@@ -60,8 +60,8 @@ SUMMARIES = {
     ),
     "lsd": (
         "A potent synthetic psychedelic dosed in micrograms, usually on blotter paper. A trip lasts "
-        "roughly 8-12 hours and longer at higher doses. Tolerance builds within hours and resets in "
-        "about five days."
+        "roughly 8-12 hours and longer at higher doses. Tolerance builds over the day after a dose, "
+        "when a repeat dose feels about half as strong, and is gone within about 3 to 6 days."
     ),
     "dmt": (
         "A short-acting, very intense psychedelic, usually vaporised. Effects start within seconds, "
@@ -104,11 +104,17 @@ SOURCES = {
         "https://psychonautwiki.org/wiki/Psilocybin_mushrooms",
         "https://erowid.org/plants/mushrooms/mushrooms_dose.shtml",
         "https://pubmed.ncbi.nlm.nih.gov/39812743/",
+        "https://pubmed.ncbi.nlm.nih.gov/38220293/",
+        "https://doi.org/10.3390/jof12070486",
+        "https://pubmed.ncbi.nlm.nih.gov/33119971/",
     ],
     "lsd": [
         "https://psychonautwiki.org/wiki/LSD",
         "https://erowid.org/chemicals/lsd/lsd_dose.shtml",
         "https://edoc.unibas.ch/56155",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC5591798/",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC8027607/",
+        "https://bibliography.maps.org/resources/download/12096",
     ],
     "dmt": [
         "https://psychonautwiki.org/wiki/DMT",
@@ -144,7 +150,9 @@ SAFETY_NOTES = {
         "New users: Erowid's strong oral range starts at 4 mg and PsychonautWiki's at 10 mg. Start with 2.5 mg and wait.",
     ],
     "psilocybin_mushrooms": [
-        "Doses are grams of DRIED mushrooms (P. cubensis), the way they are weighed. Dried P. cubensis holds roughly 6-12 mg psilocybin per gram and varies up to 10x between batches.",
+        "Doses are grams of DRIED mushrooms (P. cubensis), the way they are weighed. Dried P. cubensis in published analyses "
+        "ranges from under 2 to about 28 mg psilocybin + psilocin per gram (Rodriguez 2025; Galdino 2025; Sharchaton 2026), with "
+        "lab-grown batches often near 9-14 mg/g (Goff 2024). The app assumes 10 mg/g when nothing better is known.",
         "Fresh mushrooms are about 90% water, so a dried dose is roughly 10 times heavier fresh: a common 1-2.5 g dried dose is about 10-25 g fresh. Never use dried numbers for fresh weight.",
         "Other species (azurescens, cyanescens and others) can be several times stronger by weight than P. cubensis. The bands are for P. cubensis.",
         "Erowid puts heavy at 3.5 g+ dried (PsychonautWiki 5 g+). A scale reading to 0.1 g or better matters here.",
@@ -152,6 +160,10 @@ SAFETY_NOTES = {
     "lsd": [
         "Blotter is often NBOMe sold as LSD; reagent test it.",
         "Duration scales with dose: about 8 h at 100 ug and 12 h at 200 ug (Dolder 2017).",
+        "After 100 ug by mouth, effects began 0.8 +/- 0.4 h and peaked 2.8 +/- 0.8 h after the dose (Dolder 2017, oral "
+        "solution). No controlled sublingual data were found; the timeline uses these oral figures.",
+        "In the 1950s studies a second dose a day later was about half as strong, and during daily dosing even 2-4 times "
+        "the dose did not bring the full effect back (Isbell 1956, reviewed by Buchborn 2016).",
         "SSRIs and antipsychotics can blunt LSD, which may lead to dangerous redosing.",
         "Cannabis with LSD has a strong, unpredictable synergy that can cause anxiety, paranoia and panic.",
     ],
@@ -174,6 +186,129 @@ SAFETY_NOTES = {
         "Frequent use risks severe bladder and liver injury, and long-lasting tolerance.",
         "Grapefruit can double oral exposure.",
     ],
+}
+
+
+_BUCHBORN_2016 = (
+    "Buchborn T, Grecksch G, Dieterich DC, Hoellt V (2016). Tolerance to lysergic acid diethylamide: overview, "
+    "correlates, and clinical implications. Neuropathology of Drug Addictions and Substance Misuse, Vol. 2, "
+    "ch. 79, pp. 846-858. https://bibliography.maps.org/resources/download/12096"
+)
+_ISBELL_1956 = (
+    "Isbell H, Belleville RE, Fraser HF, Wikler A, Logan CR (1956). Studies on LSD-25. I. Effects in former morphine "
+    "addicts and development of tolerance during chronic intoxication. AMA Arch Neurol Psychiatry 76:468-478 "
+    "(as reviewed by Buchborn 2016)"
+)
+_ISBELL_1961 = (
+    "Isbell H, Wolbach AB, Wikler A, Miner EJ (1961). Cross tolerance between LSD and psilocybin. "
+    "Psychopharmacologia 2:147-159. PMID 13717955. https://doi.org/10.1007/BF00407974"
+)
+_WOLBACH_1962 = (
+    "Wolbach AB, Isbell H, Miner EJ (1962). Cross tolerance between mescaline and LSD-25. Psychopharmacologia 3:1-14 "
+    "(as reviewed by Buchborn 2016)"
+)
+_BALESTRIERI_1959 = (
+    "Balestrieri A, Fontanari D (1959). Acquired and crossed tolerance to mescaline, LSD-25, and BOL-148. "
+    "Arch Gen Psychiatry 1:279-282 (as reviewed by Buchborn 2016)"
+)
+_CHOLDEN_1955 = (
+    "Cholden LS, Kurland A, Savage C (1955). Clinical reactions and tolerance to LSD in chronic schizophrenia. "
+    "J Nerv Ment Dis 122:211-221; Hoffer A, Osmond H (1967). The hallucinogens (both as reviewed by Buchborn 2016)"
+)
+_GRESCH_2005 = (
+    "Gresch PJ, Smith RL, Barrett RJ, Sanders-Bush E (2005). Behavioral tolerance to lysergic acid diethylamide is "
+    "associated with reduced serotonin-2A receptor signaling in rat cortex. Neuropsychopharmacology 30:1693-1702. "
+    "PMID 15756304"
+)
+
+_LSD_TIME_COURSE = {
+    "rise_start_hours": {
+        "expected": 6, "low": 6, "high": 3,
+        "note": "Two 200 ug doses 6 h apart gave almost the same response (2 patients); a second dose 3 h after the "
+                "first added less than its own effect. Anecdotal reports only.",
+        "sources": [_BALESTRIERI_1959, "Freedman DX (1984), as reviewed by Buchborn 2016"],
+    },
+    "peak_hours": {
+        "expected": 24,
+        "note": "Tolerance to the mental effects is substantial 24 h after one dose (tachyphylaxis).",
+        "sources": [_BUCHBORN_2016],
+    },
+    "single_dose_loss": {
+        "expected": 0.52,
+        "note": "Self-rated effects of the second daily dose were 52% lower than of the first (daily doses averaging "
+                "138 ug, about 10 people). One small 1950s study; the true figure may differ.",
+        "sources": [_ISBELL_1956, _BUCHBORN_2016],
+    },
+    "max_loss": {
+        "expected": 0.88,
+        "note": "With daily dosing tolerance was near its maximum by day 3-4: on average about 78% less effect, "
+                "up to 88% on the physician's rating.",
+        "sources": [_ISBELL_1956, _BUCHBORN_2016],
+    },
+    "recovery_days": {
+        "expected": 5, "low": 3, "high": 6,
+        "note": "3 days without LSD was enough for full recovery after 14 and 84 days of daily use (Isbell 1956); "
+                "other reports give 3-6 days; the review concludes about 5 days to reverse completely.",
+        "sources": [_ISBELL_1956, _CHOLDEN_1955, _BUCHBORN_2016],
+    },
+    "dose_exponent": {
+        "expected": 0.5, "low": 1.0, "high": 0.0,
+        "note": "No human study measured how tolerance depends on dose size (the studies used about 75-150 ug a day). "
+                "The app assumes square-root scaling below a common dose and no extra tolerance above it; the band "
+                "runs from proportional scaling to no dependence. This is an app assumption, not a published figure.",
+        "sources": [],
+    },
+}
+
+TOLERANCE_PROFILES = {
+    "lsd": {
+        **_LSD_TIME_COURSE,
+        "summary": "Estimated loss of effect for a same-size dose. Tolerance to LSD is small for the first hours after "
+                   "a dose, largest about a day later (a repeat dose then felt about half as strong), builds to about "
+                   "80% less effect with daily use for 3-4 days, and is gone within about 3 to 6 days. The route "
+                   "(sublingual or swallowed) does not change this.",
+        "limits": "From small 1950s-60s studies (mostly 4-11 people, often patients, older questionnaires); no modern "
+                  "controlled study of repeated LSD doses was found. Rats show the same pattern with reduced cortical "
+                  "5-HT2A signalling (Gresch 2005). Treat the percent as a rough estimate.",
+        "cross_tolerance": [
+            {"substance": "psilocybin_mushrooms", "factor": 1.0,
+             "note": "Cross-tolerance in both directions on most measures; the papers give no single percentage, "
+                     "so the app counts a mushroom dose like an LSD dose of the same strength band (an assumption).",
+             "sources": [_ISBELL_1961, _BUCHBORN_2016]},
+            {"substance": "psilocin", "factor": 1.0,
+             "note": "Psilocin is the active form of psilocybin; counted as psilocybin (assumption).",
+             "sources": [_ISBELL_1961]},
+            {"substance": "mescaline", "factor": 1.0,
+             "note": "Cross-tolerance in both directions; no single percentage published, counted fully (assumption).",
+             "sources": [_WOLBACH_1962, _BUCHBORN_2016]},
+        ],
+        "sources": [_BUCHBORN_2016, _GRESCH_2005],
+    },
+    "psilocybin_mushrooms": {
+        **_LSD_TIME_COURSE,
+        "recovery_days": {
+            "expected": 5, "low": 3, "high": 7,
+            "note": "No human time course for psilocybin was found. The LSD figures are used because the two are "
+                    "cross-tolerant both ways; the upper end is PsychonautWiki's 7 days for mushrooms.",
+            "sources": [_ISBELL_1961, _BUCHBORN_2016, "https://psychonautwiki.org/wiki/Psilocybin_mushrooms"],
+        },
+        "summary": "Estimated loss of effect for a same-size dose, using LSD's measured time course: no human study "
+                   "measured how tolerance to psilocybin builds and fades over days. LSD and psilocybin are "
+                   "cross-tolerant both ways, and direct tolerance to psilocybin was reported weaker than to LSD, "
+                   "so this may overstate it.",
+        "limits": "Borrowed from 1950s LSD studies plus one small 1961 cross-tolerance study; treat it as a rough "
+                  "estimate.",
+        "cross_tolerance": [
+            {"substance": "lsd", "factor": 1.0,
+             "note": "Cross-tolerance in both directions; counted fully (assumption, no single percentage published).",
+             "sources": [_ISBELL_1961, _BUCHBORN_2016]},
+            {"substance": "psilocin", "factor": 1.0, "note": "The active form of psilocybin.", "sources": [_ISBELL_1961]},
+            {"substance": "mescaline", "factor": 1.0,
+             "note": "Mescaline is cross-tolerant with LSD; with psilocybin by extension (assumption).",
+             "sources": [_WOLBACH_1962, _BUCHBORN_2016]},
+        ],
+        "sources": [_ISBELL_1961, _BUCHBORN_2016],
+    },
 }
 
 
@@ -246,6 +381,20 @@ def apply_overrides(substances: list[dict]) -> list[dict]:
                 oral[band] = {k: (round(v / 10, 4) if v is not None else None) for k, v in oral[band].items()}
 
     note("psilocybin_mushrooms", "Doses now in grams of dried mushrooms (about 10 mg psilocybin per gram) instead of mg of pure psilocybin.")
+
+    # --- LSD and psilocybin: tolerance profiles from human studies (the Flutter app reads them;
+    # substances without one keep the generic half-life model) ---
+    for key, profile in TOLERANCE_PROFILES.items():
+        by_key[key]["tolerance_profile"] = copy.deepcopy(profile)
+        by_key[key]["tolerance_full"] = "builds over the first day after a dose; largest about 24 hours later"
+        note(key, "Tolerance profile added (time course, size and cross-tolerance, with sources); 'full' tolerance "
+                  "timing corrected from 'almost immediately' (Buchborn 2016).")
+
+    # LSD onset: 0.8 +/- 0.4 h after 100 ug by mouth (Dolder 2017), not 15-30 min.
+    lsd_route = _find_route(by_key["lsd"], "sublingual")
+    if lsd_route is not None:
+        lsd_route["duration"]["onset"] = _span(24.0, 72.0, "minutes")
+        note("lsd", "Onset 24-72 min (mean +/- SD 0.8 +/- 0.4 h after 100 ug oral, Dolder 2017); was 15-30 min.")
 
     by_key["2c-b"]["tolerance_group"] = None
     note("2c-b", "Own tolerance track: PsychonautWiki reports no cross-tolerance with other serotonergic psychedelics.")

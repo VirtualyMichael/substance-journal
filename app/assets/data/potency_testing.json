@@ -1,0 +1,58 @@
+{
+  "version": 1,
+  "verified": "2026-11-15",
+  "legal": "Possessing, posting or carrying psilocybin mushrooms is a crime in many places, and sending a sample to a lab can be too. This page is not legal advice, gives no sourcing information, and listing a service is not an endorsement. Check the service's current rules and your local law before doing anything.",
+  "what_a_test_tells": [
+    "A lab potency test measures psilocybin and psilocin, usually by liquid chromatography (HPLC or LC-MS/MS), and reports them as mg per gram or % of the sample.",
+    "Colour reagent tests show whether something is present, not how much. They cannot tell potency.",
+    "Home semi-quantitative kits (a colour scale read by eye, or with a small photometer) give a rough figure for dried material only. The maker's accuracy claims have not been checked independently here.",
+    "A result describes the sample that was tested. Single mushrooms of one grow differed by up to about 23% in a 2026 study, and caps held about twice as much as stems in another, so grind and mix (homogenise) a portion of the batch before sampling if the result is meant for the whole batch."
+  ],
+  "reading_a_certificate": [
+    "Look for psilocybin and psilocin reported separately, in mg/g or % of dry weight. 1% = 10 mg/g.",
+    "'Total psilocybin' or 'total potential psilocin' combine the two after converting one into the other by molar mass; check which the lab used. This app converts psilocin to psilocybin equivalents by x 1.39 (284.25 / 204.27 g/mol).",
+    "Check whether the result is per dry weight or per sample as received; a sample with water in it reads lower per gram.",
+    "Check what was sent: whole mushrooms, caps, stems or powder, and whether it was ground and mixed.",
+    "To use a result, open the batch in the mushroom calculator, enter the psilocybin % and psilocin %, choose 'Your lab test' and note the lab name and date."
+  ],
+  "services": [
+    {
+      "name": "ACS Laboratory",
+      "url": "https://www.acslab.com/faq",
+      "kind": "Commercial laboratory (USA)",
+      "tests": "Potency of psilocybin, psilocin, baeocystin, norbaeocystin, norpsilocin, aeruginascin, 4-HO-TMT, 4-HT, harmine and harmane, plus contaminants and moisture.",
+      "eligibility": "Its FAQ lists psilocybin mushroom testing for DEA-licensed clients only.",
+      "verified": "2026-11-15"
+    },
+    {
+      "name": "miraculix Psilocybin QTest",
+      "url": "https://miraculix-lab.de/en/psilocybin-qtest/",
+      "kind": "Home test kit (Germany)",
+      "tests": "Total psilocybin + psilocin as psilocybin equivalents in dried mushrooms, truffles or mycelium; about 150 mg of ground material; colour chart from 0 to 2.4% (0-24 mg/g) in 0.6% steps, or a separate photometer. Not for fresh mushrooms. The maker states agreement with HPLC within +/-10%.",
+      "eligibility": "Sold through the maker's EU and US web shops; check whether it may be shipped to you.",
+      "verified": "2026-11-15"
+    },
+    {
+      "name": "Bunk Police Psilocybin QTest Kit",
+      "url": "https://bunkpolice.com/products/psilocybin-qtest",
+      "kind": "Home test kit, US seller",
+      "tests": "Single-use kit giving the percentage and mg of psilocybin/psilocin in dried material (not fresh mushrooms), read against a colour chart. The page does not name the maker.",
+      "eligibility": "US seller; the page says a tested sample should not be considered safe.",
+      "verified": "2026-11-15"
+    },
+    {
+      "name": "Oregon ORELAP-accredited psilocybin labs",
+      "url": "https://www.oregon.gov/oha/PH/LABORATORYSERVICES/ENVIRONMENTALLABORATORYACCREDITATION/Pages/Psilocybin-Testing.aspx",
+      "kind": "State accreditation list (Oregon, USA)",
+      "tests": "Labs that test psilocybin products in Oregon's regulated program must be accredited by ORELAP. The state's list (updated 16 Dec 2024) named Rose City Laboratories.",
+      "eligibility": "For Oregon's licensed psilocybin program. Whether any listed lab accepts samples from the public was not confirmed.",
+      "verified": "2026-11-15"
+    }
+  ],
+  "checked_not_listed": [
+    {"name": "Energy Control International (Spain)", "url": "https://energycontrol-international.org/submitting-a-sample/", "reason": "Offers anonymous quantitative analysis to users, but its submission page does not mention mushrooms or psilocybin, so mushroom potency testing could not be confirmed."},
+    {"name": "DrugsData (USA)", "url": "https://drugsdata.org/", "reason": "Its site says new sample submissions are not being accepted."},
+    {"name": "Substance, Victoria BC (Canada)", "url": "https://substance.uvic.ca/", "reason": "Free drug checking; its page does not say whether mushrooms are accepted and says it cannot give exact percentages."},
+    {"name": "checkit! Vienna (Austria)", "url": "https://checkit.wien/", "reason": "Free, anonymous drug checking; its page does not mention mushrooms."}
+  ]
+}

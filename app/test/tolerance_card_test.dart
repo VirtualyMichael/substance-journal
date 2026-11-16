@@ -34,6 +34,35 @@ void main() {
     await disposeApp(tester, app);
   });
 
+  testWidgets('LSD shows an estimated percent loss of effect with its band, sources and no compensating dose', (tester) async {
+    final app = await buildTestApp(tester);
+    final ids = await dbRun(tester, () async {
+      final me = await app.db.ensureDefaultPerson();
+      final lsd = await app.db.addExperience(personId: me.id, sortDate: testNow.subtract(const Duration(days: 1)));
+      await app.db.addIngestion(experience: lsd, substanceKey: 'lsd', route: 'sublingual', time: testNow.subtract(const Duration(days: 1)), dose: 100, unit: 'µg');
+      final shrooms = await app.db.addExperience(personId: me.id, sortDate: testNow.subtract(const Duration(hours: 2)));
+      await app.db.addIngestion(experience: shrooms, substanceKey: 'psilocybin_mushrooms', route: 'oral', time: testNow.subtract(const Duration(hours: 2)), dose: 2, unit: 'g');
+      return (lsd: lsd.id, shrooms: shrooms.id);
+    });
+    await startApp(tester, app);
+    await tapKey(tester, 'experience-${ids.lsd}');
+    Finder keyed(String prefix) => find.byWidgetPredicate((w) => w.key is ValueKey && '${(w.key as ValueKey).value}'.startsWith(prefix));
+    // A day after 100 ug the same dose is estimated about half as strong (Isbell 1956 via Buchborn 2016).
+    final chip = tester.widget<Chip>(keyed('tolerance-trend-'));
+    expect((chip.label as Text).data, 'About 52% weaker now (est.)');
+    expect(tester.widget<Text>(keyed('tolerance-gain-')).data, contains('weaker for a same-size dose'));
+    expect(tester.widget<Text>(keyed('tolerance-halving-')).data, contains('gone by about'));
+    expect(tester.widget<Text>(keyed('tolerance-explain-')).data, contains('a day later'));
+    expect(keyed('tolerance-no-compensation-'), findsOneWidget);
+    expect(keyed('tolerance-sources-'), findsOneWidget);
+    await tester.pageBack();
+    await settle(tester);
+    // Mushrooms two hours ago: still counted with yesterday's LSD (cross-tolerance), on the same estimate.
+    await tapKey(tester, 'experience-${ids.shrooms}');
+    expect((tester.widget<Chip>(keyed('tolerance-trend-')).label as Text).data, contains('% weaker now'));
+    await disposeApp(tester, app);
+  });
+
   testWidgets('a live drinking session shows the Alcohol Tracker tiles; a past one shows session values', (tester) async {
     final app = await buildTestApp(tester);
     final ids = await dbRun(tester, () async {

@@ -1,5 +1,6 @@
 import 'reference.dart';
 import 'tolerance.dart';
+import 'tolerance_profile.dart';
 
 /// Where one person's tolerance stands for one track (a substance, or a group that cross-tolerates
 /// such as "psychedelics"), and when it should be back to normal if they stop.
@@ -12,6 +13,7 @@ class ToleranceTrack {
     required this.baselineAt,
     required this.projection,
     required this.substances,
+    this.effectLoss,
   });
 
   final String key;
@@ -29,6 +31,10 @@ class ToleranceTrack {
 
   /// Names of the substances pooled in this track.
   final List<String> substances;
+
+  /// For tracks with a published tolerance profile (LSD, psilocybin mushrooms): the estimated loss
+  /// of effect for a same-size dose now, with its band. Null for generic tracks.
+  final EffectLoss? effectLoss;
 
   String get word => toleranceWord(level);
 }
@@ -72,7 +78,8 @@ List<ToleranceTrack> toleranceTracks({
     final lastUse = entry.value.map((e) => e.at).reduce((a, b) => a.isAfter(b) ? a : b);
 
     DateTime? baselineAt;
-    if (level >= baselineLevel) {
+    // A profile's tolerance keeps building for a while after a dose, so look at the peak to come.
+    if (projectedPeak(events, byKey, entry.key, now).$2 >= baselineLevel) {
       for (var day = 1; day <= 365; day++) {
         final t = now.add(Duration(days: day));
         if (currentToleranceLevel(events, byKey, entry.key, t) < baselineLevel) {
@@ -97,6 +104,7 @@ List<ToleranceTrack> toleranceTracks({
       baselineAt: baselineAt,
       projection: projection,
       substances: nameList,
+      effectLoss: hasToleranceProfile(byKey, entry.key) ? effectLossAt(events, byKey, entry.key, now) : null,
     ));
   }
   result.sort((a, b) => b.level.compareTo(a.level));

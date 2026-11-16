@@ -37,6 +37,12 @@ void main() {
     expect(find.text('How it typically unfolds'), findsWidgets);
     expect(find.textContaining('not a measurement'), findsWidgets);
     expect(find.byKey(const ValueKey('audit-note')), findsOneWidget);
+    // Doses read as a five-step ladder (threshold, low, common, high, heavy), not one vague line.
+    expect(find.byKey(const ValueKey('dose-ladder-sublingual')), findsOneWidget);
+    expect(find.textContaining('common 75'), findsNothing);
+    for (final label in ['Threshold', 'Low', 'Common', 'High', 'Heavy']) {
+      expect(find.text(label), findsWidgets, reason: label);
+    }
     await disposeApp(tester, app);
   });
 

@@ -288,7 +288,8 @@ ToleranceView toleranceView({
     now: level,
     word: toleranceWord(level),
     trend: _trend(level, weekAgo),
-    plan: level < baselineLevel
+    // A profile's tolerance (LSD, mushrooms) is still building for up to a day after a dose.
+    plan: projectedPeak(events, byKey, track, now).$2 < baselineLevel
         ? BreakPlan(from: now)
         : BreakPlan(
             from: now,

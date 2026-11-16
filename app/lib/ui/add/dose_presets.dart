@@ -91,10 +91,16 @@ List<RecentDose> recentDoses(List<Ingestion> all, String substanceKey, String ro
         ..['abvText'] = _amount((d['abv'] as num).toDouble());
       label = '${_amount((d['volume'] as num).toDouble())} ${d['volumeUnit'] ?? 'oz'} at ${_amount((d['abv'] as num).toDouble())}%';
     } else if (substanceKey == 'psilocybin_mushrooms' && d['entered'] is num) {
+      final counted = d['form'] == 'capsule' || d['form'] == 'edible';
       input
         ..['mushroomForm'] = d['form'] ?? 'dried'
-        ..['mushroomText'] = _amount((d['entered'] as num).toDouble());
-      label = '${_amount((d['entered'] as num).toDouble())} ${d['form'] == 'mg' ? 'mg psilocybin' : '${d['form'] ?? 'dried'} g'}';
+        ..['mushroomText'] = counted ? '' : _amount((d['entered'] as num).toDouble())
+        // The calculator's inputs (potency, dryness, batch), when the entry has them.
+        ..['mushroomCalc'] = d['calc'];
+      label = counted
+          ? '${_amount((d['entered'] as num).toDouble())} ${d['form'] == 'capsule' ? 'capsules' : 'pieces'}'
+          : '${_amount((d['entered'] as num).toDouble())} ${d['form'] == 'mg' ? 'mg psilocybin' : '${d['form'] ?? 'dried'} g'}';
+      if (d['batchName'] is String) label = '${d['batchName']} $label';
     } else if (d['sample'] is String) {
       input['productName'] = d['sample'];
     }

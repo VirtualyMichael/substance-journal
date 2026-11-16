@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'tolerance_profile.dart';
+
 /// Reference data models, parsed from the bundled `data/substances.json`
 /// (produced by scripts/sync_substance_data.py plus the audited overrides).
 
@@ -107,6 +109,7 @@ class Substance {
     this.toleranceFull,
     this.toleranceHalf,
     this.toleranceZero,
+    this.toleranceProfile,
   });
 
   final String key;
@@ -140,6 +143,10 @@ class Substance {
   final String? toleranceFull;
   final String? toleranceHalf;
   final String? toleranceZero;
+
+  /// A substance-specific tolerance model with sources, where human studies support one (LSD,
+  /// psilocybin mushrooms). Null: the generic score in tolerance.dart is used.
+  final ToleranceProfile? toleranceProfile;
 
   RouteOfAdministration? route(String route) {
     for (final r in roas) {
@@ -235,6 +242,7 @@ Substance _parseSubstance(Map<String, dynamic> j) {
     toleranceFull: j['tolerance_full'] as String?,
     toleranceHalf: j['tolerance_half'] as String?,
     toleranceZero: j['tolerance_zero'] as String?,
+    toleranceProfile: ToleranceProfile.fromJson(j['tolerance_profile']),
   );
 }
 

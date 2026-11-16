@@ -19,10 +19,10 @@ void main() {
     expect(run('lsd', 'sublingual', 100), isEmpty);
   });
 
-  test('strong is a note, heavy a caution, with the published number', () {
+  test('high is a note, heavy a caution, with the published number', () {
     final lsd = byKey['lsd']!.route('sublingual')!;
     final strong = run('lsd', 'sublingual', lsd.doseStrong!.min!);
-    expect(titles(strong), ['Strong dose']);
+    expect(titles(strong), ['High dose']);
     expect(strong.single.level, AdvisoryLevel.note);
     final heavy = run('lsd', 'sublingual', lsd.doseHeavy!);
     expect(titles(heavy), ['Heavy dose']);

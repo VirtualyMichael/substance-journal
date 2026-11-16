@@ -46,7 +46,10 @@ void main() {
     await disposeApp(tester, app);
   });
 
-  testWidgets('a repeat dose shortly after the last one is flagged, with tolerance noted', (tester) async {
+  // Changed 2026-11-15: this used to expect "Tolerance is up" 30 minutes after LSD. Human data show
+  // LSD tolerance builds over the following day (largest about 24 h after a dose; two doses 6 h apart
+  // gave nearly the same response; Buchborn et al. 2016), so the note now appears the next day.
+  testWidgets('a repeat dose shortly after the last one is flagged as still active', (tester) async {
     final app = await buildTestApp(tester);
     await seedLsd(tester, app, const Duration(minutes: 30));
     await startApp(tester, app);
@@ -54,6 +57,17 @@ void main() {
     await tester.enterText(find.byKey(const ValueKey('dose-field')), '100');
     await settle(tester, rounds: 2);
     expect(find.textContaining('Still active from 30 min ago'), findsOneWidget);
+    expect(find.text('Tolerance is up'), findsNothing);
+    await disposeApp(tester, app);
+  });
+
+  testWidgets('a dose the day after LSD notes the raised tolerance', (tester) async {
+    final app = await buildTestApp(tester);
+    await seedLsd(tester, app, const Duration(days: 1));
+    await startApp(tester, app);
+    await openLsdDose(tester);
+    await tester.enterText(find.byKey(const ValueKey('dose-field')), '100');
+    await settle(tester, rounds: 2);
     expect(find.text('Tolerance is up'), findsOneWidget);
     await disposeApp(tester, app);
   });

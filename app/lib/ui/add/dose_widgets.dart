@@ -11,6 +11,7 @@ import '../design.dart';
 import '../units/custom_unit_picker.dart';
 import 'dose_presets.dart';
 import 'dose_sample.dart';
+import 'mushroom_calculator.dart';
 
 enum CannabisEntryMode { product, label }
 
@@ -73,6 +74,7 @@ class DoseInput {
     this.productName,
     this.mushroomForm = 'dried',
     this.mushroomText = '',
+    this.mushroomCalc = const MushroomCalc(),
     this.presetNonce = 0,
   });
 
@@ -109,6 +111,10 @@ class DoseInput {
   final String mushroomForm;
   final String mushroomText;
 
+  /// The mushroom calculator's other inputs: capsules and edibles, dryness, caps or stems, the
+  /// batch's potency and where it came from (see sj_core mushroom_potency.dart).
+  final MushroomCalc mushroomCalc;
+
   /// Bumped when a preset fills the form, so fields that only read their starting value redraw.
   final int presetNonce;
 
@@ -136,6 +142,7 @@ class DoseInput {
     bool clearProduct = false,
     String? mushroomForm,
     String? mushroomText,
+    MushroomCalc? mushroomCalc,
     int? presetNonce,
   }) =>
       DoseInput(
@@ -159,6 +166,7 @@ class DoseInput {
         productName: clearProduct ? null : (productName ?? this.productName),
         mushroomForm: mushroomForm ?? this.mushroomForm,
         mushroomText: mushroomText ?? this.mushroomText,
+        mushroomCalc: mushroomCalc ?? this.mushroomCalc,
         presetNonce: presetNonce ?? this.presetNonce,
       );
 
@@ -181,6 +189,7 @@ class DoseInput {
         'productName': productName,
         'mushroomForm': mushroomForm,
         'mushroomText': mushroomText,
+        'mushroomCalc': mushroomCalc.toJson(),
       };
 
   /// Fills this input from a saved preset's JSON, ignoring anything it does not understand.
@@ -212,6 +221,7 @@ class DoseInput {
       productName: j['productName'] as String?,
       mushroomForm: str('mushroomForm', 'dried'),
       mushroomText: str('mushroomText', ''),
+      mushroomCalc: MushroomCalc.fromJson(j['mushroomCalc']),
       presetNonce: presetNonce + 1,
     );
   }
@@ -229,6 +239,12 @@ class DoseInput {
       _ => n,
     };
   }
+
+  /// The mushroom calculator's reading of what was typed (an estimate, an error, or neither yet).
+  MushroomResult mushroomResult(RouteOfAdministration roa) =>
+      estimateMushroom(mushroomForm, mushroomText, mushroomCalc, heavyGrams: roa.doseHeavy ?? 5.0);
+
+  bool _isMushroomRoute(RouteOfAdministration roa) => roa.substanceKey == 'psilocybin_mushrooms' && roa.route == 'oral';
 
   /// "0.25" rather than "0.250000".
   static String formatGrams(double g) {
@@ -302,6 +318,10 @@ class DoseInput {
       return null;
     }
     if (unknown) return null;
+    if (_isMushroomRoute(roa)) {
+      final error = mushroomResult(roa).error;
+      if (error != null) return error;
+    }
     final d = dose;
     if (d == null) return 'Enter a dose, or mark it as unknown.';
     if (d <= 0) return 'The dose must be greater than zero.';
@@ -377,10 +397,28 @@ class DoseInput {
       // Keep what was actually poured, so it reads "12 fl oz at 5%" rather than grams of ethanol.
       details: drink
           ? {'drink': '', 'volume': volume, 'volumeUnit': volumeUnit, 'abv': abv}
-          : (roa.substanceKey == 'psilocybin_mushrooms' && !unknown && mushroomText.trim().isNotEmpty)
-              ? {'form': mushroomForm, 'entered': _num(mushroomText), if (productName != null) 'sample': productName}
+          : (roa.substanceKey == 'psilocybin_mushrooms' && !unknown && _mushroomDetails(roa) != null)
+              ? {..._mushroomDetails(roa)!, if (productName != null) 'sample': productName}
               : {if (productName != null) 'sample': productName},
     );
+  }
+
+  /// What a mushroom entry keeps besides its dose in grams of dried mushroom: what was weighed or
+  /// counted ('form', 'entered', as before), and, as additive keys, the calculator's inputs ('calc'),
+  /// the estimated psilocybin equivalents in mg with their range, and the batch it came from.
+  Map<String, Object?>? _mushroomDetails(RouteOfAdministration roa) {
+    final estimate = mushroomResult(roa).estimate;
+    final counted = mushroomForm == 'capsule' || mushroomForm == 'edible';
+    final entered = counted ? _num(mushroomCalc.count) : _num(mushroomText);
+    if (estimate == null && entered == null) return null;
+    return {
+      'form': mushroomForm,
+      'entered': entered,
+      if (estimate != null) ...estimate.toDetails(),
+      'calc': mushroomCalc.toJson(),
+      if (mushroomCalc.batchId != null) 'batchId': mushroomCalc.batchId,
+      if (mushroomCalc.batchName != null) 'batchName': mushroomCalc.batchName,
+    };
   }
 }
 
@@ -412,9 +450,9 @@ class DoseStorage {
 String doseClassLabel(DoseClass c) => switch (c) {
       DoseClass.belowThreshold => 'Below threshold',
       DoseClass.threshold => 'Threshold',
-      DoseClass.light => 'Light',
+      DoseClass.light => 'Low',
       DoseClass.common => 'Common',
-      DoseClass.strong => 'Strong',
+      DoseClass.strong => 'High',
       DoseClass.heavy => 'Heavy',
     };
 
@@ -571,7 +609,7 @@ class _GenericFormState extends ConsumerState<_GenericForm> {
           value: value,
           onChanged: onChanged,
         ),
-        if (!value.unknown && chosen == null && _isMushroom(substance, roa)) _MushroomEntry(value: value, onChanged: onChanged),
+        if (!value.unknown && chosen == null && _isMushroom(substance, roa)) MushroomEntry(roa: roa, value: value, onChanged: onChanged),
         if (!value.unknown && chosen == null && !_isMushroom(substance, roa))
           TextField(
             key: const ValueKey('dose-field'),
@@ -609,7 +647,7 @@ class _GenericFormState extends ConsumerState<_GenericForm> {
               onChanged: (t) => onChanged(value.copyWith(stdDevText: t)),
             ),
           const SizedBox(height: Gap.md),
-          DoseBands(roa: roa, low: dose != null && dose > 0 ? dose : null),
+          DoseBands(roa: roa, low: _bandDose(substance, roa, value, dose)),
         ] else
           Padding(
             padding: const EdgeInsets.only(top: Gap.sm),
@@ -625,74 +663,14 @@ class _GenericFormState extends ConsumerState<_GenericForm> {
 
 bool _isMushroom(Substance substance, RouteOfAdministration roa) => substance.key == 'psilocybin_mushrooms' && roa.route == 'oral';
 
-/// Mushrooms are weighed in grams, dried or fresh, not in mg of psilocybin. This takes either (or mg
-/// of pure psilocybin) and keeps the dose as grams of dried mushrooms, which is what the reference
-/// bands and the timeline use.
-class _MushroomEntry extends StatelessWidget {
-  const _MushroomEntry({required this.value, required this.onChanged});
-
-  final DoseInput value;
-  final ValueChanged<DoseInput> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    final form = value.mushroomForm;
-    final dried = DoseInput.mushroomDriedGrams(form, value.mushroomText);
-    final small = Theme.of(context).textTheme.bodySmall;
-
-    void update({String? newForm, String? text}) {
-      final f = newForm ?? form;
-      final t = text ?? value.mushroomText;
-      final g = DoseInput.mushroomDriedGrams(f, t);
-      onChanged(value.copyWith(mushroomForm: f, mushroomText: t, text: g == null ? '' : DoseInput.formatGrams(g)));
-    }
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SegmentedButton<String>(
-          key: const ValueKey('mushroom-form'),
-          segments: const [
-            ButtonSegment(value: 'dried', label: Text('Dried g')),
-            ButtonSegment(value: 'fresh', label: Text('Fresh g')),
-            ButtonSegment(value: 'mg', label: Text('Pure mg')),
-          ],
-          selected: {form},
-          onSelectionChanged: (s) => update(newForm: s.first),
-        ),
-        const SizedBox(height: Gap.sm),
-        TextFormField(
-          key: ValueKey('mushroom-amount-$form'),
-          initialValue: value.mushroomText,
-          keyboardType: const TextInputType.numberWithOptions(decimal: true),
-          decoration: InputDecoration(
-            labelText: switch (form) {
-              'fresh' => 'Weight of fresh mushrooms',
-              'mg' => 'Pure psilocybin',
-              _ => 'Weight of dried mushrooms',
-            },
-            suffixText: form == 'mg' ? 'mg' : 'g',
-          ),
-          onChanged: (t) => update(text: t),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          switch (form) {
-            'fresh' => 'Fresh mushrooms are about 90% water, so this counts as a tenth of its weight in dried mushrooms.',
-            'mg' => 'Converted at about 10 mg of psilocybin per gram of dried P. cubensis.',
-            _ => 'Dried P. cubensis holds roughly 6 to 12 mg psilocybin per gram and varies up to 10x between batches.',
-          },
-          style: small,
-        ),
-        if (dried != null && form != 'dried')
-          Padding(
-            padding: const EdgeInsets.only(top: 4),
-            child: Text('= ${DoseInput.formatGrams(dried)} g dried (about ${(dried * 10).toStringAsFixed(dried * 10 < 10 ? 1 : 0)} mg psilocybin)', key: const ValueKey('mushroom-dried'), style: small),
-          ),
-        const SizedBox(height: Gap.sm),
-      ],
-    );
+/// For mushrooms the bands are grams of dried mushroom at about 10 mg/g, so the calculator's
+/// expected psilocybin equivalents are placed on them; other compounds use the dose as typed.
+double? _bandDose(Substance substance, RouteOfAdministration roa, DoseInput value, double? dose) {
+  if (_isMushroom(substance, roa) && !value.unknown && value.unit == null) {
+    final e = value.mushroomResult(roa).estimate;
+    if (e != null) return e.expectedMg / (defaultPotencyPct * 10);
   }
+  return dose != null && dose > 0 ? dose : null;
 }
 
 class _AlcoholCalculator extends StatelessWidget {

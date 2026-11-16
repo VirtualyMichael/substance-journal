@@ -51,6 +51,10 @@ class _EditIngestionDialogState extends ConsumerState<EditIngestionDialog> {
   bool get _isDrink => widget.ingestion.substanceKey == 'alcohol' && !_changedWhat;
 
   bool get _isCannabis => widget.ingestion.substanceKey == 'cannabis';
+
+  /// A mushroom entry can record how its batch compared with what was expected (personal calibration).
+  bool get _isMushroom => widget.ingestion.substanceKey == 'psilocybin_mushrooms' && !_changedWhat;
+  late BatchFeel? _feel = batchFeelFrom(_details['batchFeel']);
   bool get _changedWhat => _substanceKey != widget.ingestion.substanceKey || _route != widget.ingestion.route;
 
   /// Still tied to a custom unit ("2 pills") and the compound and route have not changed.
@@ -102,6 +106,23 @@ class _EditIngestionDialogState extends ConsumerState<EditIngestionDialog> {
         customUnitId = const Value(null);
         detailsJson = '{}';
       }
+    }
+
+    if (_isMushroom) {
+      final d = jsonDecode(detailsJson) as Map<String, dynamic>;
+      final old = widget.ingestion.dose;
+      // The psilocybin estimate scales with the dried weight, so a corrected weight keeps it in step.
+      if (old != null && old > 0 && dose != null && dose != old) {
+        for (final k in const ['psilocybinEqMg', 'psilocybinEqMgLow', 'psilocybinEqMgHigh']) {
+          if (d[k] is num) d[k] = double.parse(((d[k] as num) * dose / old).toStringAsFixed(2));
+        }
+      }
+      if (_feel == null) {
+        d.remove('batchFeel');
+      } else {
+        d['batchFeel'] = _feel!.name;
+      }
+      detailsJson = jsonEncode(d);
     }
 
     await db.updateIngestion(
@@ -259,6 +280,26 @@ class _EditIngestionDialogState extends ConsumerState<EditIngestionDialog> {
               ),
               const SizedBox(height: Gap.sm),
               TextField(controller: _notes, maxLines: 2, decoration: const InputDecoration(labelText: 'Notes')),
+              if (_isMushroom) ...[
+                const SizedBox(height: Gap.sm),
+                DropdownButtonFormField<BatchFeel?>(
+                  key: const ValueKey('edit-batch-feel'),
+                  initialValue: _feel,
+                  isExpanded: true,
+                  decoration: InputDecoration(
+                    labelText: _details['batchName'] is String ? 'How did "${_details['batchName']}" compare with what you expected?' : 'How did it compare with what you expected?',
+                  ),
+                  items: [
+                    const DropdownMenuItem<BatchFeel?>(value: null, child: Text('Not rated')),
+                    for (final f in BatchFeel.values) DropdownMenuItem<BatchFeel?>(value: f, child: Text(batchFeelLabel(f))),
+                  ],
+                  onChanged: (f) => setState(() => _feel = f),
+                ),
+                Text(
+                  'Used only to suggest a personal calibration of this batch\'s potency in the calculator. Not dosing advice.',
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              ],
               if (_error != null)
                 Padding(
                   padding: const EdgeInsets.only(top: Gap.sm),

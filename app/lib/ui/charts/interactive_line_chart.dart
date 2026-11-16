@@ -108,6 +108,7 @@ class InteractiveLineChart extends StatefulWidget {
     this.yLabel,
     this.extraReadout,
     this.emptyText = 'Nothing to show for this range.',
+    this.xLabel,
   });
 
   final List<ChartSeries> series;
@@ -123,6 +124,10 @@ class InteractiveLineChart extends StatefulWidget {
   /// More readout lines for the moment under the crosshair (e.g. when tolerance halves from there).
   final List<String> Function(DateTime at)? extraReadout;
   final String emptyText;
+
+  /// Labels for the time axis and the readout in place of dates (e.g. "Day 3" for a hypothetical
+  /// timeline that starts at a dose rather than on a calendar date).
+  final String Function(DateTime at)? xLabel;
 
   @override
   State<InteractiveLineChart> createState() => _InteractiveLineChartState();
@@ -150,7 +155,7 @@ class _InteractiveLineChartState extends State<InteractiveLineChart> {
       final at = _x == null ? null : _timeAt(_x!, width);
       void move(Offset p) => setState(() => _x = p.dx.clamp(_left, width - _right));
       return Semantics(
-        label: 'Chart from ${chartDate(widget.from)} to ${chartDate(widget.to)}: ${widget.series.map((s) => s.label).join(', ')}',
+        label: 'Chart from ${(widget.xLabel ?? chartDate)(widget.from)} to ${(widget.xLabel ?? chartDate)(widget.to)}: ${widget.series.map((s) => s.label).join(', ')}',
         child: SizedBox(
           height: widget.height,
           child: Stack(
@@ -196,7 +201,7 @@ class _InteractiveLineChartState extends State<InteractiveLineChart> {
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(chartDateTime(at), style: const TextStyle(fontWeight: FontWeight.w600)),
+                            Text((widget.xLabel ?? chartDateTime)(at), style: const TextStyle(fontWeight: FontWeight.w600)),
                             for (final s in widget.series)
                               if (s.points.isNotEmpty)
                                 Row(mainAxisSize: MainAxisSize.min, children: [
@@ -276,7 +281,9 @@ class _ChartPainter extends CustomPainter {
     final ticks = 4;
     for (var n = 0; n <= ticks; n++) {
       final t = from.add(Duration(microseconds: (span * n / ticks).round()));
-      final s = days <= 2
+      final s = widget.xLabel != null
+          ? widget.xLabel!(t)
+          : days <= 2
           ? '${_pad(t.hour)}:${_pad(t.minute)}'
           : days <= 120
               ? '${_months[t.month - 1]} ${t.day}'

@@ -7,6 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:sj_core/sj_core.dart';
 import 'package:substance_journal_app/app.dart';
 import 'package:substance_journal_app/data/database.dart';
+import 'package:substance_journal_app/data/mushroom_reference.dart';
 import 'package:substance_journal_app/data/reference_repository.dart';
 import 'package:substance_journal_app/providers.dart';
 
@@ -41,6 +42,9 @@ Future<TestApp> buildTestApp(WidgetTester tester, {DateTime? now}) async {
       referenceProvider.overrideWithValue(reference),
       interactionPairsProvider.overrideWithValue(reference.interactionPairs),
       clockProvider.overrideWithValue(() => now ?? testNow),
+      // Read straight from disk: asset loading through the bundle is asynchronous in tests.
+      strainReferenceProvider.overrideWith((ref) => StrainReference.parse(File('assets/data/mushroom_strains.json').readAsStringSync())),
+      potencyTestingProvider.overrideWith((ref) => PotencyTestingInfo.parse(File('assets/data/potency_testing.json').readAsStringSync())),
     ],
     child: const SubstanceJournalApp(),
   );

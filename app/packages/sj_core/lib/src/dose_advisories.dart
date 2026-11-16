@@ -63,8 +63,8 @@ List<DoseAdvisory> doseAdvisories({
     } else if (cls == DoseClass.strong) {
       result.add(DoseAdvisory(
         AdvisoryLevel.note,
-        'Strong dose',
-        'This is in the strong range for this route. Effects will be intense and last longer.',
+        'High dose',
+        'This is in the high range for this route. Effects will be intense and last longer.',
       ));
     }
   }

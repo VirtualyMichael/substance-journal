@@ -5,12 +5,14 @@ import 'package:sj_core/sj_core.dart';
 import '../../data/custom_substances.dart';
 import '../../data/database.dart';
 import '../../providers.dart';
-import '../add/add_ingestion_page.dart';
 import '../design.dart';
 import '../../data/research_links.dart';
 import '../link_tile.dart';
 import '../safety/glossary_page.dart';
 import 'route_timeline_chart.dart';
+import 'dose_ladder.dart';
+import 'tolerance_graph.dart';
+import 'compound_detail_sections.dart';
 import '../journal/journal_page.dart';
 import 'compound_picker.dart';
 import 'tolerance_page.dart';
@@ -169,7 +171,9 @@ class CompoundDetailPage extends ConsumerWidget {
                 Text(
                   substance.audited
                       ? 'Doses and timings here were checked against several published sources.'
-                      : substance.crossChecked
+                      : roas.any((r) => catalog.doseAudit.behind(r) != null)
+                          ? 'Dose bands were cross-checked against other sources (see each route below). Timings and the rest come from PsychonautWiki and were not checked the same way.'
+                          : substance.crossChecked
                           ? 'From PsychonautWiki, and TripSit lists dose bands within 50% of it. That is two sources agreeing, not an independent audit.'
                           : 'Copied from PsychonautWiki and not independently checked, so treat the numbers as a starting point.',
                   key: const ValueKey('audit-note'),
@@ -195,6 +199,8 @@ class CompoundDetailPage extends ConsumerWidget {
                   ),
                 ),
               ],
+              if (!isCustom && catalog.details[substance.key] != null)
+                CompoundDetailSections(detail: catalog.details[substance.key]!, details: catalog.details),
               const SizedBox(height: Gap.md),
               if (isCustom && roas.isNotEmpty)
                 Card(
@@ -225,15 +231,17 @@ class CompoundDetailPage extends ConsumerWidget {
                         children: [
                           Text(titleCase(roa.route), style: text.titleMedium),
                           const SizedBox(height: Gap.sm),
-                          Text(describeRoute(roa)),
+                          DoseLadder(roa: roa, substance: substance, audit: catalog.doseAudit.behind(roa)),
                           const SizedBox(height: Gap.md),
                           Row(
                             children: [
                               Expanded(child: Text('How it typically unfolds', style: text.titleSmall)),
-                              TextButton(
-                                key: ValueKey('glossary-${roa.route}'),
-                                onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const GlossaryPage())),
-                                child: const Text('What do these terms mean?'),
+                              Flexible(
+                                child: TextButton(
+                                  key: ValueKey('glossary-${roa.route}'),
+                                  onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const GlossaryPage())),
+                                  child: const Text('What do these terms mean?', textAlign: TextAlign.end),
+                                ),
                               ),
                             ],
                           ),
@@ -256,17 +264,7 @@ class CompoundDetailPage extends ConsumerWidget {
               if (substance.hasTolerance || substance.addictionPotential != null) ...[
                 Text('Tolerance and dependence', style: text.titleMedium),
                 const SizedBox(height: 4),
-                if (substance.hasTolerance) ...[
-                  if (substance.toleranceFull != null) Text('Tolerance builds: ${substance.toleranceFull}'),
-                  Text(
-                    [
-                      if (substance.toleranceHalfDays != null) 'Halves in about ${substance.toleranceHalfDays!.toStringAsFixed(0)} days',
-                      if (substance.toleranceZeroDays != null) 'back to baseline in about ${substance.toleranceZeroDays!.toStringAsFixed(0)} days',
-                    ].join(', '),
-                  ),
-                  if (substance.toleranceGroup != null && substance.toleranceGroup!.isNotEmpty)
-                    Text('Cross-tolerance group: ${titleCase(substance.toleranceGroup!)}. Others in the group build and share tolerance.', style: text.bodySmall),
-                ],
+                if (substance.hasTolerance) ToleranceGraph(substance: substance, byKey: catalog.byKey),
                 if (substance.addictionPotential != null && substance.addictionPotential!.isNotEmpty)
                   Padding(
                     padding: const EdgeInsets.only(top: 4),

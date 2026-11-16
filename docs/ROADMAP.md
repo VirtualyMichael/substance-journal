@@ -85,4 +85,11 @@ Each phase ends with passing tests, and a build you can open.
 - **Insights:** monthly summary per person (doses, days, by substance, busiest weekday, change from last month).
 - **Packaging:** conditional Android release signing (`scripts/make_android_keystore.ps1`), Inno Setup installer script (`scripts/build_windows_installer.ps1`), CI workflow for Windows, Linux, Android and unsigned iOS.
 - **Not done:** per-ingestion colours; Linux and iOS build in CI but have not been launched on real devices (iOS needs a Mac and an Apple developer account to install). Built since: reminders and limit alerts, Wi-Fi and automatic sync, cannabis products, and `mcp/substance-journal` (the `my-mcp` copy still reads Alcohol Tracker's file until it is replaced).
+- **Built 2026-11-15:** per-substance tolerance profiles (LSD, psilocybin mushrooms) shown as a percent loss of effect with a band; LSD onset corrected to
+  24-72 min (Dolder 2017); the mushroom potency calculator with batches, personal calibration, a strain reference of published analyses only, and a
+  "Get your batch tested" page. **Not verified:** rendering on a real phone or the Windows build (tests only); human data on tolerance after a single dose
+  is one small 1950s study (52% at 24 h, no error range published), so the band at the peak reflects timing and dose-size uncertainty only; no
+  psilocybin-specific time course exists (LSD's is borrowed); cross-tolerance strength is assumed full (the papers report it on most measures but give no
+  single percentage); no P. cubensis water content, tea or lemon-tek extraction figure, or storage loss rate could be sourced (culinary-mushroom USDA
+  water values are used and the loss is the user's own guess); the calibration steps (x0.6 to x1.6 per rating, damped, at most x2) are the app's own rule.
 - **Screenshots without launching the app:** `SJ_SCREENSHOTS_DIR=<dir> flutter test test/screenshots_test.dart` renders the main screens to PNG.

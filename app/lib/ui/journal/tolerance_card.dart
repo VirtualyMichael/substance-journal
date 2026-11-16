@@ -166,6 +166,7 @@ class _ToleranceCardState extends ConsumerState<ToleranceCard> {
     final end = mine.last.endTime ?? mine.last.time;
     final names = {for (final i in mine) c.catalog[i.substanceKey]?.name ?? i.substanceKey}.toList()..sort();
     final color = substanceColor(mine.first.substanceKey);
+    if (!alcohol && hasToleranceProfile(c.catalog, key)) return _profileTrack(context, c, key, mine, names, color, inTrack);
 
     // Before and after this session, and when it halves from its end.
     double scoreAt(DateTime t, {bool before = false}) => alcohol
@@ -269,6 +270,171 @@ class _ToleranceCardState extends ConsumerState<ToleranceCard> {
             style: text.bodySmall,
           ),
         ),
+      const SizedBox(height: Gap.md),
+    ];
+  }
+
+  /// LSD and psilocybin mushrooms: the estimated loss of effect for a same-size dose from the
+  /// published tolerance profile (see sj_core tolerance_profile.dart), with its band and sources.
+  List<Widget> _profileTrack(
+    BuildContext context,
+    _Context c,
+    String key,
+    List<Ingestion> mine,
+    List<String> names,
+    Color color,
+    bool Function(Ingestion) inTrack,
+  ) {
+    final text = Theme.of(context).textTheme;
+    final scheme = Theme.of(context).colorScheme;
+    final catalog = c.catalog;
+    final events = c.events;
+    final profile = trackProfile(catalog, key, preferSubstance: mine.first.substanceKey)!;
+    final first = mine.first.time;
+    final end = mine.last.endTime ?? mine.last.time;
+    EffectLoss lossAt(DateTime t, {DateTime? upTo}) => effectLossAt(events, catalog, key, t, upTo: upTo);
+    final before = lossAt(first, upTo: first.subtract(const Duration(microseconds: 1)));
+    final (peakAt, _) = projectedPeak(events, catalog, key, end);
+    final peak = lossAt(peakAt, upTo: end);
+    final now = lossAt(c.now);
+    final half = timeToFraction(events, catalog, key, end, 0.5);
+    DateTime? gone(ToleranceBand band) => effectRecoveredAt(events, catalog, key, end, band: band);
+    final goneExpected = gone(ToleranceBand.expected);
+    final goneEarliest = gone(ToleranceBand.low);
+    final goneLatest = gone(ToleranceBand.high);
+
+    // The span to draw.
+    final range = _range;
+    final DateTime from;
+    final DateTime to;
+    if (range == null) {
+      from = first.subtract(const Duration(days: 7));
+      final until = [end.add(const Duration(days: 7)), ?goneLatest?.add(const Duration(days: 1)), if (c.now.isAfter(end)) c.now.add(const Duration(days: 2))]
+          .reduce((a, b) => a.isAfter(b) ? a : b);
+      to = until;
+    } else {
+      final anchor = c.now.isAfter(end) ? c.now : end;
+      final span = range.span ?? anchor.difference(c.live.first.time) + const Duration(days: 2);
+      from = anchor.subtract(span);
+      to = anchor.add(Duration(days: max(7, span.inDays ~/ 3)));
+    }
+    final step = Duration(minutes: max(60, to.difference(from).inMinutes ~/ 240));
+    final line = effectLossTimeline(events, catalog, key, from, to, step: step);
+    List<(DateTime, double)> pick(double Function(EffectLoss) f) => [for (final (t, l) in line) (t, f(l) * 100)];
+    String pct(double v) => '${v.round()}%';
+
+    final track = c.tracks[key] ??= [for (final i in c.live) if (inTrack(i)) i];
+    final earlier = [for (final i in track) if (i.time.isBefore(c.start.subtract(const Duration(hours: 12)))) i];
+    final last = earlier.isEmpty ? null : earlier.map((i) => i.time).reduce((a, b) => a.isAfter(b) ? a : b);
+    final month = track.where((i) => !i.time.isBefore(c.now.subtract(const Duration(days: 30))) && !i.time.isAfter(c.now)).length;
+    final week = track.where((i) => !i.time.isBefore(c.now.subtract(const Duration(days: 7))) && !i.time.isAfter(c.now)).length;
+    final uncounted = uncountedInProfile(events, catalog, key);
+    final noticeable = now.expected >= baselineEffectLoss;
+
+    return [
+      Row(children: [
+        Expanded(child: Text(names.join(' / '), style: text.titleSmall?.copyWith(fontWeight: FontWeight.w600))),
+        Chip(
+          key: ValueKey('tolerance-trend-$key'),
+          visualDensity: VisualDensity.compact,
+          avatar: const Icon(Icons.percent, size: 16),
+          label: Text(noticeable ? 'About ${now.percent}% weaker now (est.)' : 'No tolerance now (est.)'),
+        ),
+      ]),
+      Text(
+        [
+          last == null ? 'First use in your log' : 'Before this: ${_gap(c.start.difference(last))} earlier',
+          '$week in the last 7 days',
+          '$month in the last 30',
+        ].join('  |  '),
+        key: ValueKey('tolerance-context-$key'),
+        style: text.bodySmall,
+      ),
+      Text(
+        'This session: ${before.percent}% → ${peak.percent}% weaker for a same-size dose at its peak '
+        '(range ${peak.lowPercent}-${peak.highPercent}%)',
+        key: ValueKey('tolerance-gain-$key'),
+        style: text.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+      ),
+      const SizedBox(height: 4),
+      InteractiveLineChart(
+        key: ValueKey('tolerance-chart-$key'),
+        series: [
+          ChartSeries(label: 'Estimate', color: color, points: pick((l) => l.expected), format: pct),
+          ChartSeries(label: 'High end', color: color.withValues(alpha: 0.45), points: pick((l) => l.high), fill: false, format: pct),
+          ChartSeries(label: 'Low end', color: color.withValues(alpha: 0.45), points: pick((l) => l.low), fill: false, format: pct),
+        ],
+        from: from,
+        to: to,
+        height: 190,
+        yMin: 0,
+        yMax: 100,
+        yLabel: (v) => '${v.round()}%',
+        markers: [
+          ChartMarker(first, 'This session', color: color, dotted: false),
+          if (c.now.isAfter(end)) ChartMarker(c.now, 'Now', color: scheme.error, dotted: false),
+          ChartMarker(peakAt, 'Peak'),
+          if (goneExpected != null) ChartMarker(goneExpected, 'Gone (est.)'),
+        ],
+      ),
+      const SizedBox(height: 4),
+      Text(
+        'After the last dose of this session (${chartDate(end)}): largest around ${chartDate(peakAt)} (about ${peak.percent}%)'
+        '${half == null ? '' : ', half by ${chartDate(half)}'}'
+        '${goneExpected == null ? '' : ', gone by about ${chartDate(goneExpected)}'}'
+        '${goneEarliest == null || goneLatest == null ? '' : ' (between ${chartDate(goneEarliest)} and ${chartDate(goneLatest)})'}.',
+        key: ValueKey('tolerance-halving-$key'),
+        style: text.bodySmall,
+      ),
+      const SizedBox(height: 4),
+      Text(
+        'What this shows: how much weaker the same dose would feel, as a percent, with the shaded estimate between a low and a high end. '
+        '${profile.summary}',
+        key: ValueKey('tolerance-explain-$key'),
+        style: text.bodySmall,
+      ),
+      Text(profile.limits, style: text.bodySmall),
+      const SizedBox(height: 4),
+      Text(
+        'No "dose to feel like normal" is given: in the studies, even 2 to 4 times the dose did not bring the full effect back during daily use, '
+        'and a bigger dose adds risk without a reliable return. Waiting is what lowers tolerance.',
+        key: ValueKey('tolerance-no-compensation-$key'),
+        style: text.bodySmall,
+      ),
+      if (uncounted.isNotEmpty)
+        Padding(
+          padding: const EdgeInsets.only(top: 4),
+          child: Text(
+            'Not counted: ${(uncounted.toList()..sort()).join(', ')}. They share this group in the reference data, but no published cross-tolerance figure was found.',
+            style: text.bodySmall,
+          ),
+        ),
+      ExpansionTile(
+        key: ValueKey('tolerance-sources-$key'),
+        tilePadding: EdgeInsets.zero,
+        title: Text('Sources and assumptions', style: text.labelLarge),
+        childrenPadding: const EdgeInsets.only(bottom: Gap.sm),
+        expandedCrossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          for (final (label, v) in [
+            ('Starts', profile.riseStartHours),
+            ('Largest', profile.peakHours),
+            ('One dose', profile.singleDoseLoss),
+            ('Most measured', profile.maxLoss),
+            ('Gone after', profile.recoveryDays),
+            ('Dose size', profile.doseExponent),
+          ]) ...[
+            Text('$label: ${v.note}', style: text.bodySmall),
+            for (final s in v.sources) Padding(padding: const EdgeInsets.only(left: Gap.sm), child: SelectableText(s, style: text.labelSmall)),
+            const SizedBox(height: 4),
+          ],
+          for (final x in profile.crossTolerance) ...[
+            Text('With ${catalog[x.substanceKey]?.name ?? x.substanceKey}: ${x.note}', style: text.bodySmall),
+            for (final s in x.sources) Padding(padding: const EdgeInsets.only(left: Gap.sm), child: SelectableText(s, style: text.labelSmall)),
+            const SizedBox(height: 4),
+          ],
+        ],
+      ),
       const SizedBox(height: Gap.md),
     ];
   }

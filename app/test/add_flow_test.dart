@@ -76,7 +76,7 @@ void main() {
     await settle(tester, rounds: 2);
     expect(find.text('THC consumed: 15.0 mg'), findsOneWidget);
     expect(find.textContaining('Estimated absorbed: 1.2 to 4.5 mg'), findsOneWidget);
-    expect(find.text('Between a light and a strong dose'), findsOneWidget);
+    expect(find.text('Between a low and a high dose'), findsOneWidget);
 
     await tapKey(tester, 'primary-action');
     await tapKey(tester, 'primary-action');
@@ -101,7 +101,7 @@ void main() {
     expect(find.byKey(const ValueKey('cannabis-label-mg')), findsOneWidget);
     await tester.enterText(find.byKey(const ValueKey('cannabis-label-mg')), '10');
     await settle(tester, rounds: 2);
-    expect(find.text('About a strong dose'), findsOneWidget);
+    expect(find.text('About a high dose'), findsOneWidget);
     await disposeApp(tester, app);
   });
 

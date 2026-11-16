@@ -184,7 +184,11 @@ String _profile({
     final recent = doses.where((i) => now.difference(i.time) < const Duration(days: 30)).length;
     final days = {for (final i in doses) _day(i.time)}.length;
     final track = s == null ? null : tracks[toleranceTrackKey(s)];
-    final tol = track == null ? '' : ', tolerance ${track.word.toLowerCase()} and ${toleranceTrend(track, now).name}';
+    final loss = track?.effectLoss;
+    final tol = track == null
+        ? ''
+        : ', tolerance ${track.word.toLowerCase()} and ${toleranceTrend(track, now).name}'
+            '${loss == null ? '' : ' (a same-size dose estimated ${loss.percent}% weaker, range ${loss.lowPercent}-${loss.highPercent}%)'}';
     rows.add((doses.length, '- ${s?.name ?? key}: ${_plural(doses.length, 'dose')} on ${_plural(days, 'day')}, last ${_day(last)} (${_ago(now.difference(last))}), $recent in the last 30 days$tol.'));
   }
   rows.sort((a, b) => b.$1.compareTo(a.$1));
@@ -318,6 +322,16 @@ String _experienceSheet({
             '${pd.strainType.isEmpty ? '' : ', ${pd.strainType}'}${pd.terpenes.isEmpty ? '' : ', terpenes ${pd.terpenes}'}');
       }
     }
+    if (i.substanceKey == 'psilocybin_mushrooms') {
+      // The mushroom calculator's estimate (additive details keys; older entries have none).
+      final d = _json(i.detailsJson);
+      final mg = (d['psilocybinEqMg'] as num?)?.toDouble();
+      final lo = (d['psilocybinEqMgLow'] as num?)?.toDouble();
+      final hi = (d['psilocybinEqMgHigh'] as num?)?.toDouble();
+      if (mg != null) line.write('; estimated ${_num(mg)} mg psilocybin equivalents${lo == null || hi == null || lo == hi ? '' : ' (range ${_num(lo)}-${_num(hi)})'}');
+      if (d['batchName'] is String) line.write('; batch: ${d['batchName']}');
+      if (d['batchFeel'] is String) line.write('; batch felt: ${d['batchFeel']}');
+    }
     if (i.stomachFullness != null) line.write('; stomach ${i.stomachFullness}');
     if (i.endTime != null) line.write('; taken over ${_span(i.endTime!.difference(i.time))}');
     if (i.notes.isNotEmpty) line.write('; note: ${options.hideNotes ? '[omitted]' : i.notes}');
@@ -448,9 +462,9 @@ String _experienceSheet({
 String _classWord(DoseClass c) => switch (c) {
       DoseClass.belowThreshold => 'below threshold',
       DoseClass.threshold => 'threshold',
-      DoseClass.light => 'light',
+      DoseClass.light => 'low',
       DoseClass.common => 'common',
-      DoseClass.strong => 'strong',
+      DoseClass.strong => 'high',
       DoseClass.heavy => 'heavy',
     };
 
